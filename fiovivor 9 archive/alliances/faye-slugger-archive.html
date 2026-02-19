@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#faye-slugger — Fiovivor S9 | Hollywoo: BvW</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>faye-slugger</h1>
+    <p class="meta">Fiovivor S9 | Hollywoo: BvW &middot; 73 messages archived</p>
+    <p class="topic">&lt;@&amp;1458903291441447158&gt;, &lt;@&amp;1458903872155160779&gt;, &lt;@&amp;1458903932683157525&gt;, &lt;@&amp;1458904027868692675&gt;, &lt;@&amp;1458904058235457800&gt;, &lt;@&amp;1458904173054787604&gt;, &lt;@&amp;1458904212258951252&gt;</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/09/2026 09:00 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1459290757222502410/voice-message.ogg?ex=6996d12c&is=69957fac&hm=5c64727a480509b9335937d121c82813b33804497ba9d26af74c8fe5e3a3c9b4&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/811652199100317726/68bc6c21bcae6ec0e5fa91b561410e25.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Scripty <span class="bot-tag">BOT</span></span>
+        <span class="username">@Scripty#6156</span>
+        <span class="timestamp">01/09/2026 09:00 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">&gt; Hey, how are you doing fair wait the talk sucka is me slugga? I am the greatest agent ever<br>&gt;  No princess Karen she ain&#x27;t got shit on me. You know, I would have given bow jack that secretary a job<br>&gt;  Ten years before he wanted it. How does he wanted he wanted his whole life? That&#x27;s right<br>&gt;  I got bow jack horseman that job when he was in the room cuz that&#x27;s what slugga do, baby<br>-# 3.316 (27.180)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/09/2026 09:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">WHATS UP SLUGGER</div>
+    </div>
+    <div class="msg">
+        <div class="content">i&#x27;m gonna warn you i&#x27;ve never watched bojack horseman</div>
+    </div>
+    <div class="msg">
+        <div class="content">so either ur saying a bunch of random shit or ur kinda not and i have no idea what ur saying</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/09/2026 09:34 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1459299411783057408/voice-message.ogg?ex=6996d93c&is=699587bc&hm=e1a61272b91614abf945025e921be92b6e9cbfc8792db2c6697a2a36d20537b3&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/811652199100317726/68bc6c21bcae6ec0e5fa91b561410e25.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Scripty <span class="bot-tag">BOT</span></span>
+        <span class="username">@Scripty#6156</span>
+        <span class="timestamp">01/09/2026 09:34 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">&gt; It&#x27;s okay.<br>&gt;  I just realized we&#x27;re all agents,<br>&gt;  so what I say doesn&#x27;t matter.<br>&gt;  Cocksucker, you&#x27;re telling me<br>&gt;  you&#x27;ve never watched Bull Jack horse man?<br>&gt;  Oh, you&#x27;re missing out.<br>&gt;  Almost made a grown man like me slug a cry.<br>&gt;  A slug a don&#x27;t cry, so he didn&#x27;t cry.<br>&gt;  Except for that one time you watched<br>&gt;  the Adam sailors click.<br>&gt;  Now, where&#x27;s the sad flick?<br>-# 3.086 (24.920)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/09/2026 11:05 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">LMAO</div>
+    </div>
+    <div class="msg">
+        <div class="content">you have a talent</div>
+    </div>
+    <div class="msg">
+        <div class="content">should i watch bojack horseman..</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/09/2026 11:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1459327511505928212/voice-message.ogg?ex=6996f367&is=6995a1e7&hm=3c11f17da7bd2d152334feb8769dc31b7b7819094cf454dd74197383aafd06a3&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/811652199100317726/68bc6c21bcae6ec0e5fa91b561410e25.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Scripty <span class="bot-tag">BOT</span></span>
+        <span class="username">@Scripty#6156</span>
+        <span class="timestamp">01/09/2026 11:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">&gt; For instance, yes.<br>-# 2.598 (1.100) ⚠</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/10/2026 08:51 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hey slugger!</div>
+    </div>
+    <div class="msg">
+        <div class="content">how&#x27;s your day going?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/11/2026 01:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1459724294237196421/voice-message.ogg?ex=69971370&is=6995c1f0&hm=acd0e2cc42ccc5d38cbe43ab278721ad382c8204bae855c3ff9bc4feb54dadc8&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/811652199100317726/68bc6c21bcae6ec0e5fa91b561410e25.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Scripty <span class="bot-tag">BOT</span></span>
+        <span class="username">@Scripty#6156</span>
+        <span class="timestamp">01/11/2026 01:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">&gt; What&#x27;s a popsucker?<br>&gt;  My day&#x27;s been going all right.<br>&gt;  I could tell lessons.<br>&gt;  It&#x27;s pretty good at that guitar thing.<br>&gt;  You know, practicing, getting faster at picking,<br>&gt;  then I think there was gonna be work.<br>&gt;  I thought I was gonna be working all day,<br>&gt;  but no, work called me in.<br>&gt;  They said, hey, we got someone else to cover your shift.<br>&gt;  Even though I never asked for someone to cover my shift,<br>&gt;  but because logo likes to relax,<br>&gt;  hey, I took that as a complimentary to our relax.<br>&gt;  I&#x27;ll play you some guilty gear strife,<br>&gt;  and I got mad because there were people better than me.<br>&gt;  That were lower ranked than me,<br>&gt;  and I tried to tell them to kill themselves.<br>&gt;  But, so let&#x27;s say it because they had a filter on.<br>&gt;  So I&#x27;m like, hey, whatever.<br>&gt;  Now I&#x27;m gonna go watch the Green Bay Packers game,<br>&gt;  because I&#x27;m a Packers guy.<br>&gt;  Fuck the giants, fuck the Chicago Bears.<br>&gt;  Let&#x27;s go Packers, I&#x27;m like, he said,<br>&gt;  how&#x27;s your day going, Fey?<br>-# 10.323 (65.960)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/11/2026 05:40 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">AYEE U PLAY GUITAR?</div>
+    </div>
+    <div class="msg">
+        <div class="content">that&#x27;s</div>
+    </div>
+    <div class="msg">
+        <div class="content">pretty cool</div>
+    </div>
+    <div class="msg">
+        <div class="content">i tried guitar lessons and decided my fingers hurt too bad so i gave up</div>
+    </div>
+    <div class="msg">
+        <div class="content">and i&#x27;m so sorry that happened to you in thr game</div>
+    </div>
+    <div class="msg">
+        <div class="content">you should&#x27;ve been given the opportunity to tell them to kill themselves</div>
+    </div>
+    <div class="msg">
+        <div class="content">and it&#x27;s devastating you didn&#x27;t get that chance</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/12/2026 01:41 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1460086330477510758/voice-message.ogg?ex=6997131c&is=6995c19c&hm=51e0d4c075733924b4fe9bb2c5e6794383617270c05aef8fc6674d5c7cddf5ed&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/811652199100317726/68bc6c21bcae6ec0e5fa91b561410e25.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Scripty <span class="bot-tag">BOT</span></span>
+        <span class="username">@Scripty#6156</span>
+        <span class="timestamp">01/12/2026 01:41 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">&gt; Yeah, it&#x27;s okay, fair, forgive ya.<br>-# 0.907 (3.560)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/13/2026 07:06 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">heyy whats up slugger</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/14/2026 11:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1461140472494948413/voice-message.ogg?ex=6996f45b&is=6995a2db&hm=7ac3a0bc00cf9b2e9c73319273c7fdbc1095bc813b79f95f5c95cb3a9e56a864&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/14/2026 11:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> I&#x27;m currently picking up my sister.<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/556663419483324421/3437e95174746669a4085c8c326c1ddd.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">kebab</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">01/15/2026 04:01 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove agents 2.0 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1414761852981870592/8925596d88d5bff24e8d1bd8bcb1c2c9.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Fiovivor Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Fiovivor Bot#5413</span>
+        <span class="timestamp">01/15/2026 04:01 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> !chmove agents 2.0 1-1s</div>
+        <div class="content">✅ Successfully moved &lt;#1459261476375367723&gt; to the <strong>🤝 | Agents 2.0 1-1s</strong> category!<br><br><strong>📊 Move Details:</strong><br>• <strong>Channel:</strong> faye-slugger<br>• <strong>From:</strong> 🤝 | Agent 1-1s<br>• <strong>To:</strong> 🤝 | Agents 2.0 1-1s<br>• <strong>Category Usage:</strong> 5/50 channels</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/15/2026 04:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> !chmove agents 2.0 1-1s</div>
+        <div class="content">wrong one 🥲</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/556663419483324421/3437e95174746669a4085c8c326c1ddd.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">kebab</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">01/15/2026 04:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">😭</div>
+    </div>
+    <div class="msg">
+        <div class="content">not the first time</div>
+    </div>
+    <div class="msg">
+        <div class="content">thank u</div>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove actors 2.0 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1414761852981870592/8925596d88d5bff24e8d1bd8bcb1c2c9.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Fiovivor Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Fiovivor Bot#5413</span>
+        <span class="timestamp">01/15/2026 04:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> !chmove actors 2.0 1-1s</div>
+        <div class="content">✅ Successfully moved &lt;#1459261476375367723&gt; to the <strong>🤝 | Actors 2.0 1-1s</strong> category!<br><br><strong>📊 Move Details:</strong><br>• <strong>Channel:</strong> faye-slugger<br>• <strong>From:</strong> 🤝 | Agents 2.0 1-1s<br>• <strong>To:</strong> 🤝 | Actors 2.0 1-1s<br>• <strong>Category Usage:</strong> 10/50 channels</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/932329766063837246/cd24feb5addbf95fc95a2fa71fbc47ee.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">fishpog</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">01/15/2026 04:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">.dothething</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1347268912433336320/5ad081c22bb58f9cf9f5e50b1295067e.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">EMERGENCY <span class="bot-tag">BOT</span></span>
+        <span class="username">@EMERGENCY#0271</span>
+        <span class="timestamp">01/15/2026 04:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/932329766063837246/cd24feb5addbf95fc95a2fa71fbc47ee.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">fishpog</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">01/15/2026 04:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">.dotheotherthing</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1347268912433336320/5ad081c22bb58f9cf9f5e50b1295067e.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">EMERGENCY <span class="bot-tag">BOT</span></span>
+        <span class="username">@EMERGENCY#0271</span>
+        <span class="timestamp">01/15/2026 04:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/15/2026 05:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1461233339011694655/voice-message.ogg?ex=6996a218&is=69955098&hm=98c8c6effe7635ba85b4a34a36d038fd3b149e0a821dba5fbad8148da371248c&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/15/2026 05:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> What the fuck is it doing?<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/15/2026 06:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">slugger</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/15/2026 06:12 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1461241552604237854/voice-message.ogg?ex=6996a9be&is=6995583e&hm=dfaa5b28d458c914da23a6d754ad97209893b3f7940f6ff951e767067aaaca7d&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/15/2026 06:12 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> What the fuck do you want, man? I&#x27;m so pissed off. Fuck this Queen Dizzy.<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/15/2026 06:16 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">HELLO</div>
+    </div>
+    <div class="msg">
+        <div class="content">why r u pissed off</div>
+    </div>
+    <div class="msg">
+        <div class="content">WHAT IS GOING ON</div>
+    </div>
+    <div class="msg">
+        <div class="content">who thr hell is queen dizzy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/15/2026 06:41 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1461249034089136315/voice-message.ogg?ex=6996b0b6&is=69955f36&hm=d593e738638fb37b86dd5b6f689bab5b76d374e76074a1344cf086270c0fd8b1&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/15/2026 06:41 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> This bitch thought she could be fucking lame.<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/15/2026 04:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">what r u trying to say</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/16/2026 04:18 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1461575401607270615/voice-message.ogg?ex=69968f2a&is=69953daa&hm=80d28c3d95946244e557e4b6665bbee79fd1b39704849860dab7bc50e5ff777e&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/16/2026 04:18 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> Queen Dizzy is a character from Guilty Gear&#x27;s Thrive. Which catch sucker, that&#x27;s a fucking fighting game like Street Fighter, but better.<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/17/2026 06:13 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1461966548162973859/voice-message.ogg?ex=6996a9f3&is=69955873&hm=40342bb6f5823ea95cf01613cc87ef608018b6bbcc2ea0f39ad320e07e688aeb&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/17/2026 06:13 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> Who are we voting for?<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/17/2026 07:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">have you heard anything</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/17/2026 09:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1462196366091747472/voice-message.ogg?ex=6996d73b&is=699585bb&hm=bcf3ebbd69c6b9a18cc7d4d99f4a5526d6157e207593de0d3f9cc96ce6db8e80&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/17/2026 09:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> wake up cocksucker I&#x27;ve not heard anything it&#x27;s making me scared<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/17/2026 09:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1462196669671276614/voice-message.ogg?ex=6996d784&is=69958604&hm=864065870a358490e6d94843a8ab988dd2d374d0ea2a4681ba0f9fbd18a6ec12&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/17/2026 09:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> In, I kind of want to vote Virgo out because he doesn&#x27;t, she doesn&#x27;t get what slugger is and what slugger does. You just thought I was mad at them? No, man. Cocksucking is a term of endearment, but people are going to vote ghost. I might as well vote ghost.<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/17/2026 09:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1462197034525261967/voice-message.ogg?ex=6996d7db&is=6995865b&hm=b5f6f6a18549301f52061658b2df69a786cd770d0b29e5af20e2729b79ba650b&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/17/2026 09:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> How do you feel about voting Virgo, or should we stick with Ghost?<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/17/2026 09:41 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">is anyone else on board with voting virgo?</div>
+    </div>
+    <div class="msg">
+        <div class="content">&lt;@429051518621057062&gt;</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/17/2026 10:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">asrara</span> is anyone else on board with voting virgo?</div>
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1462205644655562773/voice-message.ogg?ex=6996dfe0&is=69958e60&hm=b2994c1fe41d67d638017c84b8b42fe00c33ed935f7e08838fa4120d601c0bba&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/17/2026 10:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> Currently, I got me and two other people, I&#x27;m asking a couple more, I&#x27;m just waiting for their responses.<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/17/2026 10:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1462206775204905133/voice-message.ogg?ex=6996e0ed&is=69958f6d&hm=37c9b15192cf78d4173ebfcfe7ab3e38dcf9d4f81e95763c7e4db7b8455fc2fd&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/17/2026 10:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> I just got two more people to vote Virgo<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/17/2026 10:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><a href="https://cdn.discordapp.com/attachments/1459261476375367723/1462206870071676988/voice-message.ogg?ex=6996e104&is=69958f84&hm=c1ffd6a3eae2c166a59867c7a6d9eba36d71b57f0a7d8d8d00be985546fe3577&" target="_blank">voice-message.ogg</a></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/1096877566595452978/26fea8ba1bcf32efa8c9a47220ccff59.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Transcriber <span class="bot-tag">BOT</span></span>
+        <span class="username">@Transcriber#8351</span>
+        <span class="timestamp">01/17/2026 10:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> </div>
+        <div class="content">``<code><br> Know what you think isn&#x27;t Virgo good at challenges what the thing about Virgo is that there&#x27;s no fucker respect No respect towards me, and I can&#x27;t I can&#x27;t accept a little I can&#x27;t accept a slight towards me<br></code>``</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/846107653716443198/9eb76bccf8a6c4a732413a7fc9045770.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">faye</span>
+        <span class="username">@asrara</span>
+        <span class="timestamp">01/17/2026 11:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">Transcriber#8351</span> ``<code><br> I just got two more people to vote Virgo<br></code>``</div>
+        <div class="content">&lt;@429051518621057062&gt; wait who have we got because no one has told virgo yet</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://cdn.discordapp.com/avatars/429051518621057062/03cc735b37850a6f17886b26bcdb0340.png?size=1024" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">napo</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">01/18/2026 12:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://tenor.com/view/goku-namek-mad-angry-kakarot-gif-4697742235674074957</div>
+        <div class="embed">
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>

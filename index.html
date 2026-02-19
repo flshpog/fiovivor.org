@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiovivor Archive</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      background: linear-gradient(180deg, #16213e 0%, #1a1a2e 100%);
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    header img {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 0.5rem;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: #e0e0e0;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    .search-bar {
+      max-width: 500px;
+      margin: 1.25rem auto 0;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 0.6rem 1rem 0.6rem 2.4rem;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      background: #0f0f23;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus {
+      border-color: #5865f2;
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: #666;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      max-width: 800px;
+      margin: 1.5rem auto 0;
+    }
+
+    .tab {
+      padding: 0.7rem 2rem;
+      background: transparent;
+      border: 1px solid #2a2a4a;
+      color: #888;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .tab:first-child { border-radius: 8px 0 0 8px; }
+    .tab:last-child { border-radius: 0 8px 8px 0; }
+
+    .tab.active {
+      background: #5865f2;
+      border-color: #5865f2;
+      color: #fff;
+    }
+
+    .tab:hover:not(.active) {
+      background: #2a2a4a;
+      color: #e0e0e0;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    .season { display: none; }
+    .season.active { display: block; }
+
+    .category {
+      margin-bottom: 0.5rem;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #16213e;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .category-header:hover {
+      background: #1e2d4d;
+    }
+
+    .category-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ccc;
+    }
+
+    .category-header .count {
+      font-size: 0.75rem;
+      color: #666;
+      background: #0f0f23;
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      margin-left: 0.5rem;
+    }
+
+    .category-header .arrow {
+      transition: transform 0.2s;
+      fill: #666;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .category.open .category-header .arrow {
+      transform: rotate(180deg);
+    }
+
+    .channel-list {
+      display: none;
+      padding: 0 0.5rem 0.5rem;
+    }
+
+    .category.open .channel-list {
+      display: block;
+    }
+
+    .channel-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.65rem;
+      color: #b0b0c0;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      transition: background 0.12s, color 0.12s;
+    }
+
+    .channel-link:hover {
+      background: #2a2a4a;
+      color: #fff;
+    }
+
+    .channel-link .hash {
+      color: #5865f2;
+      font-weight: 700;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #666;
+      padding: 3rem 1rem;
+      font-size: 0.95rem;
+      display: none;
+    }
+
+    /* Viewer overlay */
+    .viewer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: #1a1a2e;
+      flex-direction: column;
+    }
+
+    .viewer.active {
+      display: flex;
+    }
+
+    .viewer-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 1rem;
+      background: #16213e;
+      border-bottom: 1px solid #2a2a4a;
+      flex-shrink: 0;
+    }
+
+    .viewer-back {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      background: #5865f2;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+
+    .viewer-back:hover {
+      background: #4752c4;
+    }
+
+    .viewer-back svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .viewer-title {
+      color: #ccc;
+      font-size: 0.9rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .viewer-title .hash {
+      color: #5865f2;
+      font-weight: 700;
+      margin-right: 0.25rem;
+    }
+
+    .viewer iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+    }
+
+    body.viewing { overflow: hidden; }
+
+    @media (max-width: 600px) {
+      header img { max-width: 120px; }
+      header h1 { font-size: 1.3rem; }
+      .tab { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="Fiovivor Logo">
+  <h1>Fiovivor Archive</h1>
+  <p>Discord channel archives from Seasons 8 &amp; 9</p>
+  <div class="search-bar">
+    <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    <input type="text" id="search" placeholder="Search channels..." autocomplete="off">
+  </div>
+  <div class="tabs">
+    <button class="tab active" data-season="s8">Season 8</button>
+    <button class="tab" data-season="s9">Season 9</button>
+  </div>
+</header>
+
+<main>
+  <!-- Season 8 -->
+  <div class="season active" id="s8">
+
+    <div class="category open">
+      <div class="category-header">
+        <div><h3>In-Game Information <span class="count">10</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/cast-reveal-archive.html"><span class="hash">#</span> cast-reveal</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/cast-info-archive.html"><span class="hash">#</span> cast-info</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/twist-info-archive.html"><span class="hash">#</span> twist-info</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/marooning-archive.html"><span class="hash">#</span> marooning</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/episode-chronology-archive.html"><span class="hash">#</span> episode-chronology</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/treemail-archive.html"><span class="hash">#</span> treemail</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/challenge-arena-archive.html"><span class="hash">#</span> challenge-arena</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/host-confessional-archive.html"><span class="hash">#</span> host-confessional</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/distortion-world-ponderosa-archive.html"><span class="hash">#</span> distortion-world-ponderosa</a>
+        <a class="channel-link" href="fiovivor 8 archive/in-game information/orange-islands-archive.html"><span class="hash">#</span> orange-islands</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Tribal Councils <span class="count">24</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f4-tribal-bazz-archive.html"><span class="hash">#</span> f4-tribal-bazz</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f5-tribal-luis-archive.html"><span class="hash">#</span> f5-tribal-luis</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f6-tribal-jessica-archive.html"><span class="hash">#</span> f6-tribal-jessica</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f7-v1-tribal-kebab-archive.html"><span class="hash">#</span> f7-v1-tribal-kebab</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f7-v2-tribal-drew-archive.html"><span class="hash">#</span> f7-v2-tribal-drew</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f8-tribal-ore-archive.html"><span class="hash">#</span> f8-tribal-ore</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f9-tribal-nub-archive.html"><span class="hash">#</span> f9-tribal-nub</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f10-tribal-david-archive.html"><span class="hash">#</span> f10-tribal-david</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f11-v1-tribal-cameron-archive.html"><span class="hash">#</span> f11-v1-tribal-cameron</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f11-v2-tribal-robynn-archive.html"><span class="hash">#</span> f11-v2-tribal-robynn</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f12-tribal-cooper-archive.html"><span class="hash">#</span> f12-tribal-cooper</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f13-tribal-luis-archive.html"><span class="hash">#</span> f13-tribal-luis</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f14-tribal-wyatt-archive.html"><span class="hash">#</span> f14-tribal-wyatt</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f15-v1-tribal-kebab-archive.html"><span class="hash">#</span> f15-v1-tribal-kebab</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f15-v2-tribal-nicholas-archive.html"><span class="hash">#</span> f15-v2-tribal-nicholas</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f16-tribal-khana-archive.html"><span class="hash">#</span> f16-tribal-khana</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f17-tribal-dachi-archive.html"><span class="hash">#</span> f17-tribal-dachi</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f18-tribal-derek-v-archive.html"><span class="hash">#</span> f18-tribal-derek-v</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f19-tribal-cancelled-archive.html"><span class="hash">#</span> f19-tribal-cancelled</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f20-tribal-forrest-archive.html"><span class="hash">#</span> f20-tribal-forrest</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f21-tribal-cancelled-archive.html"><span class="hash">#</span> f21-tribal-cancelled</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/f21-tribal-david-archive.html"><span class="hash">#</span> f21-tribal-david</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/distortion-tribal-luis-archive.html"><span class="hash">#</span> distortion-tribal-luis</a>
+        <a class="channel-link" href="fiovivor 8 archive/tribal councils/final-tribal-council-archive.html"><span class="hash">#</span> final-tribal-council</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Confessionals <span class="count">22</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/1st-woofley-conf-archive.html"><span class="hash">#</span> 1st-woofley-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/2nd-fuggles-conf-archive.html"><span class="hash">#</span> 2nd-fuggles-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/3rd-jakey-conf-archive.html"><span class="hash">#</span> 3rd-jakey-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/4th-bazz-conf-archive.html"><span class="hash">#</span> 4th-bazz-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/5th-luis-conf-archive.html"><span class="hash">#</span> 5th-luis-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/6th-jessica-conf-archive.html"><span class="hash">#</span> 6th-jessica-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/7th-drew-conf-archive.html"><span class="hash">#</span> 7th-drew-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/8th-kebab-conf-archive.html"><span class="hash">#</span> 8th-kebab-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/9th-ore-conf-archive.html"><span class="hash">#</span> 9th-ore-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/10th-nub-conf-archive.html"><span class="hash">#</span> 10th-nub-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/11th-david-conf-archive.html"><span class="hash">#</span> 11th-david-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/12th-robynn-conf-archive.html"><span class="hash">#</span> 12th-robynn-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/13th-cameron-conf-archive.html"><span class="hash">#</span> 13th-cameron-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/14th-cooper-conf-archive.html"><span class="hash">#</span> 14th-cooper-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/15th-wyatt-conf-archive.html"><span class="hash">#</span> 15th-wyatt-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/16th-nicholas-conf-archive.html"><span class="hash">#</span> 16th-nicholas-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/17th-khana-conf-archive.html"><span class="hash">#</span> 17th-khana-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/18th-dachi-conf-archive.html"><span class="hash">#</span> 18th-dachi-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/19th-derek-v-conf-archive.html"><span class="hash">#</span> 19th-derek-v-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/20th-faith-conf-archive.html"><span class="hash">#</span> 20th-faith-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/21st-forrest-conf-archive.html"><span class="hash">#</span> 21st-forrest-conf</a>
+        <a class="channel-link" href="fiovivor 8 archive/confessionals/22nd-lily-conf-archive.html"><span class="hash">#</span> 22nd-lily-conf</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Alliances <span class="count">51</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 8 archive/alliances/a-majority-archive.html"><span class="hash">#</span> a-majority</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/aloha-nation-archive.html"><span class="hash">#</span> aloha-nation</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/cameron-drew-archive.html"><span class="hash">#</span> cameron-drew</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/cameron-ore-archive.html"><span class="hash">#</span> cameron-ore</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/cooper-jakey-archive.html"><span class="hash">#</span> cooper-jakey</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/david-luis-archive.html"><span class="hash">#</span> david-luis</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/drew-jakey-archive.html"><span class="hash">#</span> drew-jakey</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/faith-wyatt-archive.html"><span class="hash">#</span> faith-wyatt</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/femininomenons-archive.html"><span class="hash">#</span> femininomenons</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/fuggles-cameron-archive.html"><span class="hash">#</span> fuggles-cameron</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/fuggles-jessica-archive.html"><span class="hash">#</span> fuggles-jessica</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/fuggles-robynn-archive.html"><span class="hash">#</span> fuggles-robynn</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/fuggles-robynn-archive (1).html"><span class="hash">#</span> fuggles-robynn (2)</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/fuggles-wyatt-khana-archive.html"><span class="hash">#</span> fuggles-wyatt-khana</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/gem-cat-and-snack-archive.html"><span class="hash">#</span> gem-cat-and-snack</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/girl-island-archive.html"><span class="hash">#</span> girl-island</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/jakey-bazz-archive.html"><span class="hash">#</span> jakey-bazz</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/jessica-bazz-archive.html"><span class="hash">#</span> jessica-bazz</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/jessica-kebab-archive.html"><span class="hash">#</span> jessica-kebab</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/kebab-bazz-archive.html"><span class="hash">#</span> kebab-bazz</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/kebab-drew-archive.html"><span class="hash">#</span> kebab-drew</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/kebab-luis-archive.html"><span class="hash">#</span> kebab-luis</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/kebab-robynn-archive.html"><span class="hash">#</span> kebab-robynn</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/lamour-tojours-archive.html"><span class="hash">#</span> lamour-tojours</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/luis-wyatt-archive.html"><span class="hash">#</span> luis-wyatt</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/nub-drew-archive.html"><span class="hash">#</span> nub-drew</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/nub-luis-archive.html"><span class="hash">#</span> nub-luis</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/nub-ore-archive.html"><span class="hash">#</span> nub-ore</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/nub-woofley-archive.html"><span class="hash">#</span> nub-woofley</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/ore-bazz-archive.html"><span class="hash">#</span> ore-bazz</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/ore-jessica-archive.html"><span class="hash">#</span> ore-jessica</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/ore-luis-archive.html"><span class="hash">#</span> ore-luis</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/ore-woofley-archive.html"><span class="hash">#</span> ore-woofley</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/pizza-party-archive.html"><span class="hash">#</span> pizza-party</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/returning-player-pact-archive.html"><span class="hash">#</span> returning-player-pact</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/robynn-cameron-archive.html"><span class="hash">#</span> robynn-cameron</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/robynn-ore-archive.html"><span class="hash">#</span> robynn-ore</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/slayquaza-archive.html"><span class="hash">#</span> slayquaza</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/soda-jungle-forever-archive.html"><span class="hash">#</span> soda-jungle-forever</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/teahou-archive.html"><span class="hash">#</span> teahou</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/thats-just-what-i-truly-wanted-to-say-no-disrespect-to-faith-or-forrest-but-i-generally-think-we-archive.html"><span class="hash">#</span> thats-just-what-i-truly-wanted-to-say...</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/the-empire-archive.html"><span class="hash">#</span> the-empire</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/the-retirement-home-archive.html"><span class="hash">#</span> the-retirement-home</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/the-royals-archive.html"><span class="hash">#</span> the-royals</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/the-three-amigos-archive.html"><span class="hash">#</span> the-three-amigos</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/therapy-archive.html"><span class="hash">#</span> therapy</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/toxtricity-because-toxtricity-is-the-best-galar-mon-archive.html"><span class="hash">#</span> toxtricity-because-toxtricity-is-the-best-galar-mon</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/what-the-hell-sure-archive.html"><span class="hash">#</span> what-the-hell-sure</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/woofley-fuggles-archive.html"><span class="hash">#</span> woofley-fuggles</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/woofley-kebab-archive.html"><span class="hash">#</span> woofley-kebab</a>
+        <a class="channel-link" href="fiovivor 8 archive/alliances/wyatt-drew-archive.html"><span class="hash">#</span> wyatt-drew</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Other Channels <span class="count">16</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 8 archive/other channels/s8-awards-ceremony-archive.html"><span class="hash">#</span> s8-awards-ceremony</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/fan-favorite-s8-archive.html"><span class="hash">#</span> fan-favorite-s8</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/fusion-arena-archive.html"><span class="hash">#</span> fusion-arena</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/premerge-orange-islands-archive.html"><span class="hash">#</span> premerge-orange-islands</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/dillon-ticket-s8-archive.html"><span class="hash">#</span> dillon-ticket-s8</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/team-rockets-offer-archive.html"><span class="hash">#</span> team-rockets-offer</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/hisui-region-archive.html"><span class="hash">#</span> hisui-region</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/hoenn-camp-archive.html"><span class="hash">#</span> hoenn-camp</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/paldea-region-archive.html"><span class="hash">#</span> paldea-region</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/unova-camp-archive.html"><span class="hash">#</span> unova-camp</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/kalos-camp-archive.html"><span class="hash">#</span> kalos-camp</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/safari-zone-archive.html"><span class="hash">#</span> safari-zone</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/alola-camp-archive.html"><span class="hash">#</span> alola-camp</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/galar-camp-archive.html"><span class="hash">#</span> galar-camp</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/sinnoh-camp-archive.html"><span class="hash">#</span> sinnoh-camp</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/kanto-camp-archive.html"><span class="hash">#</span> kanto-camp</a>
+        <a class="channel-link" href="fiovivor 8 archive/other channels/johto-camp-archive.html"><span class="hash">#</span> johto-camp</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Season 9 -->
+  <div class="season" id="s9">
+
+    <div class="category open">
+      <div class="category-header">
+        <div><h3>In-Game Information <span class="count">12</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/cast-reveal-archive.html"><span class="hash">#</span> cast-reveal</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/cast-info-archive.html"><span class="hash">#</span> cast-info</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/twist-info-archive.html"><span class="hash">#</span> twist-info</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/episode-chronology-archive.html"><span class="hash">#</span> episode-chronology</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/treemail-archive.html"><span class="hash">#</span> treemail</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/challenge-arena-archive.html"><span class="hash">#</span> challenge-arena</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/host-yapping-archive.html"><span class="hash">#</span> host-yapping</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/s9-awards-show-archive.html"><span class="hash">#</span> s9-awards-show</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/auctioning-archive.html"><span class="hash">#</span> auctioning</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/ragebait-central-archive.html"><span class="hash">#</span> ragebait-central</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/kindness-archive.html"><span class="hash">#</span> kindness</a>
+        <a class="channel-link" href="fiovivor 9 archive/in-game information/s9-ponderosa-archive.html"><span class="hash">#</span> s9-ponderosa</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Tribals <span class="count">25</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f5-f4-tribals-katie-riley-archive.html"><span class="hash">#</span> f5-f4-tribals-katie-riley</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f6-tribal-mateo-archive.html"><span class="hash">#</span> f6-tribal-mateo</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f7-tribal-corny-archive.html"><span class="hash">#</span> f7-tribal-corny</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f8-tribal-dino-archive.html"><span class="hash">#</span> f8-tribal-dino</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f9-tribal-virgo-archive.html"><span class="hash">#</span> f9-tribal-virgo</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f10-tribal-faye-archive.html"><span class="hash">#</span> f10-tribal-faye</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f11-tribal-cancelled-archive.html"><span class="hash">#</span> f11-tribal-cancelled</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f12-tribal-grey-archive.html"><span class="hash">#</span> f12-tribal-grey</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f14-tribal-wall-archive.html"><span class="hash">#</span> f14-tribal-wall</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f15-tribal-ghost-archive.html"><span class="hash">#</span> f15-tribal-ghost</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f16-joint-syn-archive.html"><span class="hash">#</span> f16-joint-syn</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f17-tribal-hailey-archive.html"><span class="hash">#</span> f17-tribal-hailey</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f18-tribal-speed-archive.html"><span class="hash">#</span> f18-tribal-speed</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f19-tribal-layton-archive.html"><span class="hash">#</span> f19-tribal-layton</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f20-tribal-rlime-archive.html"><span class="hash">#</span> f20-tribal-rlime</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f21-tribal-slugger-archive.html"><span class="hash">#</span> f21-tribal-slugger</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f22-tribal-rachel-archive.html"><span class="hash">#</span> f22-tribal-rachel</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f23-tribal-cancelled-archive.html"><span class="hash">#</span> f23-tribal-cancelled</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f24-tribal-twelve-archive.html"><span class="hash">#</span> f24-tribal-twelve</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f25-tribal-sin-archive.html"><span class="hash">#</span> f25-tribal-sin</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f26-tribal-cam-aka-the-agent-archive.html"><span class="hash">#</span> f26-tribal-cam-aka-the-agent</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f27-tribal-tonio-archive.html"><span class="hash">#</span> f27-tribal-tonio</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/f28-tribal-joe-archive.html"><span class="hash">#</span> f28-tribal-joe</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/jury-questioning-archive.html"><span class="hash">#</span> jury-questioning</a>
+        <a class="channel-link" href="fiovivor 9 archive/tribals/s9-ftc-archive.html"><span class="hash">#</span> s9-ftc</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Confessionals <span class="count">28</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/1st-xsoul-conf-archive.html"><span class="hash">#</span> 1st-xsoul-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/2nd-lezaria-conf-archive.html"><span class="hash">#</span> 2nd-lezaria-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/3rd-mike-conf-archive.html"><span class="hash">#</span> 3rd-mike-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/4th-riley-conf-archive.html"><span class="hash">#</span> 4th-riley-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/5th-katie-conf-archive.html"><span class="hash">#</span> 5th-katie-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/6th-mateo-conf-archive.html"><span class="hash">#</span> 6th-mateo-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/7th-corny-likes-beer-archive.html"><span class="hash">#</span> 7th-corny-likes-beer</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/8th-dino-conf-archive.html"><span class="hash">#</span> 8th-dino-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/9th-virgo-conf-archive.html"><span class="hash">#</span> 9th-virgo-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/10th-faye-conf-archive.html"><span class="hash">#</span> 10th-faye-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/11th-quas-conf-archive.html"><span class="hash">#</span> 11th-quas-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/12th-grey-conf-archive.html"><span class="hash">#</span> 12th-grey-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/13th-fazz-conf-archive.html"><span class="hash">#</span> 13th-fazz-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/14th-wall-conf-archive.html"><span class="hash">#</span> 14th-wall-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/15th-ghost-conf-archive.html"><span class="hash">#</span> 15th-ghost-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/16th-syn-conf-archive.html"><span class="hash">#</span> 16th-syn-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/17th-hailey-conf-archive.html"><span class="hash">#</span> 17th-hailey-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/18th-speed-conf-archive.html"><span class="hash">#</span> 18th-speed-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/19th-layton-conf-archive.html"><span class="hash">#</span> 19th-layton-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/20th-rlime-conf-archive.html"><span class="hash">#</span> 20th-rlime-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/21st-slugger-conf-archive.html"><span class="hash">#</span> 21st-slugger-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/22nd-rachel-conf-archive.html"><span class="hash">#</span> 22nd-rachel-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/23rd-mish-conf-archive.html"><span class="hash">#</span> 23rd-mish-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/24th-twelve-conf-archive.html"><span class="hash">#</span> 24th-twelve-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/25th-sin-conf-archive.html"><span class="hash">#</span> 25th-sin-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/26th-the-agent-conf-archive.html"><span class="hash">#</span> 26th-the-agent-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/27th-tonio-conf-archive.html"><span class="hash">#</span> 27th-tonio-conf</a>
+        <a class="channel-link" href="fiovivor 9 archive/confessionals/28th-joe-conf-archive.html"><span class="hash">#</span> 28th-joe-conf</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Submissions <span class="count">31</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 9 archive/submissions/JURY__-archive.html"><span class="hash">#</span> JURY</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/PRE-JURY__-archive.html"><span class="hash">#</span> PRE-JURY</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/cameron-subs-archive.html"><span class="hash">#</span> cameron-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/corny-subs-archive.html"><span class="hash">#</span> corny-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/dino-subs-archive.html"><span class="hash">#</span> dino-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/faye-subs-archive.html"><span class="hash">#</span> faye-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/fazz-subs-archive.html"><span class="hash">#</span> fazz-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/ghost-subs-archive.html"><span class="hash">#</span> ghost-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/grey-subs-archive.html"><span class="hash">#</span> grey-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/hailey-subs-archive.html"><span class="hash">#</span> hailey-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/joe-subs-archive.html"><span class="hash">#</span> joe-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/katie-subs-archive.html"><span class="hash">#</span> katie-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/layton-subs-archive.html"><span class="hash">#</span> layton-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/lezaria-subs-archive.html"><span class="hash">#</span> lezaria-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/mateo-subs-archive.html"><span class="hash">#</span> mateo-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/mike-subs-archive.html"><span class="hash">#</span> mike-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/mish-subs-archive.html"><span class="hash">#</span> mish-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/quas-subs-archive.html"><span class="hash">#</span> quas-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/rachel-subs-archive.html"><span class="hash">#</span> rachel-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/riley-subs-archive.html"><span class="hash">#</span> riley-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/rlime-subs-archive.html"><span class="hash">#</span> rlime-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/sin-subs-archive.html"><span class="hash">#</span> sin-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/slugger-subs-archive.html"><span class="hash">#</span> slugger-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/speed-subs-archive.html"><span class="hash">#</span> speed-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/syn-subs-archive.html"><span class="hash">#</span> syn-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/tonio-subs-archive.html"><span class="hash">#</span> tonio-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/twelve-subs-archive.html"><span class="hash">#</span> twelve-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/virgo-subs-archive.html"><span class="hash">#</span> virgo-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/wall-subs-archive.html"><span class="hash">#</span> wall-subs</a>
+        <a class="channel-link" href="fiovivor 9 archive/submissions/xsoul-subs-archive.html"><span class="hash">#</span> xsoul-subs</a>
+      </div>
+    </div>
+
+    <div class="category">
+      <div class="category-header">
+        <div><h3>Other Channels <span class="count">5</span></h3></div>
+        <svg class="arrow" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="channel-list">
+        <a class="channel-link" href="fiovivor 9 archive/other channels/actors-v3-archive.html"><span class="hash">#</span> actors-v3</a>
+        <a class="channel-link" href="fiovivor 9 archive/other channels/agents-v3-archive.html"><span class="hash">#</span> agents-v3</a>
+        <a class="channel-link" href="fiovivor 9 archive/other channels/producers-v2-archive.html"><span class="hash">#</span> producers-v2</a>
+        <a class="channel-link" href="fiovivor 9 archive/other channels/f15-rehab-archive.html"><span class="hash">#</span> f15-rehab</a>
+        <a class="channel-link" href="fiovivor 9 archive/other channels/f20-and-f12-rehab-archive.html"><span class="hash">#</span> f20-and-f12-rehab</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="no-results" id="no-results">No channels found matching your search.</div>
+</main>
+
+<div class="viewer" id="viewer">
+  <div class="viewer-bar">
+    <button class="viewer-back" id="viewer-back">
+      <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+      Back to channels
+    </button>
+    <span class="viewer-title" id="viewer-title"></span>
+  </div>
+  <iframe id="viewer-frame" sandbox="allow-same-origin"></iframe>
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.season').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.season).classList.add('active');
+    });
+  });
+
+  // Category accordion
+  document.querySelectorAll('.category-header').forEach(header => {
+    header.addEventListener('click', () => {
+      header.parentElement.classList.toggle('open');
+    });
+  });
+
+  // Viewer
+  const viewer = document.getElementById('viewer');
+  const viewerFrame = document.getElementById('viewer-frame');
+  const viewerTitle = document.getElementById('viewer-title');
+  const viewerBack = document.getElementById('viewer-back');
+
+  document.querySelectorAll('.channel-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const name = link.textContent.trim();
+      viewerTitle.innerHTML = '<span class="hash">#</span> ' + name.replace(/^#\s*/, '');
+      viewerFrame.src = link.getAttribute('href');
+      viewer.classList.add('active');
+      document.body.classList.add('viewing');
+    });
+  });
+
+  viewerBack.addEventListener('click', () => {
+    viewer.classList.remove('active');
+    document.body.classList.remove('viewing');
+    viewerFrame.src = '';
+  });
+
+  // Also close viewer with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && viewer.classList.contains('active')) {
+      viewerBack.click();
+    }
+  });
+
+  // Search
+  const searchInput = document.getElementById('search');
+  const noResults = document.getElementById('no-results');
+
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase().trim();
+    let anyVisible = false;
+
+    document.querySelectorAll('.season').forEach(season => {
+      let seasonHasResults = false;
+
+      season.querySelectorAll('.category').forEach(cat => {
+        let catHasResults = false;
+
+        cat.querySelectorAll('.channel-link').forEach(link => {
+          const text = link.textContent.toLowerCase();
+          const match = !query || text.includes(query);
+          link.style.display = match ? '' : 'none';
+          if (match) catHasResults = true;
+        });
+
+        cat.style.display = catHasResults ? '' : 'none';
+        if (query && catHasResults) cat.classList.add('open');
+        if (catHasResults) seasonHasResults = true;
+      });
+
+      if (query) {
+        // Show both seasons when searching
+        season.style.display = seasonHasResults ? 'block' : 'none';
+        if (seasonHasResults) anyVisible = true;
+      } else {
+        // Restore tab behavior when not searching
+        season.style.display = '';
+        anyVisible = true;
+      }
+    });
+
+    // Show/hide tabs during search
+    const tabsEl = document.querySelector('.tabs');
+    if (query) {
+      tabsEl.style.display = 'none';
+      document.querySelectorAll('.season').forEach(s => {
+        if (s.style.display !== 'none') s.classList.add('active');
+      });
+    } else {
+      tabsEl.style.display = '';
+      // Restore active tab
+      const activeTab = document.querySelector('.tab.active');
+      document.querySelectorAll('.season').forEach(s => s.classList.remove('active'));
+      document.getElementById(activeTab.dataset.season).classList.add('active');
+    }
+
+    noResults.style.display = (!anyVisible && query) ? 'block' : 'none';
+  });
+</script>
+
+</body>
+</html>
