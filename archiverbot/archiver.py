@@ -223,14 +223,63 @@ def _escape(text, guild_data=None):
             return f'<img class="custom-emoji" src="{url}" alt=":{emoji_name}:" title=":{emoji_name}:">'
         text = re.sub(r"&lt;(a?):(\w+):(\d+)&gt;", replace_emoji, text)
 
-    # Markdown
+    # Markdown — extract code first so markup inside it isn't processed
+    # Placeholder system to protect code blocks from further processing
+    placeholders = []
+
+    def placeholder(m):
+        idx = len(placeholders)
+        placeholders.append(m.group(0))
+        return f"\x00PH{idx}\x00"
+
+    # Code blocks (``` ```)
+    def code_block(m):
+        code = m.group(1)
+        idx = len(placeholders)
+        placeholders.append(f'<pre><code>{code}</code></pre>')
+        return f"\x00PH{idx}\x00"
+    text = re.sub(r"```(?:\w+)?\n?([\s\S]*?)```", code_block, text)
+
+    # Inline code (` `)
+    def inline_code(m):
+        code = m.group(1)
+        idx = len(placeholders)
+        placeholders.append(f'<code>{code}</code>')
+        return f"\x00PH{idx}\x00"
+    text = re.sub(r"`([^`]+)`", inline_code, text)
+
+    # Block quotes (>>> and >)
+    text = re.sub(r"^&gt;&gt;&gt;\s?([\s\S]+)", r'<div class="blockquote">\1</div>', text)
+    text = re.sub(r"^&gt;\s?(.+)$", r'<div class="blockquote">\1</div>', text, flags=re.MULTILINE)
+
+    # Headers (# ## ###)
+    text = re.sub(r"^### (.+)$", r'<strong style="font-size:1em">\1</strong>', text, flags=re.MULTILINE)
+    text = re.sub(r"^## (.+)$", r'<strong style="font-size:1.25em">\1</strong>', text, flags=re.MULTILINE)
+    text = re.sub(r"^# (.+)$", r'<strong style="font-size:1.5em">\1</strong>', text, flags=re.MULTILINE)
+
+    # Spoilers ||text||
+    text = re.sub(r"\|\|(.+?)\|\|", r'<span class="spoiler">\1</span>', text)
+
+    # Bold italic ***text***
+    text = re.sub(r"\*\*\*(.+?)\*\*\*", r"<strong><em>\1</em></strong>", text)
+    # Bold **text**
     text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    # Italic *text*
     text = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"<em>\1</em>", text)
-    text = re.sub(r"_(.+?)_", r"<em>\1</em>", text)
+    # Underline __text__
+    text = re.sub(r"__(.+?)__", r"<u>\1</u>", text)
+    # Italic _text_ — only at word boundaries (Discord-style)
+    text = re.sub(r"(?<![a-zA-Z0-9_])_([^_\n]+?)_(?![a-zA-Z0-9_])", r"<em>\1</em>", text)
+    # Strikethrough ~~text~~
     text = re.sub(r"~~(.+?)~~", r"<s>\1</s>", text)
-    text = re.sub(r"`([^`]+)`", r'<code>\1</code>', text)
-    text = re.sub(r"```(?:\w+)?\n?([\s\S]*?)```", r'<pre><code>\1</code></pre>', text)
+
+    # Newlines
     text = text.replace("\n", "<br>")
+
+    # Restore placeholders
+    for i, ph in enumerate(placeholders):
+        text = text.replace(f"\x00PH{i}\x00", ph)
+
     return text
 
 
@@ -770,6 +819,26 @@ header .topic {
 .reaction-count {
     font-size: 12px;
     color: #b9bbbe;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
 }
 
 .mention {
