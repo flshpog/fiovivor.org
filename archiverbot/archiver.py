@@ -249,8 +249,26 @@ def _escape(text, guild_data=None):
     text = re.sub(r"`([^`]+)`", inline_code, text)
 
     # Block quotes (>>> and >)
-    text = re.sub(r"^&gt;&gt;&gt;\s?([\s\S]+)", r'<div class="blockquote">\1</div>', text)
-    text = re.sub(r"^&gt;\s?(.+)$", r'<div class="blockquote">\1</div>', text, flags=re.MULTILINE)
+    # >>> makes everything after it a single blockquote
+    text = re.sub(r"^&gt;&gt;&gt; ?([\s\S]+)", r'<div class="blockquote">\1</div>', text)
+    # > at start of line — merge consecutive > lines into one blockquote
+    def merge_quotes(text):
+        lines = text.split("\n")
+        result = []
+        quote_buf = []
+        for line in lines:
+            m = re.match(r"^&gt; ?(.*)$", line)
+            if m:
+                quote_buf.append(m.group(1))
+            else:
+                if quote_buf:
+                    result.append('<div class="blockquote">' + "<br>".join(quote_buf) + "</div>")
+                    quote_buf = []
+                result.append(line)
+        if quote_buf:
+            result.append('<div class="blockquote">' + "<br>".join(quote_buf) + "</div>")
+        return "\n".join(result)
+    text = merge_quotes(text)
 
     # Headers (# ## ###)
     text = re.sub(r"^### (.+)$", r'<strong style="font-size:1em">\1</strong>', text, flags=re.MULTILINE)
