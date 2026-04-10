@@ -1,13 +1,15 @@
 import os
+import shutil
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
-from archiver import archive_channel
+from archiver import archive_channel, wipe_r2
 
 load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 
 class ArchiverBot(discord.Client):
@@ -106,6 +108,30 @@ async def massarchive(interaction: discord.Interaction, category: discord.Catego
             )
         except Exception:
             await interaction.followup.send(f"Failed to upload **#{name}** (file may be too large)", ephemeral=True)
+
+
+@bot.tree.command(name="wipe", description="Delete all media from R2 and local archives")
+async def wipe(interaction: discord.Interaction):
+    if not interaction.user.guild_permissions.manage_guild:
+        await interaction.response.send_message("You need **Manage Server** permission to use this.", ephemeral=True)
+        return
+
+    await interaction.response.defer(ephemeral=True)
+
+    try:
+        # Wipe R2 bucket
+        deleted = await wipe_r2()
+
+        # Wipe local archives
+        if os.path.exists("archives"):
+            shutil.rmtree("archives")
+
+        await interaction.followup.send(
+            f"Wiped **{deleted}** objects from R2 and cleared local archives.",
+            ephemeral=True,
+        )
+    except Exception as e:
+        await interaction.followup.send(f"Wipe failed: {e}", ephemeral=True)
 
 
 bot.run(os.environ["DISCORD_BOT_TOKEN"])

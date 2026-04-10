@@ -35,6 +35,25 @@ def _init_r2():
     _cdn_base = os.environ.get("CDN_BASE_URL", "").rstrip("/")
 
 
+async def wipe_r2():
+    """Delete all objects from the R2 bucket. Returns count of deleted objects."""
+    _init_r2()
+    def _do_wipe():
+        s3 = _make_s3()
+        count = 0
+        pag = s3.get_paginator("list_objects_v2")
+        for page in pag.paginate(Bucket=_bucket):
+            objects = page.get("Contents", [])
+            if not objects:
+                continue
+            delete_keys = [{"Key": obj["Key"]} for obj in objects]
+            s3.delete_objects(Bucket=_bucket, Delete={"Objects": delete_keys})
+            count += len(delete_keys)
+        return count
+    deleted = await asyncio.to_thread(_do_wipe)
+    return deleted
+
+
 def _content_hash(data: bytes) -> str:
     """Short hash for deduplication."""
     return hashlib.sha256(data).hexdigest()[:16]
@@ -90,14 +109,26 @@ def _convert_video_to_webm(data: bytes, original_ext: str) -> bytes:
                 pass
 
 
+def _make_s3():
+    """Create a fresh S3 client (thread-safe, one per call)."""
+    return boto3.client(
+        "s3",
+        endpoint_url=f"https://{os.environ['R2_ACCOUNT_ID']}.r2.cloudflarestorage.com",
+        aws_access_key_id=os.environ["R2_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["R2_SECRET_ACCESS_KEY"],
+        region_name="auto",
+    )
+
+
 def _upload_to_r2(data: bytes, key: str, content_type: str) -> str:
     """Upload bytes to R2 and return CDN URL. Skips if key already exists."""
     _init_r2()
+    s3 = _make_s3()
     try:
-        _s3.head_object(Bucket=_bucket, Key=key)
+        s3.head_object(Bucket=_bucket, Key=key)
         # Already uploaded
-    except _s3.exceptions.ClientError:
-        _s3.put_object(
+    except s3.exceptions.ClientError:
+        s3.put_object(
             Bucket=_bucket,
             Key=key,
             Body=data,
@@ -153,9 +184,46 @@ def _format_timestamp(dt):
     return dt.strftime("%m/%d/%Y %I:%M %p")
 
 
-def _escape(text):
-    """HTML-escape text and convert basic markdown to HTML."""
+def _escape(text, guild_data=None):
+    """HTML-escape text, resolve Discord mentions/emojis, and convert markdown to HTML."""
     text = html.escape(text)
+
+    # Resolve Discord mentions/emojis before markdown processing
+    if guild_data:
+        members, roles, channels, emojis = guild_data
+
+        # User mentions: <@123> or <@!123>
+        def replace_user(m):
+            uid = int(m.group(1))
+            name = members.get(uid, f"Unknown User")
+            return f'<span class="mention">@{html.escape(name)}</span>'
+        text = re.sub(r"&lt;@!?(\d+)&gt;", replace_user, text)
+
+        # Role mentions: <@&123>
+        def replace_role(m):
+            rid = int(m.group(1))
+            role_name, role_color = roles.get(rid, ("Unknown Role", "#99aab5"))
+            return f'<span class="mention" style="color:{role_color};background:rgba({int(role_color[1:3],16)},{int(role_color[3:5],16)},{int(role_color[5:7],16)},0.1)">@{html.escape(role_name)}</span>'
+        text = re.sub(r"&lt;@&amp;(\d+)&gt;", replace_role, text)
+
+        # Channel mentions: <#123>
+        def replace_channel(m):
+            cid = int(m.group(1))
+            name = channels.get(cid, "deleted-channel")
+            return f'<span class="mention">#{html.escape(name)}</span>'
+        text = re.sub(r"&lt;#(\d+)&gt;", replace_channel, text)
+
+        # Custom emojis: <:name:123> or <a:name:123>
+        def replace_emoji(m):
+            animated = m.group(1) == "a"
+            emoji_name = m.group(2)
+            emoji_id = m.group(3)
+            ext = "gif" if animated else "webp"
+            url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{ext}?size=48"
+            return f'<img class="custom-emoji" src="{url}" alt=":{emoji_name}:" title=":{emoji_name}:">'
+        text = re.sub(r"&lt;(a?):(\w+):(\d+)&gt;", replace_emoji, text)
+
+    # Markdown
     text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
     text = re.sub(r"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)", r"<em>\1</em>", text)
     text = re.sub(r"_(.+?)_", r"<em>\1</em>", text)
@@ -242,15 +310,38 @@ async def archive_channel(channel, progress_callback=None):
                 media_map[url] = result
 
     guild = channel.guild
+
+    # Build lookup dicts for mention resolution
+    # Members: also pull from message authors in case members have left
+    members = {}
+    async for member in guild.fetch_members(limit=None):
+        members[member.id] = member.display_name
+    # Include authors from messages (catches users who left the server)
+    for msg in messages:
+        if msg.author.id not in members:
+            display = msg.author.display_name if hasattr(msg.author, "display_name") else str(msg.author)
+            members[msg.author.id] = display
+
+    roles = {}
+    for role in guild.roles:
+        color = f"#{role.color.value:06x}" if role.color.value != 0 else "#99aab5"
+        roles[role.id] = (role.name, color)
+
+    channels_map = {}
+    for ch in guild.channels:
+        channels_map[ch.id] = ch.name
+
+    guild_data = (members, roles, channels_map, None)
+
     filepath = os.path.join(ARCHIVES_DIR, f"{guild.id}-{channel.id}.html")
 
     with open(filepath, "w", encoding="utf-8") as f:
-        f.write(_render_html(channel, messages, media_map))
+        f.write(_render_html(channel, messages, media_map, guild_data))
 
     return len(messages), filepath
 
 
-def _render_html(channel, messages, media_map):
+def _render_html(channel, messages, media_map, guild_data=None):
     guild = channel.guild
     parts = []
 
@@ -315,10 +406,10 @@ def _render_html(channel, messages, media_map):
             ref = msg.reference.resolved
             if isinstance(ref, discord.Message):
                 ref_content = ref.content[:80] + ("..." if len(ref.content) > 80 else "")
-                parts.append(f'        <div class="reply"><span class="reply-author">{html.escape(str(ref.author))}</span> {_escape(ref_content)}</div>')
+                parts.append(f'        <div class="reply"><span class="reply-author">{html.escape(str(ref.author))}</span> {_escape(ref_content, guild_data)}</div>')
 
         if msg.content:
-            parts.append(f"        <div class=\"content\">{_escape(msg.content)}</div>")
+            parts.append(f"        <div class=\"content\">{_escape(msg.content, guild_data)}</div>")
 
         # Attachments
         for att in msg.attachments:
@@ -361,12 +452,12 @@ def _render_html(channel, messages, media_map):
                 else:
                     parts.append(f'            <div class="embed-title">{title_text}</div>')
             if embed.description:
-                parts.append(f'            <div class="embed-desc">{_escape(embed.description)}</div>')
+                parts.append(f'            <div class="embed-desc">{_escape(embed.description, guild_data)}</div>')
             if embed.fields:
                 parts.append('            <div class="embed-fields">')
                 for field in embed.fields:
                     inline = " inline" if field.inline else ""
-                    parts.append(f'                <div class="embed-field{inline}"><div class="embed-field-name">{html.escape(field.name)}</div><div class="embed-field-value">{_escape(field.value)}</div></div>')
+                    parts.append(f'                <div class="embed-field{inline}"><div class="embed-field-name">{html.escape(field.name)}</div><div class="embed-field-value">{_escape(field.value, guild_data)}</div></div>')
                 parts.append("            </div>")
             if embed.image:
                 parts.append(f'            <img class="embed-img" src="{cdn(embed.image.url)}" loading="lazy">')
@@ -679,6 +770,22 @@ header .topic {
 .reaction-count {
     font-size: 12px;
     color: #b9bbbe;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
 }
 
 @media (max-width: 600px) {
