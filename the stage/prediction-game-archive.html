@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#prediction-game — Fiovivor: Homestretch [S8-S10]</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>prediction-game</h1>
+    <p class="meta">Fiovivor: Homestretch [S8-S10] &middot; 56 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">09/07/2025 05:51 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/36ca6f4018a663e7-PredictionGame.webp" alt="PredictionGame.png" loading="lazy"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/320858958917009410-f0ca49f7ffc07721.webp" alt="" loading="lazy">
+        <span class="author" style="color:#439e9a">Double {S5}</span>
+        <span class="username">@doublezerob</span>
+        <span class="timestamp">10/19/2025 07:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">1st: Nicholas<br>3rd: Jakey<br>9th: Bazz<br>The other placements: Everyone else</div>
+    </div>
+    <div class="msg">
+        <div class="content">This&#x27;ll age like the finest wine, trust</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-566a86e3b303e480.webp" alt="" loading="lazy">
+        <span class="author" style="color:#ffffff">-fishpog | {S1; S6}</span>
+        <span class="username">@fishpoggg</span>
+        <span class="timestamp">10/21/2025 08:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i predict that woofley will come 8th</div>
+    </div>
+    <div class="msg">
+        <div class="content">i predict that the shylintiger109 twist will be the greatest twist weve ever seen</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">11/06/2025 06:58 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">fishpoggg</span> i predict that the shylintiger109 twist will be the greatest twist weve ever see...</div>
+        <div class="content">it sure was</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-566a86e3b303e480.webp" alt="" loading="lazy">
+        <span class="author" style="color:#ffffff">-fishpog | {S1; S6}</span>
+        <span class="username">@fishpoggg</span>
+        <span class="timestamp">11/06/2025 02:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> it sure was</div>
+        <div class="content">what did i say</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">11/30/2025 03:30 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">doublezerob</span> 1st: Nicholas<br>3rd: Jakey<br>9th: Bazz<br>The other placements: Everyone else</div>
+        <div class="content"><strong>JAKEY 3RD PREDICTION</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374099594016980997-43621e54f641e7ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">cristen</span>
+        <span class="username">@capyidentity</span>
+        <span class="timestamp">11/30/2025 03:31 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">LMFAOO</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/320858958917009410-f0ca49f7ffc07721.webp" alt="" loading="lazy">
+        <span class="author" style="color:#439e9a">Double {S5}</span>
+        <span class="username">@doublezerob</span>
+        <span class="timestamp">11/30/2025 08:08 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://tenor.com/view/gosia-gopnitsa-general-medals-gif-25255344</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/3cd7d4301d7d0c19-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@jakey</span> Thanks man, I can always count on you</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">12/01/2025 02:12 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>---~---~---</strong></div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/ad53f121e8cb92d2-fiovivors9.webp" alt="fiovivors9.png" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>---~---~---</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/835620542546968587-b6ae81f7e76e6a65.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">That</span>
+        <span class="username">@conventpotato</span>
+        <span class="timestamp">01/09/2026 07:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I think Layton is gonna die in this house<br>Thats my prediction</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">01/09/2026 08:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Wait thats so real</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/211775019057938434-2f70464b68e4e9ac.webp" alt="" loading="lazy">
+        <span class="author" style="color:#2d3b3b">Quartz {S7}</span>
+        <span class="username">@suitquartzdice</span>
+        <span class="timestamp">01/09/2026 10:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">conventpotato</span> I think Layton is gonna die in this house<br>Thats my prediction</div>
+        <div class="content">he is</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/195289878903259147-2339fd38a3deee9d.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">auralevant</span>
+        <span class="username">@auralevant</span>
+        <span class="timestamp">01/11/2026 06:15 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Tonio will make it past the first two tribals he attends</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">01/11/2026 07:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">auralevant</span> Tonio will make it past the first two tribals he attends</div>
+        <div class="content">it was a bold prediction i’ll give you that</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/195289878903259147-2339fd38a3deee9d.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">auralevant</span>
+        <span class="username">@auralevant</span>
+        <span class="timestamp">01/11/2026 07:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Oh Im crying</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/835620542546968587-b6ae81f7e76e6a65.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">That</span>
+        <span class="username">@conventpotato</span>
+        <span class="timestamp">01/11/2026 09:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">conventpotato</span> I think Layton is gonna die in this house<br>Thats my prediction</div>
+        <div class="content">wait this prediction will be right so long as layton doesnt win</div>
+    </div>
+    <div class="msg">
+        <div class="content">🤩</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">01/11/2026 09:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">conventpotato</span> wait this prediction will be right so long as layton doesnt win</div>
+        <div class="content">true af</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/854424783051685899-671a48311295bde1.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Sam #LongLiveWoofley</span>
+        <span class="username">@sambubbles</span>
+        <span class="timestamp">01/11/2026 09:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Or he is out when voted out 🙏🙏</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/835620542546968587-b6ae81f7e76e6a65.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">That</span>
+        <span class="username">@conventpotato</span>
+        <span class="timestamp">01/11/2026 09:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Well no when you die in this house, you get voted out<br>so the only way for him to NOT die in this house is to win <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1216964604475740180.webp?size=48" alt=":DDVAUnothought:" title=":DDVAUnothought:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/835620542546968587-b6ae81f7e76e6a65.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">That</span>
+        <span class="username">@conventpotato</span>
+        <span class="timestamp">01/25/2026 01:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">conventpotato</span> I think Layton is gonna die in this house<br>Thats my prediction</div>
+        <div class="content">Atleast I was right <span class="mention">@-Layton | {S5; S9}</span> DID die in this house</div>
+    </div>
+    <div class="msg">
+        <div class="content">for my next prediction Dino will be gone before final 10</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/429051518621057062-0200f615a63fde44.webp" alt="" loading="lazy">
+        <span class="author" style="color:#ff865a">Slugger {S9}</span>
+        <span class="username">@napodomo</span>
+        <span class="timestamp">02/18/2026 05:30 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">conventpotato</span> Atleast I was right <span class="mention">@-Layton | {S5; S9}</span> DID die in this house</div>
+        <div class="content">wanna huff glue</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/835620542546968587-b6ae81f7e76e6a65.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">That</span>
+        <span class="username">@conventpotato</span>
+        <span class="timestamp">02/18/2026 05:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">napodomo</span> wanna huff glue</div>
+        <div class="content">Nah</div>
+    </div>
+    <div class="msg">
+        <div class="content">I can only get non-toxic glue 💔</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1288992139992371241-0b0f792a94ff0212.webp" alt="" loading="lazy">
+        <span class="author" style="color:#ff865a">Dino {S9}</span>
+        <span class="username">@pxzge</span>
+        <span class="timestamp">02/18/2026 09:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">conventpotato</span> for my next prediction Dino will be gone before final 10</div>
+        <div class="content">oh</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/835620542546968587-b6ae81f7e76e6a65.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">That</span>
+        <span class="username">@conventpotato</span>
+        <span class="timestamp">02/18/2026 09:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">pxzge</span> oh</div>
+        <div class="content">Fuck you for staying too lonf</div>
+    </div>
+    <div class="msg">
+        <div class="content">Long</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1288992139992371241-0b0f792a94ff0212.webp" alt="" loading="lazy">
+        <span class="author" style="color:#ff865a">Dino {S9}</span>
+        <span class="username">@pxzge</span>
+        <span class="timestamp">02/18/2026 09:42 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">conventpotato</span> Fuck you for staying too lonf</div>
+        <div class="content">fuck you for wanting me out sooner</div>
+        <div class="reactions">
+            <span class="reaction">‼️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374099594016980997-43621e54f641e7ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">cristen</span>
+        <span class="username">@capyidentity</span>
+        <span class="timestamp">02/18/2026 09:44 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">queen</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">03/08/2026 03:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">any predictions drop ‘em</div>
+    </div>
+    <div class="msg">
+        <div class="content">🗣️</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1242546896325841047-aada8efbee8dbfbc.webp" alt="" loading="lazy">
+        <span class="author" style="color:#f2b765">Nub {S8}</span>
+        <span class="username">@nub_3_3</span>
+        <span class="timestamp">03/08/2026 10:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Drew gets 22nd<br>Woofley 16th<br>ore 9th</div>
+    </div>
+    <div class="msg">
+        <div class="content">kyle gets idoled out</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/464564638344806412-18757ba2aad4e33d.webp" alt="" loading="lazy">
+        <span class="author" style="color:#87d94f">-Syn | {S9}</span>
+        <span class="username">@syncerelyy</span>
+        <span class="timestamp">03/08/2026 10:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">cristen snipes griffin</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/308057662082514945-bb5f53946b564069.webp" alt="" loading="lazy">
+        <span class="author" style="color:#32e6f3">-Mike | {S9}</span>
+        <span class="username">@mikeramp72</span>
+        <span class="timestamp">03/08/2026 10:57 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">griffin snipes cristen</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/464564638344806412-18757ba2aad4e33d.webp" alt="" loading="lazy">
+        <span class="author" style="color:#87d94f">-Syn | {S9}</span>
+        <span class="username">@syncerelyy</span>
+        <span class="timestamp">03/08/2026 10:57 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">:O</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/323695449225691136-e35245bb2bbf25a8.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">jakey</span>
+        <span class="username">@jakey8888</span>
+        <span class="timestamp">03/09/2026 05:15 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">drew loses</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/464564638344806412-18757ba2aad4e33d.webp" alt="" loading="lazy">
+        <span class="author" style="color:#87d94f">-Syn | {S9}</span>
+        <span class="username">@syncerelyy</span>
+        <span class="timestamp">03/09/2026 06:36 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jakey8888</span> drew loses</div>
+        <div class="content">okay ❤️</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/353333889068040193-5e623572551c06f5.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Justin710</span>
+        <span class="username">@justin710</span>
+        <span class="timestamp">03/09/2026 07:50 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> any predictions drop ‘em</div>
+        <div class="content">Is it placement predictions or is it like Cephal</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">03/09/2026 08:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">justin710</span> Is it placement predictions or is it like Cephal</div>
+        <div class="content">you could do either or!</div>
+    </div>
+    <div class="msg">
+        <div class="content">lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/353333889068040193-5e623572551c06f5.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Justin710</span>
+        <span class="username">@justin710</span>
+        <span class="timestamp">03/11/2026 01:18 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Brent will be responsible for a rock draw<br>There will be two different idols played during a tribal council<br>The player who comes back from distortion world will be responsible for voting out the player who originally voted them out</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1242546896325841047-aada8efbee8dbfbc.webp" alt="" loading="lazy">
+        <span class="author" style="color:#f2b765">Nub {S8}</span>
+        <span class="username">@nub_3_3</span>
+        <span class="timestamp">03/15/2026 03:36 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">nub_3_3</span> Drew gets 22nd<br>Woofley 16th<br>ore 9th</div>
+        <div class="content">I got something right</div>
+        <div class="reactions">
+            <span class="reaction">💀 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/854424783051685899-671a48311295bde1.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Sam #LongLiveWoofley</span>
+        <span class="username">@sambubbles</span>
+        <span class="timestamp">03/15/2026 04:01 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Don’t manifest Woofley 16th :((</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1242546896325841047-aada8efbee8dbfbc.webp" alt="" loading="lazy">
+        <span class="author" style="color:#f2b765">Nub {S8}</span>
+        <span class="username">@nub_3_3</span>
+        <span class="timestamp">04/06/2026 01:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">2 off for ore damn</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/353333889068040193-5e623572551c06f5.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Justin710</span>
+        <span class="username">@justin710</span>
+        <span class="timestamp">04/08/2026 07:59 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Let me go and check my predictions</div>
+    </div>
+    <div class="msg">
+        <div class="content">...</div>
+    </div>
+    <div class="msg">
+        <div class="content">I think</div>
+    </div>
+    <div class="msg">
+        <div class="content">All</div>
+    </div>
+    <div class="msg">
+        <div class="content">Of these options are impossible now</div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>

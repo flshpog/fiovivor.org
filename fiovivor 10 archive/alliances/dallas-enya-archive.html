@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#dallas-enya — Fiovivor: Homestretch [S8-S10]</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>dallas-enya</h1>
+    <p class="meta">Fiovivor: Homestretch [S8-S10] &middot; 67 messages archived</p>
+    <p class="topic">Dallas, Enya</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1414761852981870592-74668f6173fecf7e.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Fiovivor HR Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Fiovivor Bot#5413</span>
+        <span class="timestamp">03/29/2026 02:19 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🤝 <strong>Welcome!</strong><br><br>This is a private 1-on-1 for:<br>• <span class="mention" style="color:#7178b4;background:rgba(113,120,180,0.1)">@Dallas</span><br>• <span class="mention" style="color:#a04e22;background:rgba(160,78,34,0.1)">@Enya</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 02:19 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">If I knew what was coming, i would have never voted u man lol</div>
+    </div>
+    <div class="msg">
+        <div class="content">sorry for that</div>
+    </div>
+    <div class="msg">
+        <div class="content">kinda hope u got some momentum i&#x27;d like to vote you back in if possible</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 02:51 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hey Dallas!</div>
+    </div>
+    <div class="msg">
+        <div class="content">It made sense for you to vote for me back then but trust that I’m a loyal soldier unlike a lot of these people</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 02:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🫡</div>
+    </div>
+    <div class="msg">
+        <div class="content">How&#x27;s the distortion world been</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 04:19 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">It’s been pretty quiet overall but I do enjoy that there’s been enough where I don’t feel like I’ve been OUT of the game</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 08:52 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">That&#x27;s definitely good</div>
+    </div>
+    <div class="msg">
+        <div class="content">I talked briefly with Griffin in the safari and he said y&#x27;all did nothing</div>
+    </div>
+    <div class="msg">
+        <div class="content">Lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 08:58 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yeah hahaha</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:09 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">damn the tribal is in 6 hours</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:09 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I know and I don’t know what I’m doing</div>
+    </div>
+    <div class="msg">
+        <div class="content">I really want to go back but I feel like it’s a long shot</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">im between you and neptune rn</div>
+    </div>
+    <div class="msg">
+        <div class="content">for my vote</div>
+    </div>
+    <div class="msg">
+        <div class="content">i feel like penelope and riley kinda earned their eliminations</div>
+    </div>
+    <div class="msg">
+        <div class="content">penelope was playing wayy too messy</div>
+    </div>
+    <div class="msg">
+        <div class="content">im not sure if u heard about that</div>
+    </div>
+    <div class="msg">
+        <div class="content">from neptune at all</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yeah I heard about that</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">was so bad 💀</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I was originally between Neptune and Penelope but I think I’m gonna go Neptune</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">in that case i&#x27;ll throw a vote your way</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I would love that tbh</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">u and penelope are the only people here i actually voted out</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">But like, if not, I still enjoyed being on this season</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i think u got some left in the tank for sure</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">You are one of the few people that had every right to vote for me. We never found our footing together even though we should’ve</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">right</div>
+    </div>
+    <div class="msg">
+        <div class="content">that might be on me</div>
+    </div>
+    <div class="msg">
+        <div class="content">i just was playing super passive</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">No, it’s also on me</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">round 1</div>
+    </div>
+    <div class="msg">
+        <div class="content">cuz i didnt wanna go 🤣</div>
+    </div>
+    <div class="msg">
+        <div class="content">i heard there was a girls alliance</div>
+    </div>
+    <div class="msg">
+        <div class="content">established at that first vote</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I’m old and struggle to make small talk but once I get over that hump, I’m a blast in a glass</div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">Yeah that’s what Neptune told me</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i found that out from cristen rather recently</div>
+    </div>
+    <div class="msg">
+        <div class="content">i cant say i hate it cuz it makes sense especially when the gender balance is as balanced as it is</div>
+    </div>
+    <div class="msg">
+        <div class="content">makes me feel a little more bad voting you out</div>
+    </div>
+    <div class="msg">
+        <div class="content">have u campaigned to stephen much?</div>
+    </div>
+    <div class="msg">
+        <div class="content">i thinkit&#x27;s gonna come down to him</div>
+    </div>
+    <div class="msg">
+        <div class="content">Here&#x27;s what I think is gonna happen:<br><br>Enya - Neptune<br>Neptune - Enya or Penelope?<br>Penelope - Riley<br>Stephen - ?<br>Riley - Penelope<br>Saturn - ? (Probably won&#x27;t vote, or will vote Stephen)<br>Dallas - Enya</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I’m trying to talk to Stephen now</div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">maybe u and neptune can agree to vote each other</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/29/2026 09:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yeah I just told Neptune I’m voting him</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/29/2026 09:57 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">so money</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/30/2026 01:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hey</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/30/2026 01:26 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yo</div>
+    </div>
+    <div class="msg">
+        <div class="content">I heard Neptune is playing dirty</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/30/2026 01:27 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yeah that’s what Penelope’s revealing</div>
+    </div>
+    <div class="msg">
+        <div class="content">Kind of weird you and Riley both knew immediately though lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/30/2026 01:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Penelope mentioned it 2 me just now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/30/2026 02:11 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I still got u though</div>
+    </div>
+    <div class="msg">
+        <div class="content">I think it may be Neptune but you got some momentum</div>
+    </div>
+    <div class="msg">
+        <div class="content">Amiss the Neptune stuff you might be the next contender</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/30/2026 02:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I hope so. I don’t even know what to do here</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/30/2026 02:27 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I probably wouldn&#x27;t vote Neptune if I were you</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/30/2026 02:29 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Welp</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/379433735856193537-bcb9fda22f299d48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#7178b4">Dallas {S1; S2; S5; S10}</span>
+        <span class="username">@winnervegetable</span>
+        <span class="timestamp">03/30/2026 03:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Enya {S7; S10}</span> GGS BRO</div>
+    </div>
+    <div class="msg">
+        <div class="content">Hope you&#x27;re not old enough to still be my bro 👊</div>
+    </div>
+    <div class="msg">
+        <div class="content">Gotta kick ass up in there</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374772773593153539-04e42d7644dc85a7.webp" alt="" loading="lazy">
+        <span class="author" style="color:#a04e22">Enya {S7; S10}</span>
+        <span class="username">@enyasurvivor</span>
+        <span class="timestamp">03/30/2026 03:30 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Omg thank you so much for voting for me!!!</div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>

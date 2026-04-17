@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#fan-favorite-voting — Fiovivor: Homestretch [S8-S10]</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>fan-favorite-voting</h1>
+    <p class="meta">Fiovivor: Homestretch [S8-S10] &middot; 24 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-16377d1ca0dbc5ad.webp" alt="" loading="lazy">
+        <span class="author" style="color:#4f2be0">-Fio‼️</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">04/12/2026 12:46 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/ee0e8c5cd82b4399-bazz-s10.webp" alt="bazz-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/01a5e83b479620a3-brent-s10.webp" alt="brent-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">1</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">4</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1824a0a6a4a82d0d-cristen-s10.webp" alt="cristen-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">11</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/6aaffcbfbc5e695a-dallas-s10.webp" alt="dallas-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">6</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/d60e04ee46402f31-drew-s10.webp" alt="drew-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">4</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/44f3dbd8d782b2de-enya-s10.webp" alt="enya-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">4</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/bc53c6f323dde031-evie-s10.webp" alt="evie-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">2</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/3aab07d69c387559-griffin-mk-s10.webp" alt="griffin-mk-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/ed0ec02680014e66-jiv-s10.webp" alt="jiv-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">1</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/9f9a79160b211873-katie-s10.webp" alt="katie-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">13</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/e198981e28bf5118-kebab-s10.webp" alt="kebab-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">8</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/68f2ed9bb60f8c63-kyle-s10.webp" alt="kyle-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">2</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/a2afbce307814ad1-marionette-s10.webp" alt="marionette-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">6</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/49c645c7acd7d082-neptune-s10.webp" alt="neptune-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/fdd86617a850c2d5-ore-s10.webp" alt="ore-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">10</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/a6ff0142ef1c3940-penelope-s10.webp" alt="penelope-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/c7e020335a760e3d-riley-s10.webp" alt="riley-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">6</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/83c19b7547e5c5d2-saturn-s10.webp" alt="saturn-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/2e18a826871107b2-stephen-s10.webp" alt="stephen-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">6</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/ef783492fbb89b20-sylvia-s10.webp" alt="sylvia-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">5</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/4df27a5c12180461-tiff-s10.webp" alt="tiff-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">6</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/966c476e044cec04-vini-s10.webp" alt="vini-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">3</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/fb8d3385291f89f2-virgo-s10.webp" alt="virgo-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">8</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/afe5d126686a4919-woofley-s10.webp" alt="woofley-s10.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><:upvote:1492688182351892541> <span class="reaction-count">14</span></span>
+            <span class="reaction"><:downvote:1492688098570539099> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -121,20 +121,30 @@ def _make_s3():
 
 
 def _upload_to_r2(data: bytes, key: str, content_type: str) -> str:
-    """Upload bytes to R2 and return CDN URL. Skips if key already exists."""
+    """Upload bytes to R2 and return CDN URL. Retries on failure."""
     _init_r2()
-    s3 = _make_s3()
-    try:
-        s3.head_object(Bucket=_bucket, Key=key)
-        # Already uploaded
-    except s3.exceptions.ClientError:
-        s3.put_object(
-            Bucket=_bucket,
-            Key=key,
-            Body=data,
-            ContentType=content_type,
-        )
-    return f"{_cdn_base}/{key}"
+    import time
+    for attempt in range(3):
+        try:
+            s3 = _make_s3()
+            try:
+                s3.head_object(Bucket=_bucket, Key=key)
+                return f"{_cdn_base}/{key}"  # Already uploaded
+            except s3.exceptions.ClientError:
+                pass
+            s3.put_object(
+                Bucket=_bucket,
+                Key=key,
+                Body=data,
+                ContentType=content_type,
+            )
+            return f"{_cdn_base}/{key}"
+        except Exception as e:
+            if attempt < 2:
+                print(f"    [R2] Upload failed for {key}, retrying ({attempt + 1}/3): {e}")
+                time.sleep(2 ** attempt)
+            else:
+                raise
 
 
 async def _process_image(url: str, filename: str) -> str:
@@ -223,6 +233,31 @@ def _escape(text, guild_data=None):
             return f'<img class="custom-emoji" src="{url}" alt=":{emoji_name}:" title=":{emoji_name}:">'
         text = re.sub(r"&lt;(a?):(\w+):(\d+)&gt;", replace_emoji, text)
 
+    # Discord timestamps: <t:1234567890:R>, <t:1234567890:F>, <t:1234567890>, etc.
+    def replace_timestamp(m):
+        try:
+            ts = int(m.group(1))
+            style = m.group(2) or "f"
+            dt = datetime.utcfromtimestamp(ts)
+            if style == "t":
+                formatted = dt.strftime("%I:%M %p").lstrip("0")
+            elif style == "T":
+                formatted = dt.strftime("%I:%M:%S %p").lstrip("0")
+            elif style == "d":
+                formatted = dt.strftime("%m/%d/%Y")
+            elif style == "D":
+                formatted = dt.strftime("%B %d, %Y")
+            elif style == "F":
+                formatted = dt.strftime("%A, %B %d, %Y %I:%M %p").replace("  ", " ")
+            elif style == "R":
+                formatted = dt.strftime("%B %d, %Y %I:%M %p")
+            else:  # "f" (default)
+                formatted = dt.strftime("%B %d, %Y %I:%M %p")
+            return f'<span class="timestamp-inline">{formatted}</span>'
+        except (ValueError, OSError):
+            return m.group(0)
+    text = re.sub(r"&lt;t:(\d+)(?::([tTdDfFR]))?&gt;", replace_timestamp, text)
+
     # Markdown — extract code first so markup inside it isn't processed
     # Placeholder system to protect code blocks from further processing
     placeholders = []
@@ -301,14 +336,39 @@ def _escape(text, guild_data=None):
     return text
 
 
-async def archive_channel(channel, progress_callback=None):
+async def build_guild_data(guild):
+    """Build lookup dicts for mention resolution. Call once and reuse across channels."""
+    print(f"  [guild-data] Fetching members...")
+    members = {}
+    async for member in guild.fetch_members(limit=None):
+        members[member.id] = member.display_name
+    print(f"  [guild-data] {len(members)} members loaded")
+    roles = {}
+    for role in guild.roles:
+        color = f"#{role.color.value:06x}" if role.color.value != 0 else "#99aab5"
+        roles[role.id] = (role.name, color)
+    print(f"  [guild-data] {len(roles)} roles loaded")
+    channels_map = {}
+    for ch in guild.channels:
+        channels_map[ch.id] = ch.name
+    print(f"  [guild-data] {len(channels_map)} channels loaded")
+    return (members, roles, channels_map, None)
+
+
+async def archive_channel(channel, progress_callback=None, output_path=None, guild_data=None):
     """Fetch all messages from a channel and write an HTML archive. Returns (count, filepath)."""
     _init_r2()
     os.makedirs(ARCHIVES_DIR, exist_ok=True)
 
+    print(f"  [#{channel.name}] Fetching messages...")
     messages = []
+    count = 0
     async for msg in channel.history(limit=None, oldest_first=True):
         messages.append(msg)
+        count += 1
+        if count % 500 == 0:
+            print(f"  [#{channel.name}] {count:,} messages fetched...")
+    print(f"  [#{channel.name}] {len(messages):,} messages total")
 
     # --- Pre-process all media in parallel ---
     # Maps: original_url -> cdn_url
@@ -354,11 +414,24 @@ async def archive_channel(channel, progress_callback=None):
                 if embed.thumbnail and embed.thumbnail.url and embed.thumbnail.url not in tasks:
                     tasks[embed.thumbnail.url] = _process_image(embed.thumbnail.url, "embed-thumb.png")
 
+    # Forwarded message attachments
+    for msg in messages:
+        if hasattr(msg, "message_snapshots") and msg.message_snapshots:
+            for snap in msg.message_snapshots:
+                for att in snap.attachments:
+                    ct = att.content_type or ""
+                    if att.url not in tasks:
+                        if ct.startswith("image/"):
+                            tasks[att.url] = _process_image(att.url, att.filename)
+                        elif ct.startswith("video/"):
+                            tasks[att.url] = _process_video(att.url, att.filename)
+
     # Run all downloads/conversions/uploads concurrently
     if tasks:
         urls = list(tasks.keys())
         coros = list(tasks.values())
         total = len(coros)
+        print(f"  [#{channel.name}] Processing {total} media items...")
         results = []
         # Process in batches to avoid overwhelming connections
         batch_size = 10
@@ -366,45 +439,46 @@ async def archive_channel(channel, progress_callback=None):
             batch = [asyncio.wait_for(c, timeout=150) for c in coros[i:i + batch_size]]
             batch_results = await asyncio.gather(*batch, return_exceptions=True)
             results.extend(batch_results)
+            done = min(i + batch_size, total)
+            print(f"  [#{channel.name}] Media: {done}/{total}")
             if progress_callback:
-                done = min(i + batch_size, total)
                 await progress_callback(f"Processing media: {done}/{total}")
 
+        failures = 0
         for url, result in zip(urls, results):
             if isinstance(result, Exception):
                 media_map[url] = url  # fallback to original URL on failure
+                failures += 1
             else:
                 media_map[url] = result
+        if failures:
+            print(f"  [#{channel.name}] {failures} media items failed (using fallback URLs)")
+    else:
+        print(f"  [#{channel.name}] No media to process")
 
     guild = channel.guild
 
-    # Build lookup dicts for mention resolution
-    # Members: also pull from message authors in case members have left
-    members = {}
-    async for member in guild.fetch_members(limit=None):
-        members[member.id] = member.display_name
-    # Include authors from messages (catches users who left the server)
+    if guild_data is None:
+        guild_data = await build_guild_data(guild)
+
+    # Also add message authors not in the member list (left the server)
+    members = guild_data[0]
     for msg in messages:
         if msg.author.id not in members:
             display = msg.author.display_name if hasattr(msg.author, "display_name") else str(msg.author)
             members[msg.author.id] = display
 
-    roles = {}
-    for role in guild.roles:
-        color = f"#{role.color.value:06x}" if role.color.value != 0 else "#99aab5"
-        roles[role.id] = (role.name, color)
+    if output_path:
+        filepath = output_path
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    else:
+        filepath = os.path.join(ARCHIVES_DIR, f"{guild.id}-{channel.id}.html")
 
-    channels_map = {}
-    for ch in guild.channels:
-        channels_map[ch.id] = ch.name
-
-    guild_data = (members, roles, channels_map, None)
-
-    filepath = os.path.join(ARCHIVES_DIR, f"{guild.id}-{channel.id}.html")
-
+    print(f"  [#{channel.name}] Writing HTML to {filepath}")
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(_render_html(channel, messages, media_map, guild_data))
 
+    print(f"  [#{channel.name}] Done — {len(messages):,} messages archived")
     return len(messages), filepath
 
 
@@ -469,14 +543,45 @@ def _render_html(channel, messages, media_map, guild_data=None):
 
         parts.append('    <div class="msg">')
 
-        if msg.reference and msg.reference.resolved:
-            ref = msg.reference.resolved
-            if isinstance(ref, discord.Message):
-                ref_content = ref.content[:80] + ("..." if len(ref.content) > 80 else "")
-                parts.append(f'        <div class="reply"><span class="reply-author">{html.escape(str(ref.author))}</span> {_escape(ref_content, guild_data)}</div>')
+        # Forwarded messages
+        is_forward = (
+            msg.reference
+            and hasattr(msg.reference, "type")
+            and msg.reference.type == discord.MessageReferenceType.forward
+            and hasattr(msg, "message_snapshots")
+            and msg.message_snapshots
+        )
 
-        if msg.content:
-            parts.append(f"        <div class=\"content\">{_escape(msg.content, guild_data)}</div>")
+        if is_forward:
+            parts.append('        <div class="forwarded">')
+            parts.append('            <div class="forwarded-header">Forwarded Message</div>')
+            for snap in msg.message_snapshots:
+                if snap.content:
+                    parts.append(f'            <div class="content">{_escape(snap.content, guild_data)}</div>')
+                for att in snap.attachments:
+                    ct = att.content_type or ""
+                    if ct.startswith("image/"):
+                        parts.append(f'            <div class="attachment"><img src="{cdn(att.url)}" alt="{html.escape(att.filename)}" loading="lazy"></div>')
+                    elif ct.startswith("video/"):
+                        parts.append(f'            <div class="attachment"><video controls preload="metadata" src="{cdn(att.url)}" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>')
+                    else:
+                        parts.append(f'            <div class="attachment"><a href="{att.url}" target="_blank">{html.escape(att.filename)}</a></div>')
+                for embed in snap.embeds:
+                    if embed.image:
+                        parts.append(f'            <img class="embed-img" src="{cdn(embed.image.url)}" loading="lazy">')
+                    if embed.description:
+                        parts.append(f'            <div class="embed-desc">{_escape(embed.description, guild_data)}</div>')
+            parts.append('        </div>')
+        else:
+            # Reply reference
+            if msg.reference and msg.reference.resolved:
+                ref = msg.reference.resolved
+                if isinstance(ref, discord.Message):
+                    ref_content = ref.content[:80] + ("..." if len(ref.content) > 80 else "")
+                    parts.append(f'        <div class="reply"><span class="reply-author">{html.escape(str(ref.author))}</span> {_escape(ref_content, guild_data)}</div>')
+
+            if msg.content:
+                parts.append(f"        <div class=\"content\">{_escape(msg.content, guild_data)}</div>")
 
         # Attachments
         for att in msg.attachments:
@@ -837,6 +942,32 @@ header .topic {
 .reaction-count {
     font-size: 12px;
     color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .blockquote {
