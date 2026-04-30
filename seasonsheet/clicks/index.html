@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seasonsheet Clicks — Fiovivor</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="/logo.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    .label {
+      color: #888;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.25rem;
+    }
+    .label code {
+      background: #0f0f23;
+      border: 1px solid #2a2a4a;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+    }
+    .count {
+      font-size: clamp(4rem, 18vw, 9rem);
+      font-weight: 700;
+      color: #5865f2;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .suffix {
+      color: #888;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    .footer {
+      margin-top: 3rem;
+      color: #555;
+      font-size: 0.8rem;
+    }
+    .footer a { color: #5865f2; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="label"><code>fiovivor.org/seasonsheet</code> has been clicked</div>
+  <div class="count" id="count">…</div>
+  <div class="suffix" id="suffix">times</div>
+  <div class="footer"><a href="/">← back to fiovivor.org</a></div>
+  <script>
+    (function () {
+      var el = document.getElementById('count');
+      var suffix = document.getElementById('suffix');
+      fetch('https://abacus.jasoncameron.dev/get/fiovivor-org/seasonsheet')
+        .then(function (r) {
+          if (!r.ok) throw new Error('http ' + r.status);
+          return r.json();
+        })
+        .then(function (d) {
+          var n = (d && typeof d.value === 'number') ? d.value : 0;
+          el.textContent = n.toLocaleString();
+          suffix.textContent = (n === 1) ? 'time' : 'times';
+        })
+        .catch(function () {
+          el.textContent = '0';
+          suffix.textContent = 'times';
+        });
+    })();
+  </script>
+</body>
+</html>
