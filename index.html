@@ -33,7 +33,7 @@ a{color:inherit;text-decoration:none}
 /* track holds [fiovivor | everest]; Everest (2nd panel) is the default view */
 .track{display:flex;width:200vw;height:100vh;transform:translateX(-100vw);transition:transform .8s cubic-bezier(.76,0,.24,1)}
 .track.show-fio{transform:translateX(0)}
-.world{width:100vw;height:100vh;overflow-y:auto;overflow-x:hidden;position:relative;scroll-behavior:smooth}
+.world{width:100vw;min-width:0;height:100vh;overflow-y:auto;overflow-x:hidden;position:relative;scroll-behavior:smooth}
 .world::-webkit-scrollbar{width:10px}
 .world::-webkit-scrollbar-thumb{background:#1c2b45;border-radius:6px}
 
@@ -57,7 +57,7 @@ a{color:inherit;text-decoration:none}
 .kicker{font-weight:800;letter-spacing:.2em;text-transform:uppercase;
   font-size:1.15rem;color:var(--ice);margin-bottom:1.4rem;padding-left:.2em;
   animation:fade 1s .1s both}
-.tagline{max-width:640px;color:#cdd9ee;font-size:1.12rem;line-height:1.6;margin-top:1.7rem;
+.tagline{max-width:min(640px,calc(100vw - 3rem));color:#cdd9ee;font-size:1.12rem;line-height:1.6;margin-top:1.7rem;
   animation:fade 1s .5s both}
 .season-tag{margin-top:1.5rem;display:inline-flex;align-items:center;gap:.6rem;
   font-weight:700;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
@@ -159,7 +159,7 @@ a{color:inherit;text-decoration:none}
   display:flex;align-items:center;gap:.6rem;padding:1rem .9rem;border:1px solid var(--line);
   background:rgba(9,14,26,.82);backdrop-filter:blur(6px);color:var(--snow);
   font-weight:700;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
-  transition:background .2s,border-color .2s,transform .2s}
+  transition:background .2s,border-color .2s,transform .35s cubic-bezier(.76,0,.24,1),opacity .35s}
 .flag:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .flag svg{width:16px;height:16px;fill:currentColor;flex-shrink:0}
 .flag-left{left:0;border-left:none;border-radius:0 12px 12px 0;writing-mode:vertical-rl;text-orientation:mixed}
@@ -167,6 +167,9 @@ a{color:inherit;text-decoration:none}
 .flag-right{right:0;border-right:none;border-radius:12px 0 0 12px;writing-mode:vertical-rl;text-orientation:mixed}
 .flag-right:hover{transform:translateY(-50%) translateX(-3px)}
 .flag-left .lbl,.flag-right .lbl{writing-mode:vertical-rl}
+.flag-icon{display:none}
+.flag-left.hidden{transform:translateY(-50%) translateX(-120%);opacity:0;pointer-events:none}
+.flag-right.hidden{transform:translateY(-50%) translateX(120%);opacity:0;pointer-events:none}
 
 /* ---------- viewer overlay ---------- */
 .viewer{display:none;position:fixed;inset:0;z-index:100;background:var(--night);flex-direction:column}
@@ -193,10 +196,14 @@ body.viewing{overflow:hidden}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
 
 @media(max-width:600px){
-  .altitude{display:none}
-  .flag{font-size:.58rem;padding:.8rem .6rem}
+  .flag-left,.flag-right{writing-mode:horizontal-tb;padding:.4rem;gap:0}
+  .flag-left{border-radius:0 14px 14px 0}
+  .flag-right{border-radius:14px 0 0 14px}
+  .flag-left .lbl,.flag-right .lbl,.flag-left>svg,.flag-right>svg{display:none}
+  .flag .flag-icon{display:block;width:30px;height:30px;object-fit:contain;border-radius:6px}
+  .kicker{font-size:.76rem;letter-spacing:.1em;padding-left:.1em}
   .tagline{font-size:1rem}
-  .wordmark{font-size:clamp(3.4rem,22vw,8rem)}
+  .wordmark{font-size:clamp(2.4rem,14vw,8rem)}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -1618,10 +1625,12 @@ body.viewing{overflow:hidden}
 <button class="flag flag-left" id="to-fio" title="See Fiovivor archives">
   <svg viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5V7z"/></svg>
   <span class="lbl">Also see our Fiovivor archives</span>
+  <img class="flag-icon" src="fiovivorlogo.png" alt="Fiovivor">
 </button>
 <button class="flag flag-right" id="to-everest" title="Back to Everest" style="display:none">
   <span class="lbl">Back to Everest</span>
   <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+  <img class="flag-icon" src="everestlogo.png" alt="Everest">
 </button>
 
 <div class="toast" id="toast"></div>
@@ -1644,10 +1653,24 @@ var track = document.getElementById('track');
 var toFio = document.getElementById('to-fio');
 var toEverest = document.getElementById('to-everest');
 var snowEl = document.getElementById('snow');
-function showFio(){ track.classList.add('show-fio'); toFio.style.display='none'; toEverest.style.display='flex'; snowEl.style.opacity='0'; }
-function showEverest(){ track.classList.remove('show-fio'); toEverest.style.display='none'; toFio.style.display='flex'; snowEl.style.opacity='1'; }
+function showFio(){ track.classList.add('show-fio'); toFio.style.display='none'; toEverest.style.display='flex'; toEverest.classList.remove('hidden'); snowEl.style.opacity='0'; }
+function showEverest(){ track.classList.remove('show-fio'); toEverest.style.display='none'; toFio.style.display='flex'; toFio.classList.remove('hidden'); snowEl.style.opacity='1'; }
 toFio.addEventListener('click', showFio);
 toEverest.addEventListener('click', showEverest);
+
+// hide the side flag while scrolling down within a world, reveal on scroll up
+function attachFlagAutohide(world, flag){
+  var last = 0;
+  world.addEventListener('scroll', function(){
+    var y = world.scrollTop;
+    if (y < 120) flag.classList.remove('hidden');
+    else if (y > last + 6) flag.classList.add('hidden');
+    else if (y < last - 6) flag.classList.remove('hidden');
+    last = y;
+  }, {passive:true});
+}
+attachFlagAutohide(document.getElementById('everest'), toFio);
+attachFlagAutohide(document.getElementById('fiovivor'), toEverest);
 
 // toast + everest season tabs
 function showToast(msg){
