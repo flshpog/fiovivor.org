@@ -1,5 +1,6 @@
 import os
 import shutil
+from typing import Optional
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
@@ -233,6 +234,128 @@ async def rearchiveall(interaction: discord.Interaction):
                 failed.append((cat_name, channel.name, str(e)))
 
     summary = f"Re-archived **{total_done - len(failed)}/{total_channels}** channels ({total_messages:,} total messages).\nFiles saved to `{SITE_ROOT}`."
+    if failed:
+        summary += "\n\n**Failed:**\n" + "\n".join(f"- {cat}/#{ch}: {err}" for cat, ch, err in failed)
+
+    try:
+        await progress_msg.edit(content=summary)
+    except Exception:
+        await dest.send(summary)
+
+
+@bot.tree.command(
+    name="gigaarchive",
+    description="Archive many categories at once — sends every channel back as an HTML file",
+)
+@app_commands.describe(
+    category1="A category to archive",
+    category2="A category to archive",
+    category3="A category to archive",
+    category4="A category to archive",
+    category5="A category to archive",
+    category6="A category to archive",
+    category7="A category to archive",
+    category8="A category to archive",
+    category9="A category to archive",
+    category10="A category to archive",
+    category11="A category to archive",
+    category12="A category to archive",
+    category13="A category to archive",
+    category14="A category to archive",
+    category15="A category to archive",
+)
+async def gigaarchive(
+    interaction: discord.Interaction,
+    category1: discord.CategoryChannel,
+    category2: Optional[discord.CategoryChannel] = None,
+    category3: Optional[discord.CategoryChannel] = None,
+    category4: Optional[discord.CategoryChannel] = None,
+    category5: Optional[discord.CategoryChannel] = None,
+    category6: Optional[discord.CategoryChannel] = None,
+    category7: Optional[discord.CategoryChannel] = None,
+    category8: Optional[discord.CategoryChannel] = None,
+    category9: Optional[discord.CategoryChannel] = None,
+    category10: Optional[discord.CategoryChannel] = None,
+    category11: Optional[discord.CategoryChannel] = None,
+    category12: Optional[discord.CategoryChannel] = None,
+    category13: Optional[discord.CategoryChannel] = None,
+    category14: Optional[discord.CategoryChannel] = None,
+    category15: Optional[discord.CategoryChannel] = None,
+):
+    if not interaction.user.guild_permissions.manage_guild:
+        await interaction.response.send_message("You need **Manage Server** permission to use this.", ephemeral=True)
+        return
+
+    # Collect provided categories, de-duplicated, preserving order
+    provided = [
+        category1, category2, category3, category4, category5,
+        category6, category7, category8, category9, category10,
+        category11, category12, category13, category14, category15,
+    ]
+    categories = []
+    seen_cats = set()
+    for cat in provided:
+        if cat is not None and cat.id not in seen_cats:
+            seen_cats.add(cat.id)
+            categories.append(cat)
+
+    # Build the full channel plan (category, channel), top-to-bottom within each category
+    plan = []
+    for cat in categories:
+        text_channels = [ch for ch in cat.channels if isinstance(ch, discord.TextChannel)]
+        text_channels.sort(key=lambda ch: ch.position)
+        for ch in text_channels:
+            plan.append((cat, ch))
+
+    if not plan:
+        await interaction.response.send_message("No text channels found in the provided categories.", ephemeral=True)
+        return
+
+    await interaction.response.send_message(
+        f"Starting **giga archive** — {len(categories)} categories, {len(plan)} channels. "
+        f"This can take a while; you can leave it running.",
+        ephemeral=True,
+    )
+
+    # Progress + uploads go to a regular message (interaction tokens expire after 15 min)
+    dest = interaction.channel
+    guild = interaction.guild
+
+    # Build member/role/channel data once and reuse for every channel (big speedup)
+    progress_msg = await dest.send("Building member/role/channel data...")
+    gd = await build_guild_data(guild)
+
+    total = len(plan)
+    done = 0
+    total_messages = 0
+    failed = []
+
+    for cat, channel in plan:
+        done += 1
+        try:
+            await progress_msg.edit(
+                content=f"**[{done}/{total}]** Archiving **#{channel.name}** from **{cat.name}**..."
+            )
+        except Exception:
+            pass
+
+        try:
+            count, filepath = await archive_channel(channel, guild_data=gd)
+            total_messages += count
+            try:
+                file = discord.File(filepath, filename=f"{channel.name}-archive.html")
+                await dest.send(f"**{cat.name} / #{channel.name}** — {count:,} messages", file=file)
+            except Exception:
+                await dest.send(
+                    f"Archived **#{channel.name}** ({count:,} messages) but upload failed (file too large)."
+                )
+        except Exception as e:
+            failed.append((cat.name, channel.name, str(e)))
+
+    summary = (
+        f"**Giga archive complete** — {total - len(failed)}/{total} channels "
+        f"({total_messages:,} messages) across {len(categories)} categories."
+    )
     if failed:
         summary += "\n\n**Failed:**\n" + "\n".join(f"- {cat}/#{ch}: {err}" for cat, ch, err in failed)
 

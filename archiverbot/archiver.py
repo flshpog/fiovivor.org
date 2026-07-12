@@ -69,7 +69,7 @@ async def _download(url: str) -> bytes:
 
 
 def _convert_image_to_webp(data: bytes) -> bytes:
-    """Convert image bytes to WebP."""
+    """Convert image bytes to WebP (single frame). Used for avatars."""
     img = Image.open(BytesIO(data))
     if img.mode in ("RGBA", "P"):
         img = img.convert("RGBA")
@@ -78,6 +78,24 @@ def _convert_image_to_webp(data: bytes) -> bytes:
     buf = BytesIO()
     img.save(buf, format="WEBP", quality=85)
     return buf.getvalue()
+
+
+def _convert_image(data: bytes):
+    """Convert an image to WebP, but preserve animation for animated GIF/WebP so
+    it keeps autoplaying as an <img>. Returns (out_bytes, ext, content_type)."""
+    img = Image.open(BytesIO(data))
+    if getattr(img, "is_animated", False) and getattr(img, "n_frames", 1) > 1:
+        # Re-encoding animated frames is lossy/fragile — keep the original bytes.
+        fmt = (img.format or "GIF").lower()
+        ext = "gif" if fmt == "gif" else "webp"
+        return data, ext, f"image/{'gif' if ext == 'gif' else 'webp'}"
+    if img.mode in ("RGBA", "P"):
+        img = img.convert("RGBA")
+    else:
+        img = img.convert("RGB")
+    buf = BytesIO()
+    img.save(buf, format="WEBP", quality=85)
+    return buf.getvalue(), "webp", "image/webp"
 
 
 def _convert_video_to_webm(data: bytes, original_ext: str) -> bytes:
@@ -148,14 +166,27 @@ def _upload_to_r2(data: bytes, key: str, content_type: str) -> str:
 
 
 async def _process_image(url: str, filename: str) -> str:
-    """Download image, convert to webp, upload to R2, return CDN URL."""
+    """Download image, convert to webp (preserving GIF animation), upload to R2, return CDN URL."""
     data = await _download(url)
     h = _content_hash(data)
     name = os.path.splitext(filename)[0]
-    key = f"images/{h}-{name}.webp"
 
-    webp_data = await asyncio.to_thread(_convert_image_to_webp, data)
-    cdn_url = await asyncio.to_thread(_upload_to_r2, webp_data, key, "image/webp")
+    out_data, ext, content_type = await asyncio.to_thread(_convert_image, data)
+    key = f"images/{h}-{name}.{ext}"
+    cdn_url = await asyncio.to_thread(_upload_to_r2, out_data, key, content_type)
+    return cdn_url
+
+
+async def _process_audio(url: str, filename: str, content_type: str = "") -> str:
+    """Download audio (voice notes etc.) and upload to R2 unchanged, return CDN URL.
+    Discord attachment URLs are signed and expire, so we must re-host them."""
+    data = await _download(url)
+    h = _content_hash(data)
+    name = os.path.splitext(filename)[0] or "audio"
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else "ogg"
+    key = f"audio/{h}-{name}.{ext}"
+    ctype = content_type or ("audio/ogg" if ext == "ogg" else f"audio/{ext}")
+    cdn_url = await asyncio.to_thread(_upload_to_r2, data, key, ctype)
     return cdn_url
 
 
@@ -183,15 +214,77 @@ async def _process_avatar(url: str, user_id: int) -> str:
     return cdn_url
 
 
-def _role_color(member):
-    """Get the top role color hex for a member, or default grey."""
-    if member and hasattr(member, "top_role") and member.top_role and member.top_role.color.value != 0:
-        return f"#{member.top_role.color.value:06x}"
-    return "#dcddde"
+def _colour_hex(colour, default="#dcddde"):
+    """Hex string for a discord.Colour, or a default if it's None/uncolored."""
+    if colour is None or colour.value == 0:
+        return default
+    return f"#{colour.value:06x}"
+
+
+def _text_colour_style(role, default="#dcddde"):
+    """CSS for coloring text by a role. Honors 2-color gradient and 3-color
+    holographic roles (Discord's enhanced role colors), rendered as a
+    linear-gradient clipped to the text. Falls back to a solid primary color."""
+    primary = getattr(role, "colour", None)
+    secondary = getattr(role, "secondary_colour", None)
+    tertiary = getattr(role, "tertiary_colour", None)
+
+    if secondary is not None and secondary.value != 0:
+        stops = [_colour_hex(primary, default), f"#{secondary.value:06x}"]
+        if tertiary is not None and tertiary.value != 0:
+            stops.append(f"#{tertiary.value:06x}")
+        grad = ", ".join(stops)
+        return (
+            f"background:linear-gradient(90deg,{grad});"
+            "-webkit-background-clip:text;background-clip:text;"
+            "-webkit-text-fill-color:transparent;color:transparent"
+        )
+    return f"color:{_colour_hex(primary, default)}"
+
+
+def _role_style(member):
+    """Text-color CSS for a member's display name, based on their top role."""
+    if not member or isinstance(member, dict) or not hasattr(member, "top_role"):
+        return "color:#dcddde"
+    role = member.top_role
+    if role is None:
+        return "color:#dcddde"
+    return _text_colour_style(role)
+
+
+def _role_mention_style(role):
+    """CSS for a @role mention pill. Gradient roles get gradient text with no
+    pill tint (can't have both a tint and a text-clipped gradient); solid roles
+    keep the tinted pill."""
+    secondary = getattr(role, "secondary_colour", None)
+    if secondary is not None and secondary.value != 0:
+        return _text_colour_style(role, default="#99aab5")
+    colour = getattr(role, "colour", None)
+    hexc = _colour_hex(colour, default="#99aab5")
+    if colour is not None and colour.value != 0:
+        r, g, b = (colour.value >> 16) & 255, (colour.value >> 8) & 255, colour.value & 255
+    else:
+        r, g, b = 153, 170, 181
+    return f"color:{hexc};background:rgba({r},{g},{b},0.1)"
 
 
 def _format_timestamp(dt):
     return dt.strftime("%m/%d/%Y %I:%M %p")
+
+
+def _render_reaction_emoji(emoji):
+    """Render a reaction emoji. Unicode emoji is a str; custom emoji is a
+    discord.Emoji/PartialEmoji rendered as an <img> from Discord's CDN (works
+    even for emojis from other servers)."""
+    if isinstance(emoji, str):
+        return html.escape(emoji)
+    emoji_id = getattr(emoji, "id", None)
+    if emoji_id:
+        ext = "gif" if getattr(emoji, "animated", False) else "webp"
+        url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{ext}?size=48"
+        name = html.escape(emoji.name or "")
+        return f'<img class="custom-emoji" src="{url}" alt=":{name}:" title=":{name}:">'
+    return html.escape(str(emoji))
 
 
 def _escape(text, guild_data=None):
@@ -212,8 +305,8 @@ def _escape(text, guild_data=None):
         # Role mentions: <@&123>
         def replace_role(m):
             rid = int(m.group(1))
-            role_name, role_color = roles.get(rid, ("Unknown Role", "#99aab5"))
-            return f'<span class="mention" style="color:{role_color};background:rgba({int(role_color[1:3],16)},{int(role_color[3:5],16)},{int(role_color[5:7],16)},0.1)">@{html.escape(role_name)}</span>'
+            role_name, role_style = roles.get(rid, ("Unknown Role", "color:#99aab5;background:rgba(153,170,181,0.1)"))
+            return f'<span class="mention" style="{role_style}">@{html.escape(role_name)}</span>'
         text = re.sub(r"&lt;@&amp;(\d+)&gt;", replace_role, text)
 
         # Channel mentions: <#123>
@@ -310,6 +403,9 @@ def _escape(text, guild_data=None):
     text = re.sub(r"^## (.+)$", r'<strong style="font-size:1.25em">\1</strong>', text, flags=re.MULTILINE)
     text = re.sub(r"^# (.+)$", r'<strong style="font-size:1.5em">\1</strong>', text, flags=re.MULTILINE)
 
+    # Subtext -# text (small, muted)
+    text = re.sub(r"^-# (.+)$", r'<span class="subtext">\1</span>', text, flags=re.MULTILINE)
+
     # Spoilers ||text||
     text = re.sub(r"\|\|(.+?)\|\|", r'<span class="spoiler">\1</span>', text)
 
@@ -345,8 +441,7 @@ async def build_guild_data(guild):
     print(f"  [guild-data] {len(members)} members loaded")
     roles = {}
     for role in guild.roles:
-        color = f"#{role.color.value:06x}" if role.color.value != 0 else "#99aab5"
-        roles[role.id] = (role.name, color)
+        roles[role.id] = (role.name, _role_mention_style(role))
     print(f"  [guild-data] {len(roles)} roles loaded")
     channels_map = {}
     for ch in guild.channels:
@@ -395,7 +490,9 @@ async def archive_channel(channel, progress_callback=None, output_path=None, gui
                     tasks[att.url] = _process_image(att.url, att.filename)
                 elif ct.startswith("video/"):
                     tasks[att.url] = _process_video(att.url, att.filename)
-            # audio and other files: keep original Discord URL (no conversion needed)
+                elif ct.startswith("audio/"):
+                    tasks[att.url] = _process_audio(att.url, att.filename, ct)
+            # other files: keep original Discord URL (no conversion needed)
 
     # Embed images/videos (tenor gifs, image embeds, etc.)
     for msg in messages:
@@ -425,6 +522,8 @@ async def archive_channel(channel, progress_callback=None, output_path=None, gui
                             tasks[att.url] = _process_image(att.url, att.filename)
                         elif ct.startswith("video/"):
                             tasks[att.url] = _process_video(att.url, att.filename)
+                        elif ct.startswith("audio/"):
+                            tasks[att.url] = _process_audio(att.url, att.filename, ct)
 
     # Run all downloads/conversions/uploads concurrently
     if tasks:
@@ -526,7 +625,7 @@ def _render_html(channel, messages, media_map, guild_data=None):
 
             avatar_url = msg.author.display_avatar.url if msg.author.display_avatar else ""
             avatar_cdn = cdn(avatar_url) if avatar_url else ""
-            color = _role_color(msg.author if not isinstance(msg.author, dict) else None)
+            name_style = _role_style(msg.author if not isinstance(msg.author, dict) else None)
             display_name = html.escape(msg.author.display_name if hasattr(msg.author, "display_name") else str(msg.author))
             username = html.escape(str(msg.author))
             timestamp = _format_timestamp(msg.created_at)
@@ -536,7 +635,7 @@ def _render_html(channel, messages, media_map, guild_data=None):
             parts.append(f"""<div class="msg-group">
     <div class="msg-header">
         <img class="avatar" src="{avatar_cdn}" alt="" loading="lazy">
-        <span class="author" style="color:{color}">{display_name}{bot_tag}</span>
+        <span class="author" style="{name_style}">{display_name}{bot_tag}</span>
         <span class="username">@{username}</span>
         <span class="timestamp">{timestamp}</span>
     </div>""")
@@ -564,6 +663,8 @@ def _render_html(channel, messages, media_map, guild_data=None):
                         parts.append(f'            <div class="attachment"><img src="{cdn(att.url)}" alt="{html.escape(att.filename)}" loading="lazy"></div>')
                     elif ct.startswith("video/"):
                         parts.append(f'            <div class="attachment"><video controls preload="metadata" src="{cdn(att.url)}" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>')
+                    elif ct.startswith("audio/"):
+                        parts.append(f'            <div class="attachment"><audio controls preload="metadata" src="{cdn(att.url)}" style="margin:4px 0;"></audio></div>')
                     else:
                         parts.append(f'            <div class="attachment"><a href="{att.url}" target="_blank">{html.escape(att.filename)}</a></div>')
                 for embed in snap.embeds:
@@ -591,7 +692,7 @@ def _render_html(channel, messages, media_map, guild_data=None):
             elif ct.startswith("video/"):
                 parts.append(f'        <div class="attachment"><video controls preload="metadata" src="{cdn(att.url)}" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>')
             elif ct.startswith("audio/"):
-                parts.append(f'        <div class="attachment"><audio controls src="{att.url}" style="margin:4px 0;"></audio></div>')
+                parts.append(f'        <div class="attachment"><audio controls preload="metadata" src="{cdn(att.url)}" style="margin:4px 0;"></audio></div>')
             else:
                 parts.append(f'        <div class="attachment"><a href="{att.url}" target="_blank">{html.escape(att.filename)}</a></div>')
 
@@ -646,7 +747,7 @@ def _render_html(channel, messages, media_map, guild_data=None):
         if msg.reactions:
             parts.append('        <div class="reactions">')
             for reaction in msg.reactions:
-                parts.append(f'            <span class="reaction">{reaction.emoji} <span class="reaction-count">{reaction.count}</span></span>')
+                parts.append(f'            <span class="reaction">{_render_reaction_emoji(reaction.emoji)} <span class="reaction-count">{reaction.count}</span></span>')
             parts.append("        </div>")
 
         parts.append("    </div>")
@@ -659,6 +760,31 @@ def _render_html(channel, messages, media_map, guild_data=None):
 
     parts.append("""</div>
 </div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
 </body>
 </html>""")
 
@@ -1004,6 +1130,46 @@ header .topic {
     height: 22px;
     vertical-align: -0.4em;
     object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
 }
 
 @media (max-width: 600px) {
