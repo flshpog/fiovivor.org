@@ -336,8 +336,8 @@ a{color:inherit;text-decoration:none}
 .flag-right:hover{transform:translateY(-50%) translateX(-3px)}
 .flag-left .lbl,.flag-right .lbl{writing-mode:vertical-rl}
 .flag-icon{display:none}
-.flag-left.hidden{transform:translateY(-50%) translateX(-120%);opacity:0;pointer-events:none}
-.flag-right.hidden{transform:translateY(-50%) translateX(120%);opacity:0;pointer-events:none}
+.flag-left.hidden{transform:translateY(-50%) translateX(-115%);pointer-events:none}
+.flag-right.hidden{transform:translateY(-50%) translateX(115%);pointer-events:none}
 
 /* ---------- viewer overlay ---------- */
 .viewer{display:none;position:fixed;inset:0;z-index:100;background:var(--night);flex-direction:column}
