@@ -1,0 +1,3385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#draft-day — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>draft-day</h1>
+    <p class="meta">Everest &middot; 360 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 11:21 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@ak</span> <span class="mention">@Ricci [S1; S2]</span> <span class="mention">@Tully  [S1; S2]</span> can all of you speak here?</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/37e646376270466a-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">07/24/2026 11:24 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> </div>
+        <div class="content"><pre><code>, whatever. I sincerely hope all of you can speak here. It&#x27;s going to be very important to the longevity and the success of this game. Around 9 o&#x27;clock AM, because it&#x27;s going to be about 12 hours since I announced the twist, we are going to reveal which of the three captains was the most voted for Island Leader, and also who was the second most voted and the least most voted. that is going to determine our drafting order. Now I understand, you know, time zones, availability. One of you guys is European. One of you guys is Aussie and the other is American. So a live draft where we get everyone on at the same time, I feel like is not necessarily doable. My thought is to instead kind of slowly draft throughout the day, if that makes sense. once we have a basically confirmation that everyone is alive and going to be on for the next few hours, I would love to be able to, you know, get the draft process started. And so if you guys want to in your submissions, if you want to rank everyone from most want to least want, that would make my life a little easier in case you&#x27;re not available for a little bit and you&#x27;re taking too long to draft. That&#x27;s awesome. But my thought right now is to kind of just, like I said, draft slowly throughout the day. If that sounds good with you guys, that&#x27;s how I&#x27;m going to do it. If you guys would rather try to schedule something and do a live draft, we can do that too. Or if we can&#x27;t schedule anything, if it&#x27;s too much of a time zone conflict, then I&#x27;m okay with it just being lists, but ideally there&#x27;s some sort of, uh, live draft pick them to it. Right. So just let me know, communicate with me and I hope you guys have an awesome day today.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 11:51 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I can speak here</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/749052505308266645.webp?size=160" alt="Congratulations" title="Congratulations" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 11:59 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">What if we do a live draft at 1130PM est?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/720402926069350450/1423743359016636456/b06fd4bfb55a5c2898052e4efaa9258c.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/460c493b8263472e-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i sense we arent fans</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ITS A LITTLE EARLY…</div>
+    </div>
+    <div class="msg">
+        <div class="content">Wait tully what time is it for u neow</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:06 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">10PM!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/720402926069350450/1423743359016636456/b06fd4bfb55a5c2898052e4efaa9258c.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/460c493b8263472e-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i have about an hour if i wake up at 5am  est</div>
+    </div>
+    <div class="msg">
+        <div class="content">which is like</div>
+    </div>
+    <div class="msg">
+        <div class="content">so i go sleep in an hour, then i wake up at 7am my time maybe then finish work 1:20PM my time and thats when ill lock in</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I think we can like submit da preference lists but then we can do the live stuff if we r online cuz scheduling seems a lil tricky</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/809210578433736724.webp?size=160" alt="Cry" title="Cry" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Heyyyy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hallo!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 12:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/971fe6053f127e36-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">07/24/2026 12:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> </div>
+        <div class="content"><pre><code>, okay. I see all of you guys are on right now. What are you still not addressing right now, guys?</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 12:14 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">8AM DRAFT WHOS READY</div>
+    </div>
+    <div class="msg">
+        <div class="content">🔥🔥🔥🔥🔥🔥</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:15 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">lets do it!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 12:15 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> lets do it!</div>
+        <div class="content"><span class="mention">@ak</span> <span class="mention">@Ricci [S1; S2]</span> ?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Shit i’ll do it right now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 12:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@ak</span> are you available ;D</div>
+    </div>
+    <div class="msg">
+        <div class="content">my gathering and assumption is that if this isn’t something that can be sorted out within the next hour or two then it will go to lists.</div>
+    </div>
+    <div class="msg">
+        <div class="content">which may be what happens since idk if ak is available at this hour</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:20 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://tenor.com/view/dylan-minnette-wallows-gif-4306179065203561690</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/dc399e8a90ab7952-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/bangchan-bang-chan-3</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/77f6fcadd2a3da8b-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I sleep in like 40 minutes but ill stay up if we start the thingy in the next 40 mins</div>
+    </div>
+    <div class="msg">
+        <div class="content">I won&#x27;t settle for a guy with a fake job</div>
+    </div>
+    <div class="msg">
+        <div class="content">they seem so desperate for loving but im not</div>
+    </div>
+    <div class="msg">
+        <div class="content">im not kissing any boy thats passive</div>
+    </div>
+    <div class="msg">
+        <div class="content">their indecision is painfully inattracative</div>
+    </div>
+    <div class="msg">
+        <div class="content">thats not a word wtf</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Haiiii</div>
+    </div>
+    <div class="msg">
+        <div class="content">Im on and off in activitu whopsi i missed the ping</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">mvlancholia</span> Im on and off in activitu whopsi i missed the ping</div>
+        <div class="content">what if we did draft right now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I’m here for it</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I gotta go in a bit but i can try</div>
+    </div>
+    <div class="msg">
+        <div class="content">If it doesnt take long</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://tenor.com/view/monkey-sad-gif-4835826683835238847</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/e210fea704f3948f-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">we can be super duper quick</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Tully  [S1; S2]</span> U streaming my most listened to taylor song</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">OH SO WHAT YOU ARE SAYING YOU ARE TASTEFUL AF</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I think its my most streamed</div>
+    </div>
+    <div class="msg">
+        <div class="content">.favs taylor swift</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/356268235697553409-76171cf8994f37c9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">.fmbot <span class="bot-tag">BOT</span></span>
+        <span class="username">@.fmbot#8173</span>
+        <span class="timestamp">07/24/2026 12:38 PM</span>
+    </div>
+    <div class="msg">
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ALMOST!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ttpd is her best album omg</div>
+    </div>
+    <div class="msg">
+        <div class="content">someone could offer me 1 million dollar to never listen to TTPD and id say no</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Idk a million dollars can do a lot...</div>
+    </div>
+    <div class="msg">
+        <div class="content">But its a good album fo sho</div>
+    </div>
+    <div class="msg">
+        <div class="content">Ok we can try to do da draft</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@- big T</span></div>
+    </div>
+    <div class="msg">
+        <div class="content">hiiiiiiiiiiiiiiiiiiiiiiiiiiii</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:42 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><video controls preload="metadata" src="https://everest-cdn.xsoul.org/videos/366818480fb2d402-YTDown_YouTube_Vanilla-Ninja-Too-Epic-To-Be-True-LIVE-E_Media_FfvawqmkXnA_005_240p.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">Ok wait let me make a preference list just in case we don’t do this now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:42 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="color:#99aab5;background:rgba(153,170,181,0.1)">@Producer</span> what does this do</div>
+    </div>
+    <div class="msg">
+        <div class="content">let us draft</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 12:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">AYYYY</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hiiii.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> AYYYY</div>
+        <div class="content">https://klipy.com/gifs/bear-sitting-down-1</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/c0a632fb41c797c8-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:44 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/onewishwillow</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/83da58ab1725e378-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">i wish to do the draft right this second</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 12:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">tully where&#x27;s the gif</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/1509982399042293921/1516198611040338081/Discord_pJoPgMTtQd.gif</div>
+    </div>
+    <div class="msg">
+        <div class="content">this one?</div>
+    </div>
+    <div class="msg">
+        <div class="content">it doesnt work</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 12:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">omg what</div>
+    </div>
+    <div class="msg">
+        <div class="content">like why</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Its very upsetting</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 12:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">TULLY....</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 12:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i’m working</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 12:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i&#x27;ll find a solution</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/24fcfba7ffb823e6-image0.gif" alt="image0.gif" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content">like dont even play</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:48 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/1112810092052623492/1484851851819220992/togif.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/456500644a3e1f7b-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Ricci [S1; S2]</span> Is ur name pronounced richie or ricki</div>
+    </div>
+    <div class="msg">
+        <div class="content">Im just curious.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:49 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> </div>
+        <div class="content">OMFG</div>
+        <div class="reactions">
+            <span class="reaction">💛 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">THIS DIVA</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:49 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">mvlancholia</span> <span class="mention">@Ricci [S1; S2]</span> Is ur name pronounced richie or ricki</div>
+        <div class="content">like ricky! 😁</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:50 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/749052505308266645.webp?size=160" alt="Congratulations" title="Congratulations" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+    <div class="msg">
+        <div class="content">I gotta leave in like 10-15 mins for a bit so if the draft isn’t neow i’ll submit my list</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 12:51 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026544704262275.webp?size=48" alt=":carlee:" title=":carlee:"> <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026544704262275.webp?size=48" alt=":carlee:" title=":carlee:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 12:54 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ric5311</span> like ricky! 😁</div>
+        <div class="content">I KNEW IT</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 12:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> I KNEW IT</div>
+        <div class="content">we spent a whole season guessing 😔</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 12:58 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://tenor.com/view/obsession-2025-2026-movie-film-gif-18253712557652970448</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/41e606a752d0e9f4-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">im listening to the fate of ophelia</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 12:59 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> https://tenor.com/view/obsession-2025-2026-movie-film-gif-18253712557652970448</div>
+        <div class="content">Is this obsession i keep delaying watching it</div>
+        <div class="reactions">
+            <span class="reaction">‼️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:00 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Watch asap it’s peak</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:00 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">mvlancholia</span> Is this obsession i keep delaying watching it</div>
+        <div class="content">correct.</div>
+    </div>
+    <div class="msg">
+        <div class="content">and yes watch it</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:00 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">I WILL.</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:00 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">watch it like now</div>
+    </div>
+    <div class="msg">
+        <div class="content">OBSESSION WATCH PARTY</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:01 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Well now isn’t quite a feasible time</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:01 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">IN EVEREST</div>
+    </div>
+    <div class="msg">
+        <div class="content">TONIGHT.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:01 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">WOOO</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i think i need to go to sleep now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Goodnight tully.</div>
+    </div>
+    <div class="msg">
+        <div class="content">It was nice meeting u.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> i think i need to go to sleep now</div>
+        <div class="content">bye tully 👋</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">gn!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">omg not all of our captains being offline for the draft</div>
+    </div>
+    <div class="msg">
+        <div class="content">guys</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">mvlancholia</span> It was nice meeting u.</div>
+        <div class="content">Like wise</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">WE WERE PRESENT</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">We were so ready at 8 am 😔</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">like if drafting starts in 5 minutes then ill stay up</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">fish do you want me to gamble now or gamble later</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Lemmy</span> Can u give me a share of the winnings</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">mvlancholia</span> <span class="mention">@Lemmy</span> Can u give me a share of the winnings</div>
+        <div class="content">i dont control that</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i mean texhnically it was supposed yo start in 13 mins</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">but theres this show im putting on right before i go to sleep to help me sleep its a horror thriller i cant wait</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/netflix-horror</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/df8ffd3f2dbb8380-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:04 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ilovelemlem</span> i dont control that</div>
+        <div class="content">can you control a PvZ Coffee Bean fun fact, I have some questions</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:05 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ric5311</span> can you control a PvZ Coffee Bean fun fact, I have some questions</div>
+        <div class="content">ok</div>
+    </div>
+    <div class="msg">
+        <div class="content">what are your questions</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:05 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Is Coffee Bean the most useless PvZ plant?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:05 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">no<br>the most useless pvz plant is split pea</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:06 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">damn hard to argue with that one</div>
+    </div>
+    <div class="msg">
+        <div class="content">Okay follow up question, what is the best Mushroom that you would want to use during daytime that actually makes the Coffee Bean worthwhile?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">doom-shroom/magnet-shroom</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 01:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">wait so are yall drafting rn or</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yes</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 01:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">okay</div>
+    </div>
+    <div class="msg">
+        <div class="content">can a fellow producer tally results</div>
+    </div>
+    <div class="msg">
+        <div class="content">for votes</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i can</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">07/24/2026 01:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thanks lem</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I’m pretty sure AK is gone now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thats okay if AK sent a list we can still do it yea</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">you all sent a list which is good</div>
+    </div>
+    <div class="msg">
+        <div class="content">can one of the other prod get online i got the votes all ready</div>
+    </div>
+    <div class="msg">
+        <div class="content">i swear i might just reveal the votes myself</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:14 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ilovelemlem</span> i swear i might just reveal the votes myself</div>
+        <div class="content">Yes ❤️</div>
+        <div class="reactions">
+            <span class="reaction">‼️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ok ill reveal the votes for island rep myself and then wait for another prod to do the draft itself because i have a few questions about the process which are different between orgs</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><span class="mention" style="color:#99aab5;background:rgba(153,170,181,0.1)">@Alive Player</span> It&#x27;s time to reveal the votes for your island leader!</strong></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">4</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><em>As a reminder, the player with the most votes will draft first, and the second most will draft second, and the player with the least amount of votes will pick last.</em></div>
+    </div>
+    <div class="msg">
+        <div class="content"><em>With 6 votes...picking first is...</em></div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Tully  [S1; S2]</span> !</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><em>With 3 votes...picking second is...</em></div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@ak</span> !</div>
+    </div>
+    <div class="msg">
+        <div class="content"><em>So, picking last with 2 votes is...</em></div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Ricci [S1; S2]</span> !</div>
+    </div>
+    <div class="msg">
+        <div class="content"><em>So, the draft order is Tully &gt; AK &gt; Ricci.</em></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:20 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">THENGYA LEMMY</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:20 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yw</div>
+    </div>
+    <div class="msg">
+        <div class="content">ak isn&#x27;t here rn so remember to use his list</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:21 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yesyes</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:21 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026293192556664.webp?size=48" alt=":tully:" title=":tully:"></div>
+    </div>
+    <div class="msg">
+        <div class="content">Drafting 🥹</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">well then what are we wsiting for</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> well then what are we wsiting for</div>
+        <div class="content">Thats a good quesguon</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Ricci [S1; S2]</span> u here?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:23 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yes</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:23 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">alrighty</div>
+    </div>
+    <div class="msg">
+        <div class="content">just getting on my pc rn</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/828729689131712552-30574b7aca742fb4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- Void [S1]</span>
+        <span class="username">@vvoidds</span>
+        <span class="timestamp">07/24/2026 01:23 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Larp larp larp sahur</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:25 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">okay</div>
+    </div>
+    <div class="msg">
+        <div class="content">HELLO</div>
+    </div>
+    <div class="msg">
+        <div class="content">im here</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:25 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><video controls preload="metadata" src="https://everest-cdn.xsoul.org/videos/4d7615450b68a065-ZiqH2W1tCOavgdlT.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:25 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">vvoidds</span> Larp larp larp sahur</div>
+        <div class="content">void void void sahur 😂</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:25 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully<br><br>Apple:<br>AK<br><br>Pear:<br>Ricci<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Colin, Dallas, Emp, Francisca, Garret, Maddy, Missouri, Pizzaman, Riley, Snubbs</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">let&#x27;s begin!</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><span class="mention" style="color:#592a2a;background:rgba(89,42,42,0.1)">@Tully</span>, you have the first pick!</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">who&#x27;s joining the <span class="mention" style="background:linear-gradient(90deg,#f685a4, #fac860);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Peach</span> tribe?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I pick.....</div>
+    </div>
+    <div class="msg">
+        <div class="content">Colin</div>
+        <div class="reactions">
+            <span class="reaction">😎 <span class="reaction-count">1</span></span>
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Colin [S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin<br><br>Apple:<br>AK<br><br>Pear:<br>Ricci<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Dallas, Emp, Francisca, Garret, Maddy, Missouri, Pizzaman, Riley, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">next up...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><span class="mention">@ak</span> ohhhhh ohh hohoho 😂 ak is GONE</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">list time</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><em>pulls up list</em></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>Ak</strong> picks...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@- Riley [S2]</span> !</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin<br><br>Apple:<br>AK, Riley<br><br>Pear:<br>Ricci<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Dallas, Emp, Francisca, Garret, Maddy, Missouri, Pizzaman, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">next up...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><span class="mention">@Ricci [S1; S2]</span> !</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">who you picking?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hmmm</div>
+    </div>
+    <div class="msg">
+        <div class="content">I will take… <span class="mention">@Dallas [S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin<br><br>Apple:<br>AK, Riley<br><br>Pear:<br>Ricci, Dallas<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Emp, Francisca, Garret, Maddy, Missouri, Pizzaman, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Dallas joins the Pear tribe!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/828729689131712552-30574b7aca742fb4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- Void [S1]</span>
+        <span class="username">@vvoidds</span>
+        <span class="timestamp">07/24/2026 01:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Don’t be last picked in dodgeball</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">back to you <span class="mention">@Tully  [S1; S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hmmmmmm</div>
+    </div>
+    <div class="msg">
+        <div class="content">🥹</div>
+    </div>
+    <div class="msg">
+        <div class="content">I pick</div>
+    </div>
+    <div class="msg">
+        <div class="content">Francisa</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca<br><br>Apple:<br>AK, Riley<br><br>Pear:<br>Ricci, Dallas<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Emp, Garret, Maddy, Missouri, Pizzaman, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">tully spells her name WRONG..... AWKAWRDDDDDDDDDD</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@☆ StargirlSylvia ☆</span> joins the Peach tribe!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">next up is Ak again....</div>
+    </div>
+    <div class="msg">
+        <div class="content">who is still asleep.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Ak picks...</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1462585110900768828.gif?size=48" alt=":honkmimimimi:" title=":honkmimimimi:"> &lt; ak rn</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Emp [S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca<br><br>Apple:<br>AK, Riley, Emp<br><br>Pear:<br>Ricci, Dallas<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Garret, Maddy, Missouri, Pizzaman, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">back to you <span class="mention">@Ricci [S1; S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Perry the platypus</span> welcome to pear nation</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca<br><br>Apple:<br>AK, Riley, Emp<br><br>Pear:<br>Ricci, Dallas, Missouri<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Garret, Maddy, Pizzaman, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Missouri joins the Pear tribe!</div>
+    </div>
+    <div class="msg">
+        <div class="content">next up... <span class="mention">@Tully  [S1; S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Pizzaman!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Pizzaman [S2]</span> joins the Peach tribe!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman<br><br>Apple:<br>AK, Riley, Emp<br><br>Pear:<br>Ricci, Dallas, Missouri<br><br>Undrafted:<br>Ale, Carlee, Cassandra, Cherrio, Chris O., Garret, Maddy, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">back to ak...</div>
+    </div>
+    <div class="msg">
+        <div class="content">who picks...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Cassandra Fish [S2]</span>!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman<br><br>Apple:<br>AK, Riley, Emp, Cassandra<br><br>Pear:<br>Ricci, Dallas, Missouri<br><br>Undrafted:<br>Ale, Carlee, Cherrio, Chris O., Garret, Maddy, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">back to you <span class="mention">@Ricci [S1; S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Chris O. [S2]</span> Wake up, you’ve been drafted 🪖</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Chris O. joins the Pear tribe!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman<br><br>Apple:<br>AK, Riley, Emp, Cassandra<br><br>Pear:<br>Ricci, Dallas, Missouri, Chris O.<br><br>Undrafted:<br>Ale, Carlee, Cherrio, Garret, Maddy, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">youuuure up <span class="mention">@Tully  [S1; S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">CARLEE</div>
+        <div class="reactions">
+            <span class="reaction">🎉 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman, Carlee<br><br>Apple:<br>AK, Riley, Emp, Cassandra<br><br>Pear:<br>Ricci, Dallas, Missouri, Chris O.<br><br>Undrafted:<br>Ale, Cherrio, Garret, Maddy, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Carlee [S2]</span> joins the Peach tribe!</div>
+    </div>
+    <div class="msg">
+        <div class="content">down to our last 5...</div>
+    </div>
+    <div class="msg">
+        <div class="content">who will be picked last for dodgeball 🥺</div>
+    </div>
+    <div class="msg">
+        <div class="content">let&#x27;s see what ak has to say!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Ak picks....</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Ale [S2👑]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:34 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman, Carlee<br><br>Apple:<br>AK, Riley, Emp, Cassandra, Ale<br><br>Pear:<br>Ricci, Dallas, Missouri, Chris O.<br><br>Undrafted: Cherrio, Garret, Maddy, Snubbs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:34 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">back to you <span class="mention">@Ricci [S1; S2]</span> !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:35 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Snubbs [S2]</span> is a pear now!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:35 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Snubbs joins the Pear tribe!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:35 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman, Carlee<br><br>Apple:<br>AK, Riley, Emp, Cassandra, Ale<br><br>Pear:<br>Ricci, Dallas, Missouri, Chris O., Snubbs<br><br>Undrafted: Cherrio, Garret, Maddy</div>
+    </div>
+    <div class="msg">
+        <div class="content">final round of drafting!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:35 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">back to you <span class="mention">@Tully  [S1; S2]</span> for the final round!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Im tossing up between three people rigjt now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">who might those 3 be?</div>
+    </div>
+    <div class="msg">
+        <div class="content">🤔</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yeah let us know</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">07/24/2026 01:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I think we will go with</div>
+    </div>
+    <div class="msg">
+        <div class="content">Garret</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Garrett [S2]</span> finishes off the Peach tribe!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Current tribe tracker:<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman, Carlee, Garret<br><br>Apple:<br>AK, Riley, Emp, Cassandra, Ale<br><br>Pear:<br>Ricci, Dallas, Missouri, Chris O., Snubbs<br><br>Undrafted: Cherrio, Maddy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Wait hiiiii</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">dont worry man i know your name has 2 t&#x27;s</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">i recognize you</div>
+    </div>
+    <div class="msg">
+        <div class="content">ak is BACK</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hi ak</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Omg i’m a little late i’m outside now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">you have 2 options</div>
+    </div>
+    <div class="msg">
+        <div class="content">pick one</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">OH</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ak youre back just in time for your last draft</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/695664345832620062-d50d8eb356efc34b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">General Purpose ORG bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@General Purpose ORG bot#3432</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Out of <strong>[cherrio, maddy]</strong>, I choose <strong>maddy</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1300932188497379390-f9540d9f84637b48.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">ak</span>
+        <span class="username">@mvlancholia</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Let’s go with maddy.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">CVRYING</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Maddy [S2]</span> finishes off the Apple tribe!</div>
+    </div>
+    <div class="msg">
+        <div class="content">now... <span class="mention">@Ricci [S1; S2]</span>!</div>
+    </div>
+    <div class="msg">
+        <div class="content">out of Cherrio and</div>
+    </div>
+    <div class="msg">
+        <div class="content">who&#x27;s finishing the Pear tribe?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/271452328090009601-9410b34c3583b7c4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ricci [S1; S2]</span>
+        <span class="username">@ric5311</span>
+        <span class="timestamp">07/24/2026 01:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">now this is an easy choice</div>
+    </div>
+    <div class="msg">
+        <div class="content">my #1 left on the board</div>
+    </div>
+    <div class="msg">
+        <div class="content">COME ON DOWN</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Cherrio [S2]</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Tribes!<br><br>Peach:<br>Tully, Colin, Francisca, Pizzaman, Carlee, Garret<br><br>Apple:<br>AK, Riley, Emp, Cassandra, Ale, Maddy<br><br>Pear:<br>Ricci, Dallas, Missouri, Chris O., Snubbs, Cherrio</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">And those are your tribes!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">1-1s will soon be made automatically</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">why not right now in fact</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">when they are created, you should see 5 1-1s with your tribe mates!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">eh let me do cast info and then you guys get 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">if there aren&#x27;t 5, then tell us and we&#x27;ll fix it</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">07/24/2026 01:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="embed" style="border-left-color:#3f071e">
+            <div class="embed-title">Apple</div>
+            <div class="embed-fields">
+                <div class="embed-field inline"><div class="embed-field-name">ID</div><div class="embed-field-value">1525498333551001830</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Position</div><div class="embed-field-value">54</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Members</div><div class="embed-field-value">5</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hex Color</div><div class="embed-field-value">#3f071e</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Mentionable</div><div class="embed-field-value">No</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hoisted</div><div class="embed-field-value">No</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thengya</div>
+    </div>
+    <div class="msg">
+        <div class="content">that is not apple coloured</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-c640e78f0a1889ec.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Lemmy</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">07/24/2026 01:41 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">also when can we lock off marooning</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:41 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">be fr</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ilovelemlem</span> also when can we lock off marooning</div>
+        <div class="content">when i feel like it <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1140487154632495155.webp?size=48" alt=":Clueless:" title=":Clueless:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">07/24/2026 01:41 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i think it is</div>
+    </div>
+    <div class="msg">
+        <div class="embed" style="border-left-color:#af1138">
+            <div class="embed-title">Apple</div>
+            <div class="embed-fields">
+                <div class="embed-field inline"><div class="embed-field-name">ID</div><div class="embed-field-value">1525498333551001830</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Position</div><div class="embed-field-value">54</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Members</div><div class="embed-field-value">5</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hex Color</div><div class="embed-field-value">#af1138</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Mentionable</div><div class="embed-field-value">No</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hoisted</div><div class="embed-field-value">No</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/24/2026 01:41 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">tahts better</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">07/24/2026 01:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="embed" style="border-left-color:#f685a4">
+            <div class="embed-title">Peach</div>
+            <div class="embed-fields">
+                <div class="embed-field inline"><div class="embed-field-name">ID</div><div class="embed-field-value">1525497710705115208</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Position</div><div class="embed-field-value">55</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Members</div><div class="embed-field-value">6</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hex Color</div><div class="embed-field-value">#f685a4</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Mentionable</div><div class="embed-field-value">No</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hoisted</div><div class="embed-field-value">No</div></div>
+            </div>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="embed" style="border-left-color:#8affcf">
+            <div class="embed-title">Pear</div>
+            <div class="embed-fields">
+                <div class="embed-field inline"><div class="embed-field-name">ID</div><div class="embed-field-value">1525497181409116180</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Position</div><div class="embed-field-value">56</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Members</div><div class="embed-field-value">6</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hex Color</div><div class="embed-field-value">#8affcf</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Mentionable</div><div class="embed-field-value">No</div></div>
+                <div class="embed-field inline"><div class="embed-field-name">Hoisted</div><div class="embed-field-value">No</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">07/26/2026 04:50 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove public archives</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">07/26/2026 04:50 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> !chmove public archives</div>
+        <div class="content">✅ Successfully moved <span class="mention">#draft-day</span> to the <strong>📚 | Public Archives</strong> category!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 09:52 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove ingame information</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/02/2026 09:52 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> !chmove ingame information</div>
+        <div class="content">✅ Successfully moved <span class="mention">#draft-day</span> to the <strong>🏝️ | In-Game Information</strong> category!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 09:53 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1430750682419302400.webp?size=48" alt=":bubububub:" title=":bubububub:"></div>
+    </div>
+    <div class="msg">
+        <div class="content">Hello everyone once again.</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1333615823553691682.gif?size=48" alt=":Wave:" title=":Wave:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">We wanted to take a different approach to your Everest getaway package and have these tribes be once again formed by <strong>you, the players.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">There are captains once again, but this time they are not just the returnees!</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="subtext">*except one was but not <u>because</u> he was a returnee.</span></div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">Please welcome in your new captains...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="color:#592a2a;background:rgba(89,42,42,0.1)">@Tully</span></div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="color:#f4554f;background:rgba(244,85,79,0.1)">@Chris O.</span></div>
+    </div>
+    <div class="msg">
+        <div class="content">who now can both speak here.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 09:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 09:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">tully are you ready to draft a second tribe</div>
+    </div>
+    <div class="msg">
+        <div class="content">will it be better than the first one</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/1455985841305550900.webp?size=160" alt="….gulp" title="….gulp" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 09:56 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">it will be the best tribe that has ever tribed</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 09:57 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i see</div>
+    </div>
+    <div class="msg">
+        <div class="content">WELL</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 09:57 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Im getting stage freight wheres chris</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 09:57 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">you are not first pick this time around it is actually <span class="mention">@Chris O. [S2]</span>!!!! since he got 1st in the competition</div>
+    </div>
+    <div class="msg">
+        <div class="content">you have <strong>two minutes</strong> to make your first selection or it will be #1 on your list</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>Chris O.&#x27;s</strong> first pick was...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Perry the platypus</span>!</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>Tully</strong> picks next and has two minutes</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:01 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hmmmm</div>
+    </div>
+    <div class="msg">
+        <div class="content">I think</div>
+    </div>
+    <div class="msg">
+        <div class="content">Garrett</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Garrett [S2]</span> is on #TeamTully</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">Since <strong>Chris</strong> is not here we will use the list to pick for him.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Dallas [S2]</span> is on #TeamChris</div>
+    </div>
+    <div class="msg">
+        <div class="content">back to <strong>Tully!</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hiiii</div>
+    </div>
+    <div class="msg">
+        <div class="content">Carlee!</div>
+        <div class="reactions">
+            <span class="reaction">🎉 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:04 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Carlee [S2]</span> is on #TeamTully</div>
+    </div>
+    <div class="msg">
+        <div class="content">and <span class="mention">@Dallas [S2]</span> is on #TeamChrisO</div>
+    </div>
+    <div class="msg">
+        <div class="content">back to <strong>Tully</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:05 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> and <span class="mention">@Dallas [S2]</span> is on #TeamChrisO</div>
+        <div class="content">You said dallas twice</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1378669679878606941.webp?size=48" alt=":cassiesmile:" title=":cassiesmile:"> <span class="reaction-count">2</span></span>
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:05 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">no shot 💀</div>
+    </div>
+    <div class="msg">
+        <div class="content">let me lock in</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">it appears i have made a mistake</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1268706582527479890.gif?size=48" alt=":se_sideeye:" title=":se_sideeye:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> <span class="mention">@Dallas [S2]</span> is on #TeamChris</div>
+        <div class="content"><strong>Carlee</strong> was actually Chris&#x27; pick here i dont know how i managed to fuck that one up 😭</div>
+        <div class="reactions">
+            <span class="reaction">🎉 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">so <span class="mention">@Tully  [S1; S2]</span> you must pick someone other than carlee.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Francisca</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:09 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">To avoid confusion, here is what the draft <em>properly</em> looks like right now 😭</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/8b68d6295e986329-image.webp" alt="image.png" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content">well not for long because now <strong>Dallas</strong> is officially on chris&#x27; team and it is back to <span class="mention">@Tully  [S1; S2]</span> once again</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Ricci</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">and <strong>Chris O.</strong> picks...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Ale [S2👑]</span></div>
+    </div>
+    <div class="msg">
+        <div class="content">back to you, <span class="mention">@Tully  [S1; S2]</span></div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/7a64311e8d52782b-image.webp" alt="image.png" loading="lazy"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Snubbs !!!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">and <strong>Chris O.</strong> has picked <span class="mention">@Cassandra Fish [S2]</span>.</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/c5d4d684e17cc311-image.webp" alt="image.png" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1268706582527479890.gif?size=48" alt=":se_sideeye:" title=":se_sideeye:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Tully  [S1; S2]</span> has three more picks</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Emp!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:15 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">and <strong>Chris O.</strong> drafts <span class="mention">@- Riley [S2]</span>.</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/16697a1aef3a1426-image.webp" alt="image.png" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026321558765589.webp?size=48" alt=":riley:" title=":riley:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Tully  [S1; S2]</span> second-to last pick</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:15 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">A.K!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">oh wait and thats everyone</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">2</span></span>
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">😹</div>
+    </div>
+    <div class="msg">
+        <div class="content">can you tell im lowkey stupid</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1332478926186086480.gif?size=48" alt=":catyes:" title=":catyes:"> <span class="reaction-count">1</span></span>
+            <span class="reaction">🫂 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/828729689131712552-30574b7aca742fb4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- Void [S1]</span>
+        <span class="username">@vvoidds</span>
+        <span class="timestamp">08/02/2026 10:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I don’t think it’s lowkey</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1378669679878606941.webp?size=48" alt=":cassiesmile:" title=":cassiesmile:"> <span class="reaction-count">1</span></span>
+            <span class="reaction">💛 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-38fd4e9677b24c63.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- big T</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">08/02/2026 10:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">high key for sure</div>
+    </div>
+    <div class="msg">
+        <div class="content">high key excited to announce that...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Chris O. [S2]</span>, <span class="mention">@Perry the platypus</span>, <span class="mention">@Carlee [S2]</span>, <span class="mention">@Dallas [S2]</span>, <span class="mention">@Ale [S2👑]</span>, <span class="mention">@Cassandra Fish [S2]</span> and <span class="mention">@- Riley [S2]</span> are on the <span class="mention" style="background:linear-gradient(90deg,#c06666, #ff6868);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Cherry</span> tribe!</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530587904680661033.webp?size=48" alt=":don:" title=":don:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">And <span class="mention">@Tully  [S1; S2]</span>, <span class="mention">@Garrett [S2]</span>, <span class="mention">@☆ StargirlSylvia ☆</span>, <span class="mention">@Ricci [S1; S2]</span>, <span class="mention">@Snubbs [S2]</span>, <span class="mention">@Emp [S2]</span> and <span class="mention">@ak</span> are on the <span class="mention" style="background:linear-gradient(90deg,#fdaf6a, #f6cd6e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Orange</span> tribe.</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-046601f8afa1c1ea.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Tully  [S1; S2]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">08/02/2026 10:18 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Orange like the sun... ❤️</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/03/2026 04:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove public archives</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/03/2026 04:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> !chmove public archives</div>
+        <div class="content">✅ Successfully moved <span class="mention">#draft-day</span> to the <strong>📚 | Public Archives</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

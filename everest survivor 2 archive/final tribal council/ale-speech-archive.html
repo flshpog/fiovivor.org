@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#ale-speech — Everest Survivor S2 | New Horizons</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>ale-speech</h1>
+    <p class="meta">Everest Survivor S2 | New Horizons &middot; 54 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/27/2026 05:31 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://tenor.com/view/dress-monkey-3amskypecall-gif-2221749212536475811</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/f062e51992cd3838-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/28/2026 01:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">OPENER</strong><br>Before I start this speech I just want to say that I GENUINELY enjoyed playing on this season so much. I can truly say that I&#x27;m leaving this season liking every single person I competed with. Even to the people I didn&#x27;t get the chance to work with this season it was genuinely so much fun to play with all of you. Thank you so much to prod for putting so much effort into this season it was so much fun !! Lastly, thank you so much to all my apples and Carlee for riding this game out with me I wouldn&#x27;t have done it any other way ❤️</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">PREMERGE</strong><br>From day one I knew I had to start building strong connections. I needed to make sure that I made connections that could last me throughout the entire game. I immediately got to work, bonding with all of my tribemates on any little thing that I could grasp. I got fairly close to everyone pretty quickly except for Maddy. Even before we lost the first challenge I worked to single Maddy out to everyone else so we could have a quick and easy first vote. We ended up winning both of the next immunities and throughout those 2 free rounds I kept up the work on my social game, making sure I was close to everyone on my tribe.<br><br><strong style="font-size:1.5em">MAYDAY</strong><br>During Mayday I knew I didn&#x27;t want my first impression on all these new players to be me making waves so I decided to lie low. I made an immediate ally in Snubbs and worked on getting info out of him. I collected that he was at the bottom of the pear tribe and I decided on pulling him as my own number apart from the apples.  During tribal only 2 names popped up, those being Carlee and Cherrio. I could&#x27;ve easily stayed out of this vote like a lot of others but instead I saw an amazing opportunity. I roped Snubbs in on the Cherrio vote and let Carlee know that I would be voting with her. This action resulted in what would be one of my strongest connections in the game. I also told a little lie that I didn&#x27;t vote when I did in fact vote for Cherrio. This took any possible heat off me with the Pears and seemingly placed it on Snubbs.<br><br><strong style="font-size:1.5em">SWAP</strong><br>Fresh off of Mayday my tribe lost the immunity challenge and I immediately knew I wanted to use this opportunity to make a big move. Going into swap I knew that Missouri, Dallas and Chris were a trio so I wanted to make a move on one of them. I used the fact that the Pears were pushing her name last round and again this round to rope Carlee in to working with me and my apples. While the heat initially was all on Dallas I was able to shift the focus on to Chris O as my target. I made a plan for Cassie to push Dallas as our fake target to Missouri (In case they used any advantages) and then I went to Missouri and told him I probably planned on staying out of the vote again. My planned blindside went off without a hitch. I made SURE that I made absolutely no promises to the Pears this week while knowing that Riley was lying to them the whole time, allowing her to take the heat and leading the Pears to view the apples as sort of &quot;Riley and friends&quot; to minimize my threat level despite this being my plan.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">EARLY MERGE</strong><br>Going into merge I had a few worries. My main concerns were Ak and Carlee. These were both people I had strong connections with but I wasn&#x27;t sure if they&#x27;d keep working with me. I KNEW that I had to get these two 100% on my side if I wanted to make it to the end so I got to work. I found out through Snubbs that he and the rest of his swap tribe had just blindsided Ak so I used this as leverage to make SURE Ak would be back on our side. Before tribal it looked like the vote was between Ak and Garrett which helped me even more because if we pulled it off it would look like we saved Ak which would even further make sure he was on my side. Tribal comes around and. . . ? Snubbs is voted off 7-4. <br><br>Going into the next round I was <strong>SPOOKED</strong>. Cassie, Riley, Ak, Snubbs and I had all just been blindsided and I knew something sinister was going on. My intuition told me that either I or Riley were 100% going to be targeted by the other side and I was paranoid AS FUCK that it was going to be me. I initially planned to take out Dallas but somehow that plan leaked and I had to reformulate. I knew that from our actions in previous weeks if it leaked that we were going for Dallas the others were very likely to assume that our actual target was Missouri instead so I pitched to Riley, Ak and Cassie to go for TULLY. This was very well received and they were all on board but I didn&#x27;t believe we had the numbers to pull this off so I took a big risk and decided to try to rope in Carlee. I broke down to Carlee about how I was scared this week and told her that I knew she was probably working with the Peaches and that I knew for a fact that Tully and Garrett were working with the Pear trio. I made it clear that I wasn&#x27;t asking her to vote WITH me but just to not vote AGAINST me and to my surprise she was actually willing to completely jump ship on the Peaches and vote with me. The connections I worked so hard on had finally started to pay off. I was even able to convince both Ak and Carlee to buy advantages from the shop and use them at a tribal where neither of them were in danger. With all of this I was able to NARROWWLLYYYY save myself from getting eliminated. <br><br>Going into the next week I did the unthinkable I. . . won a challenge. . .? I WAS IMMUNE! After almost getting voted off the last week I COULD FINALLY BREATHE. During this week I did a lot of work socially and I think Missouri and Dallas finally. . . started to like me. . .? A lot of things happened this week before the vote so I kinda knew one of us was TOAST. I saw the writing on the wall when Riley made an alliance chat with our alliance + Garrett and then Ak being shady asf in our 1-1&#x27;s after sealed her fate and I knew she was going home. I was backed into a corner because we had all exhausted our advantages and bells last week so I knew I would need to reformulate after she left.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">MID MERGE</strong><br><strong>SOMEBODY LIED.</strong> The votes didn&#x27;t add up. It became clear to me that one of the worst possible scenarios came true. AK FLIPPED. I chewed the fuck out of him in our 1-1&#x27;s right after and made him feel like he would NEVER win after this move. I never had any real intention of going against Ak but I knew I needed to tough love him back on my side and it worked because he spent most of this week making it up to me. While RIley&#x27;s elimination was probably the biggest hit to my game so far it opened my eyes to a CLEAR path to the end and made me play a more dominant role in my alliance which got my target out EACH ROUND after this. The auction was a GREAT challenge for me and it allowed me to basically guarantee myself 3 weeks of immunity. (Winning f9, bluffing shovel use f8 and then finally using it f7) A LOT of antics went down during the challenge that basically confirmed that I would NEVER be able to trust Ricci however, he won immunity so with my main target immune I had to THINK! After the challenge ended Garrett came to me and informed me that Dallas was trying to pin the vote on Carlee and I did NOT believe his ass for a second! After seeing the other side viciously beat and kill Riley right in front of me last week I knew I could NOT be the next one to make the fatal mistake of trusting Garrett. With info from Ak I realized Dallas actually got to keep his rod after it getting blocked so I told Cassie to use her golden slingshot on him just in case. So at the time I knew this:<br>1. The vote was <strong>NOT</strong> on Carlee. GARRETT LIED <strong>AGAIN.</strong> (Assumedly)<br>2. The vote was <strong>NOT</strong> on me. Dallas and Missouri came into my 1-1&#x27;s to intimidate me into using my Golden Shovel at the same time so I knew they weren&#x27;t going to try something crazy on me.<br>AND THEN. . . AK DID SOMETHING STUPID. He threw Garrett utb to me and I told Garrett. After this Garrett was VERY clearly upset with Ak as it made a bit of a mess with Garrett, Ricci, Ak and I. This led me to make the correct assumption that Ak was the real target this week. So when tribal rolled around and Cassie&#x27;s slingshot hit I tried to push for her to play it on Ak without making it look like it was MY move and it worked!<br><br>After Garrett&#x27;s failed blindside he gunned for the immunity which worked in my favor because he was never on my radar this week and this allowed me to FINALLY go for my main target Ricci. After last week my four of Ak, Cassie, Carlee and myself were all pretty locked in so when I mentioned that I wanted Ricci gone there wasn&#x27;t any contention on it. The only problem left was actually getting us there especially because there were still advantages that were not accounted for. After deducing that Cassie was likely the target this week (She hadn&#x27;t spoken to some people in 3 days LMFAOOOOOOOOO) she came to me with a plan. We decided to use her slingshot and my shovel to basically ensure that BOTH of us would be making it past this week (I would be making it past because no one would vote me knowing I had the shovel and with the rod she&#x27;d actually get to use it making her safe!)</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">Late Merge</strong><br>This week things got a little interesting. Likely knowing that his days were numbered, Garrett came to me with some information. He basically stated that Carlee and Missouri were a secret duo and he suggested that we vote Carlee out this week. Now admittedly, this almost worked. When I started to connect the dots it made sooo much sense. I started to think about how Carlee was the original target during the Dallas vote and now with the information that Missouri had moved the target off of her multiple times I was spooked. Garrett also told me he had a shovel and intended to use it no matter what. I floated the idea of possibly voting Carlee to Ak but I still wasn&#x27;t sure. After bringing myself back down to earth knowing that we had the numbers to send Missouri home next week regardless I decided to use what Garrett told me as leverage to make SURE Carlee voted for Garrett (We had 4 votes -2 with Garrett&#x27;s shovel so I couldn&#x27;t risk a 2-2-1 if she voted with Missouri) and it worked.<br><br>The Missouri vote was pretty cut and dried. After he lost the immunity he knew his time was up and didn&#x27;t do a whole lot of fighting (at least not with me)<br><br>Going into final 4 I WON INDIVIDUAL IMMUNITY AGAIN 😍. I was in my ideal spot here so I knew I wouldn&#x27;t have been at risk regardless but it was so nice to be able to breathe this round knowing I was making ftc regardless. My decision to vote Carlee had many different factors. First off it wouldn&#x27;t have sat right with me to take Ak all this way just to not even give him a chance at fighting for it. Second when thinking about their games as a whole I knew the ins and outs of Ak and Cassie&#x27;s games and I felt confident about sitting next to them in the FTC.</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">CLOSER</strong><br>This season I played the fuck out of the social and strategic games. There were only TWO times in this entire game that I didn&#x27;t vote in the majority and I took both of those hits as a way to strengthen my game. I used every move I made to strengthen my connections with my allies and used every connection I had to my advantage. During the final 10 I had my allies willing to use all of their advantages just to save ME. During the final 9 I made SURE that I was the #1 of every single one of my allies so that in the event of a flip I made sure that <strong>I</strong> was safe above all else and I was NEVER a target after the final 10 tribal (Or before that). I positioned myself so well that I think that even in the event that I lost one or two allies I genuinely think I still have a clear path to the ftc. I was the MAIN planner on my side so much so that even if it wasn&#x27;t MY advantage I made SURE it was played the exact way I wanted it to. All of this led me HERE to the FTC where I am humbly asking all of you to look at my game for what it is. I can tell you without a doubt that sitting here in the final 3, I KNOW I played the best game.</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/28/2026 02:35 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Just woke up! Will get around to answering new questions in a bit ❤️</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 12:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Fish is so weird</div>
+        <div class="reactions">
+            <span class="reaction">✅ <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Maddy [S2]</span> Hi</div>
+        <div class="reactions">
+            <span class="reaction">🇭 <span class="reaction-count">1</span></span>
+            <span class="reaction">🇮 <span class="reaction-count">1</span></span>
+            <span class="reaction">💖 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:01 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">adoreale</span> Fish is so weird</div>
+        <div class="content">who are youuuu</div>
+        <div class="reactions">
+            <span class="reaction">😮 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">crazy to think we was sisters day 1.</div>
+    </div>
+    <div class="msg">
+        <div class="content">I DONT EVEN KNOW YOU.</div>
+        <div class="reactions">
+            <span class="reaction">😲 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Ur so weird and mean I cant</div>
+    </div>
+    <div class="msg">
+        <div class="content">Get out my face</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i&#x27;m literally not mean at all. u started this rivalry im just continuing it.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">U literally are horribly mesn</div>
+    </div>
+    <div class="msg">
+        <div class="content">U hugged cassie knowing im abt to lose 8-0-0</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i am not mean.</div>
+    </div>
+    <div class="msg">
+        <div class="content">who getting the 8?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Cassie of course thats why u hugged her</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="forwarded">
+            <div class="forwarded-header">Forwarded Message</div>
+            <div class="content">i am not implying anything</div>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">whats thjs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I cant even read that</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Cassandra Fish [S2]</span> yes absolutely</div>
+        <div class="reactions">
+            <span class="reaction">💗 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@- everyone&#x27;s favorite host</span> u being biased and im not ur fav umm …</div>
+    </div>
+    <div class="msg">
+        <div class="content">Like i cant</div>
+    </div>
+    <div class="msg">
+        <div class="content">Everyone would get a hug except me</div>
+    </div>
+    <div class="msg">
+        <div class="content">Ugly ass fraud ass prod</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">then leave.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-f64ead0cd93fc416.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- everyone&#x27;s favorite host</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ak invited me in to his conf before i was prod</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">WAIT DONT.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Shut up frauds</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">DOMT LEAVE.</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I will leave.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">GET THE FUCK OUT MY FACE.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@- unbiased orgs</span></div>
+        <div class="attachment"><video controls preload="metadata" src="https://everest-cdn.xsoul.org/videos/2f49b3f8f9c1d2c3-v15044gf0000d9pv1snog65o43937o3g.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="subtext">BACKS UP.</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">DIE BITCH CANCER YOU YOU DEMONIC BITCH</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:07 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Omar [S1]</span></div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><video controls preload="metadata" src="https://everest-cdn.xsoul.org/videos/c8d1ca476c034703-v14044g50000d8vplh7og65iii0gfbn0.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:07 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Omar [S1]</span> still so burned you didnt apply for this season I cant where were my premades</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">https://tenor.com/view/stucksixteen-monkey-monkey-phone-gif-26854765</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/5100dc63d3e9c1bc-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:08 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">adoreale</span> <span class="mention">@Omar [S1]</span> still so burned you didnt apply for this season I cant wh...</div>
+        <div class="content">BACK THE FUCK UP. DATS MY SISTER U DRAGGING.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 01:09 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">BITCH UGH STOP TRYING TO STEAL MY SISTERS.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">WE DONT KNOW YOU.</strong></div>
+        <div class="reactions">
+            <span class="reaction">💛 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/29/2026 04:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">adoreale</span> <strong style="font-size:1.5em">OPENER</strong><br>Before I start this speech I just want to say that I GENUINELY enjoyed ...</div>
+        <div class="content">THE SPEECH</div>
+    </div>
+    <div class="msg">
+        <div class="content">OF A</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">WINNER</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://gif.fxtwitter.com/tweet_video/Dyx4ZOzWkAA0Hat.webp</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/b4f15c8eb072f984-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

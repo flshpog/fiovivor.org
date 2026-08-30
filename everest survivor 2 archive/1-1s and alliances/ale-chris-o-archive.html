@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#ale-chris-o — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>ale-chris-o</h1>
+    <p class="meta">Everest &middot; 60 messages archived</p>
+    <p class="topic">Ale, Chris O.</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/02/2026 10:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🤝 <strong>Welcome!</strong><br><br>This is a private 1-on-1 for:<br>• <span class="mention" style="color:#ef73b1;background:rgba(239,115,177,0.1)">@Ale</span><br>• <span class="mention" style="color:#f4554f;background:rgba(244,85,79,0.1)">@Chris O.</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/02/2026 10:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hey....</div>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026426844319896.webp?size=48" alt=":chris_o:" title=":chris_o:"> ❤️ <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026358388953230.webp?size=48" alt=":ale:" title=":ale:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/02/2026 11:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">OMFGGGGG</div>
+    </div>
+    <div class="msg">
+        <div class="content">our showmance can finally start</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/02/2026 11:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yuhhhh</div>
+    </div>
+    <div class="msg">
+        <div class="content">it was truly meant to be for us</div>
+    </div>
+    <div class="msg">
+        <div class="content">i couldnt stand being apart from you any longer 🥺</div>
+    </div>
+    <div class="msg">
+        <div class="content">and i thought to myself, I must get to know you before my untimely demise</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/02/2026 11:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://gif.fxtwitter.com/tweet_video/G49YO9BWQAA_rL7.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/9ddcb5044776c8fd-embed-image.gif" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/02/2026 11:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">enough of all that tho lmao</div>
+    </div>
+    <div class="msg">
+        <div class="content">howve you been doin Ale ?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/02/2026 11:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Im doing pretty goooddd wbu?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/02/2026 11:35 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">doin great, just finished up a dnd session with my buddies and now were playin magic</div>
+    </div>
+    <div class="msg">
+        <div class="content">but i do cooler shit than that i promise 🤣</div>
+    </div>
+    <div class="msg">
+        <div class="content">sundays our group game day</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/02/2026 11:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">LMFAOOOO</div>
+    </div>
+    <div class="msg">
+        <div class="content">Thats so fun omg Ive always wanted to get into dnd</div>
+    </div>
+    <div class="msg">
+        <div class="content">It seems fun</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/02/2026 11:49 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">oh hell ya it is</div>
+    </div>
+    <div class="msg">
+        <div class="content">well</div>
+    </div>
+    <div class="msg">
+        <div class="content">its a lot of fun playing but its so stressful being the dm, which is what i do 😵‍💫</div>
+    </div>
+    <div class="msg">
+        <div class="content">but its a grand old time hosting i usually have no prep notes before a session and i make everything up right before we start</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/03/2026 03:56 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove cherry 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/03/2026 03:56 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> !chmove cherry 1-1s</div>
+        <div class="content">✅ Successfully moved <span class="mention">#ale-chris-o</span> to the <strong>🍒 | Cherry 1-1s</strong> category!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/03/2026 08:52 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yooo</div>
+    </div>
+    <div class="msg">
+        <div class="content">what it do !</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 12:05 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hiii</div>
+    </div>
+    <div class="msg">
+        <div class="content">I just woke up loool</div>
+    </div>
+    <div class="msg">
+        <div class="content">Wbu?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 12:11 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ive been chudding out for the last 4 hours in my bed</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 12:14 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Fully abt to do that as well</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/1363682223538049077/1415141628619784245/968DEC4B-F07E-4179-8719-C3295CA89EA6.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/754d9178c433a806-embed-image.gif" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content">How r u feeling abt the tribal 😵‍💫</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 12:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i feel terrible idt this works out for any of us!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Ughhh I rlly thought we might win this sucks so bad</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 12:24 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i think they just hit with a lot more ppl on the high pts ones</div>
+    </div>
+    <div class="msg">
+        <div class="content">you carried us tho so dont sweat it</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 01:46 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hiiii</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 02:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hellooooo</div>
+    </div>
+    <div class="msg">
+        <div class="content">how we doin?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 02:58 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">amazzzingggg wbuu</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 03:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">doin good just at twerk</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 04:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">wait that was so bland of me</div>
+    </div>
+    <div class="msg">
+        <div class="content">doing good im just fighting clients at work because theyre soooo incompetent and they have no idea what theyre doin even tho everytime i say the same shit when theres a problem, i cant stand boomers man</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 08:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">LMAOOOO</div>
+    </div>
+    <div class="msg">
+        <div class="content">I would actually die omg</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 09:21 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">its terrible sometimes</div>
+    </div>
+    <div class="msg">
+        <div class="content">but we get through the day</div>
+    </div>
+    <div class="msg">
+        <div class="content">you got any ideas for the vote?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 09:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I&#x27;ve heard carlee and dallas but I think I might just stay out of the vote ngl</div>
+    </div>
+    <div class="msg">
+        <div class="content">wbu what do u think</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 09:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">im gonna have to go carlee here</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/152242644775469058-33eb942e8fbdedd9.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Ale [S2👑]</span>
+        <span class="username">@adoreale</span>
+        <span class="timestamp">08/04/2026 09:42 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yeahhh</div>
+    </div>
+    <div class="msg">
+        <div class="content">missouri was telling me abt the whole snubbs situation so I get why</div>
+    </div>
+    <div class="msg">
+        <div class="content">I just dont have a super big preference on which goes here</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/294314259012124673-87eea7294ae0209d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#209244, #a7cd6a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">Chris O. [S2]</span>
+        <span class="username">@chriso.</span>
+        <span class="timestamp">08/04/2026 09:45 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ahh okok</div>
+    </div>
+    <div class="msg">
+        <div class="content">im glad it can work out for the rest of us</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- fishm</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/07/2026 12:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove to be archived 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/07/2026 12:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> !chmove to be archived 1-1s</div>
+        <div class="content">✅ Successfully moved <span class="mention">#ale-chris-o</span> to the <strong>❌ | To Be Archived 1-1s</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

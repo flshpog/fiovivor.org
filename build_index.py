@@ -27,16 +27,21 @@ PRETTY = {
     "confessionals": "Confessionals",
     "alliances": "Alliances",
     "1-1s": "1-on-1s",
+    "1-1s and alliances": "1-1s & Alliances",
     "tribe chat archives": "Tribe Chats",
     "lodge twist archives": "Lodge Twist",
     "other channels": "Other Channels",
+    "final tribal council": "Final Tribal Council",
+    "nook auction": "Nook Auction",
+    "the mountaintop": "The Mountaintop",
     "audience seating": "Audience Seating",
     "submissions": "Submissions",
 }
 
 EVEREST_ORDER = [
-    "in-game info", "tribal councils", "confessionals", "alliances",
-    "1-1s", "tribe chat archives", "lodge twist archives", "other channels",
+    "in-game info", "tribal councils", "final tribal council", "confessionals",
+    "1-1s and alliances", "tribe chat archives", "nook auction",
+    "lodge twist archives", "the mountaintop", "other channels",
 ]
 FIO_ORDER = [
     "in-game information", "tribal councils", "confessionals",
@@ -127,7 +132,28 @@ def season_categories(base_folder, order):
 
 # ---- assemble the two worlds -------------------------------------------------
 
-everest_cats, everest_total = season_categories("everest survivor 1 archive", EVEREST_ORDER)
+everest_worlds = []
+for sid, folder, label in [
+    ("everest-s1", "everest survivor 1 archive", "Season 1 &middot; Twin Peaks"),
+    ("everest-s2", "everest survivor 2 archive", "Season 2 &middot; New Horizons"),
+]:
+    cats, total = season_categories(folder, EVEREST_ORDER)
+    everest_worlds.append((sid, label, total, cats))
+
+EVEREST_DEFAULT = "everest-s2"
+everest_total = sum(t for _, _, t, _ in everest_worlds)
+
+everest_tabs, everest_panels = [], []
+for sid, label, total, cats in everest_worlds:
+    active = " active" if sid == EVEREST_DEFAULT else ""
+    everest_tabs.append(
+        f'<button class="tab{active}" data-eseason="{sid}">{label}</button>'
+    )
+    everest_panels.append(
+        f'          <div class="season{active}" id="{sid}">\n{cats}\n          </div>'
+    )
+everest_tabs_html = "\n            ".join(everest_tabs)
+everest_panels_html = "\n".join(everest_panels)
 
 fio_worlds = []
 for sid, folder, label in [
@@ -228,16 +254,19 @@ a{color:inherit;text-decoration:none}
 .tagline{max-width:min(640px,calc(100vw - 3rem));color:#cdd9ee;font-size:1.12rem;line-height:1.6;margin-top:1.7rem;
   animation:fade 1s .5s both}
 .season-tag{margin-top:1.5rem;display:inline-flex;align-items:center;gap:.6rem;
-  font-weight:700;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--snow);border:1px solid var(--line);border-radius:100px;padding:.5rem 1.1rem;
+  font-weight:700;font-size:.95rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--snow);border:1px solid var(--line);border-radius:100px;padding:.65rem 1.5rem;
   background:rgba(10,17,32,.5);animation:fade 1s .7s both}
 .season-tag b{color:var(--accent);font-weight:700}
-.discord-btn{margin-top:1.8rem;display:inline-flex;align-items:center;gap:.55rem;
+.hero-btns{margin-top:1.8rem;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.75rem;
+  animation:fade 1s .85s both}
+.discord-btn,.wiki-btn{display:inline-flex;align-items:center;gap:.55rem;
   background:var(--accent);color:#f4f8ff;font-weight:800;font-size:.98rem;letter-spacing:.01em;
   padding:.8rem 1.5rem;border-radius:100px;transition:transform .18s,filter .18s,box-shadow .18s;
-  box-shadow:0 10px 30px rgba(99,119,152,.34);animation:fade 1s .85s both}
-.discord-btn:hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 14px 38px rgba(99,119,152,.48)}
-.discord-btn svg{width:20px;height:20px;fill:currentColor}
+  box-shadow:0 10px 30px rgba(99,119,152,.34)}
+.discord-btn:hover,.wiki-btn:hover{transform:translateY(-2px);filter:brightness(1.1);
+  box-shadow:0 14px 38px rgba(99,119,152,.48)}
+.discord-btn svg,.wiki-btn svg{width:20px;height:20px;fill:currentColor}
 .scroll-cue{margin-top:auto;padding-top:2.4rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;
   color:var(--muted);font-weight:700;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;
   animation:fade 1s 1s both}
@@ -415,11 +444,17 @@ __FIO_PANELS__
           <div class="kicker">Multiformat Discord ORG</div>
           <h1 class="wordmark">Everest<span class="dot">.</span></h1>
           <p class="tagline">An official spinoff and evolution of the Fiovivor series, built for high quality, competitive, and thoroughly enjoyable ORG experiences.</p>
-          <div class="season-tag">Now casting: <b>Season 2 &middot; New Horizons</b></div>
-          <a class="discord-btn" href="https://discord.gg/everest-org" target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.3 5.3A17.5 17.5 0 0 0 15 4l-.2.4a16 16 0 0 1 3.8 1.2 15 15 0 0 0-12.9 0A16 16 0 0 1 9.5 4.4L9.3 4A17.5 17.5 0 0 0 5 5.3C2.3 9.3 1.6 13.2 2 17a17.7 17.7 0 0 0 5.3 2.7l.4-.6a11.5 11.5 0 0 1-1.8-.9l.4-.3a12.6 12.6 0 0 0 10.8 0l.4.3a11.5 11.5 0 0 1-1.8.9l.4.6A17.7 17.7 0 0 0 22 17c.5-4.5-.7-8.4-2.7-11.7zM8.9 14.8c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8zm6.2 0c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8z"/></svg>
-            Join the Everest server
-          </a>
+          <div class="season-tag">Currently <b>off-season!</b></div>
+          <div class="hero-btns">
+            <a class="discord-btn" href="https://discord.gg/everest-org" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.3 5.3A17.5 17.5 0 0 0 15 4l-.2.4a16 16 0 0 1 3.8 1.2 15 15 0 0 0-12.9 0A16 16 0 0 1 9.5 4.4L9.3 4A17.5 17.5 0 0 0 5 5.3C2.3 9.3 1.6 13.2 2 17a17.7 17.7 0 0 0 5.3 2.7l.4-.6a11.5 11.5 0 0 1-1.8-.9l.4-.3a12.6 12.6 0 0 0 10.8 0l.4.3a11.5 11.5 0 0 1-1.8.9l.4.6A17.7 17.7 0 0 0 22 17c.5-4.5-.7-8.4-2.7-11.7zM8.9 14.8c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8zm6.2 0c-.9 0-1.6-.8-1.6-1.8s.7-1.8 1.6-1.8 1.6.8 1.6 1.8-.7 1.8-1.6 1.8z"/></svg>
+              Join the Everest server!
+            </a>
+            <a class="wiki-btn" href="https://everestpedia.org" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.2C10.4 5 8.3 4.4 6 4.4c-1 0-2 .1-2.9.4-.4.1-.6.4-.6.8v12.1c0 .3.1.5.3.7.2.1.5.2.7.1.8-.2 1.6-.3 2.5-.3 2.1 0 4 .6 5.4 1.7.2.2.6.2.9 0 1.4-1.1 3.3-1.7 5.4-1.7.9 0 1.7.1 2.5.3.3.1.5 0 .7-.1.2-.2.3-.4.3-.7V5.6c0-.4-.2-.7-.6-.8-.9-.3-1.9-.4-2.9-.4-2.3 0-4.4.6-6 1.8zm-1.1 11.5c-1.4-.8-3.1-1.2-4.9-1.2-.6 0-1.2 0-1.8.1V6.2c.6-.1 1.2-.1 1.8-.1 2 0 3.7.5 4.9 1.4v10.2zm10-1.1c-.6-.1-1.2-.1-1.8-.1-1.8 0-3.5.4-4.9 1.2V7.5c1.2-.9 2.9-1.4 4.9-1.4.6 0 1.2 0 1.8.1v10.4z"/></svg>
+              Check out our wiki!
+            </a>
+          </div>
           <a class="scroll-cue" href="#everest-archives">
             <span>Scroll</span>
             <svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
@@ -449,16 +484,13 @@ __FIO_PANELS__
 
         <div class="browser" id="everest-browser">
           <div class="tabs everest-tabs">
-            <button class="tab active" data-eseason="everest-s1">Season 1 &middot; Twin Peaks</button>
-            <button class="tab" data-eseason="soon">Season 2 &middot; New Horizons</button>
+            __EVEREST_TABS__
           </div>
           <div class="search-bar">
             <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-            <input type="text" class="search" placeholder="Search Season 1 channels..." autocomplete="off">
+            <input type="text" class="search" placeholder="Search Everest channels..." autocomplete="off">
           </div>
-          <div class="season active" id="everest-s1">
-__EVEREST_CATS__
-          </div>
+__EVEREST_PANELS__
           <div class="no-results">No channels found.</div>
         </div>
 
@@ -527,10 +559,10 @@ function showToast(msg){
 }
 document.querySelectorAll('.everest-tabs .tab').forEach(function(tab){
   tab.addEventListener('click', function(){
-    if(tab.dataset.eseason === 'soon'){ showToast('Season 2 · New Horizons is coming soon'); return; }
     document.querySelectorAll('.everest-tabs .tab').forEach(function(t){ t.classList.remove('active'); });
     tab.classList.add('active');
-    document.getElementById('everest-s1').classList.add('active');
+    document.querySelectorAll('#everest .season').forEach(function(sn){ sn.classList.remove('active'); });
+    document.getElementById(tab.dataset.eseason).classList.add('active');
   });
 });
 
@@ -642,7 +674,8 @@ document.querySelectorAll('.world').forEach(function(world){
 """
 
 out = (TEMPLATE
-       .replace("__EVEREST_CATS__", everest_cats)
+       .replace("__EVEREST_TABS__", everest_tabs_html)
+       .replace("__EVEREST_PANELS__", everest_panels_html)
        .replace("__EVEREST_TOTAL__", f"{everest_total:,}")
        .replace("__FIO_TABS__", fio_tabs_html)
        .replace("__FIO_PANELS__", fio_panels_html)
@@ -652,5 +685,6 @@ with open(OUT, "w", encoding="utf-8") as f:
     f.write(out)
 
 print(f"Wrote {OUT}")
-print(f"  Everest S1: {everest_total} channels")
+for sid, label, total, _ in everest_worlds:
+    print(f"  {sid}: {total} channels")
 print(f"  Fiovivor:   {fio_grand_total} channels (S8/S9/S10 + Stage)")

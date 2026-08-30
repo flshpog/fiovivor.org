@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#cassandra-fish-speech — Everest Survivor S2 | New Horizons</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>cassandra-fish-speech</h1>
+    <p class="meta">Everest Survivor S2 | New Horizons &middot; 124 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/27/2026 05:31 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">BIIITCH</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/shocked-jewels-sparkles</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/dc43760484a1f1a3-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">i didn’t think i was gonna make it here omg</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 12:52 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">is this even worth it anymore</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/28/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> is this even worth it anymore</div>
+        <div class="content">1 hour bby</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/ugly-rat-22</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/848cd3add3858436-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 01:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">lowk</div>
+    </div>
+    <div class="msg">
+        <div class="content">second half i got lazy</div>
+    </div>
+    <div class="msg">
+        <div class="content">and</div>
+    </div>
+    <div class="msg">
+        <div class="content">my tco bell here</div>
+    </div>
+    <div class="msg">
+        <div class="content">and</div>
+    </div>
+    <div class="msg">
+        <div class="content">mallory evicted</div>
+    </div>
+    <div class="msg">
+        <div class="content">so</div>
+    </div>
+    <div class="msg">
+        <div class="content">motivation lost</div>
+    </div>
+    <div class="msg">
+        <div class="content">so</div>
+    </div>
+    <div class="msg">
+        <div class="content">imma vm 2nd half</div>
+    </div>
+    <div class="msg">
+        <div class="content">oki</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><strong> </strong></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">LADIES OF THE JURY. <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026264025370694.webp?size=48" alt=":cassandra_fish:" title=":cassandra_fish:"></strong><br><div class="blockquote">I stand in front of you all today with humility. <br>I ask that you dispose of any preconceived notions about me or my game before you read my speech. <br>Please understand that everyone has a different point of view, so while you may feel that an action I took was poor for you, it was good for me. <br>There&#x27;s a line between disrespect and disagreement. I have tried to do this with each of you in my actions, so I ask that you reciprocate this in your questioning.<br>I have worked so hard to be here, so a fair perspective would be very appreciated.</div><br><br><div class="blockquote">Now,</div><br><br><div class="blockquote"><em>My name is Cassandra Fish, and this is my story...</em></div></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">Apple tribe! <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1522165510165368962.webp?size=48" alt=":Flower:" title=":Flower:"> </strong><br><div class="blockquote">Hoorah! A starting kick to the season with a (mostly) active tribe and some familiar faces! I hit the bat right off by trying to seem sociable enough to get myself in with some people, but not clocked as someone who &quot;did too much.&quot;<br>After our tribe loss, I felt worried about how I would&#x27;ve fared in both social relations and comp relations, as I only really felt good with Ale, who if it came down to it, wouldn&#x27;t stick his neck out this early in the game.<br>Thankfully, after her unfortunate inactivity and public argument with Ale, Maddy was sent out. This was good, but not good enough. I focused on strengthening my connections enough to try to get me past the new tribals if needed, and it payed off after the swap!</div></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">May Day <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1523610773023363132.webp?size=48" alt=":6_flower:" title=":6_flower:">  </strong><br><div class="blockquote">FINALLY some new people! After being nervous from my previous tribe, I knew I needed to locked INNNN on my connections from the previous tribe. I namely got close with Francisca and good with Carlee and Snubbs! <br>This gave me an amazing safety net to rebound off of if I was (mostly) doomed on Apple. <br>Being able to sit down and relax during May Day was beautiful! I had earned comp bells, made new connections, and reinforced my given connections. Notably, I had used the Carlee v. Cheerio debacle as ways to satisfy many people into thinking they didn&#x27;t need to vote, whole time this was what kept Carlee safe, as more people wanted to send her home in the end!<br>This was very impactful because it set a perfect scenario once we hit the swap, but I&#x27;ll get into that later.<br>My game was still something that was more under the radar, but wasn&#x27;t someone who was an easy knock out anymore.</div></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">Cherry tribe! <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1363442760442581074.webp?size=48" alt=":91_flower:" title=":91_flower:">  </strong><br><div class="blockquote">Drafted onto a tribe with someone I chose to have one-sided beef with... but I had my No-Moles trio with Riley and the newly saved Carlee, so I had hope. An instant loss was <em>very</em> helpful, allowing for my now connections to show their impactfulness.<br>This is namely visable when the Chrallassouri trio had begun to push my name, exposing their trio, but also having my No Moles trio protect me by informing me, pushing Chrallassouri&#x27;s vote onto Carlee, and recruiting Carlee to create a four.<br>My game didn&#x27;t stop this round with social insulation though, me and Riley saw an opportunity to snipe out a bigger threat than what Ale and Carlee preferred, switch the vote from Dallas to Chris O. Chris O going sent out a comp and social threat, and also because of personal one-sided shit (SORRYYY <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1268706582527479890.gif?size=48" alt=":se_sideeye:" title=":se_sideeye:">). This also kept a ridge between Carlee and Ale, to Dallas, thus ensuring a lower chance at either of these two flipping. <br>The vote goes as planned, with Chris O leaving 4-3. My social game being exemplified by the vote flipping from on me, to eventually 0 votes cast against and my target out!</div></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/346050395463876608/1402789111777202318/IMG_3821.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/1838f16adff2bf46-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">MERGE!!! <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1523604968324468759.webp?size=48" alt=":4_flower:" title=":4_flower:">  </strong><br><div class="blockquote">Yay! A new stage in the game and a locked group with the Frat Boy Endings alliance, and taking in a poorly wounded AK to gather a five! <br>Attempting to damage control Missouri, I didn&#x27;t get in the BEST spot with him and his newfound allies, but it prevented me from being a target as I still had underlying relationships that people hadn&#x27;t seen. <br>Snubbs going was a big wake-up call to me, mostly that I wouldn&#x27;t be able to hold a power position for the entire time in the game. But I was just gearing up to take the game by full storm, but it wasn&#x27;t time yet.<br>Tully tribal is where the game REALLY started to heat up, and also when I really began to work behind the scenes. Knowing my name wasn&#x27;t out this tribal, it really gave me a chance to take a seat and let the other people fuck shit up. From Ale&#x27;s poor threat management, to many advantages cancelled out, to a full clear sides situation, I was able to rather sit and watch what happened. Notating groupinhs and bell counts was something that proved VERY useful later down the line (IYKYK). Tully going was something that wasn&#x27;t in my preferences, but being offline all week I can&#x27;t complain too much...but the recovery was what mattered.<br>RIley tribal was actually something that was very very helpful to my game, because</div></div>
+    </div>
+    <div class="msg">
+        <div class="content">oki vm now <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1363201366251798771.webp?size=48" alt=":puppassmile:" title=":puppassmile:"></div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/2088ca5d5b828ef8-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 01:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> when she went home, it was able to shift a lot of perspective on me because I did not vote that tribal. I knew she was going home or I knew she was getting votes and I was content with her going home. So what I had done was I was able to turn it around and more portray it as seeing someone who is now like this lost dog who doesn&#x27;t know what to do. And it was able to conceal both my golden slingshots and my idol that I had at the time because people just saw me as a sheep. people had thought that I was going to be doing things to save her if I was able to, which was not the case. It also allowed me to secure Ale with me in the event that the three of us broke up, I wouldn&#x27;t be the one kicked to the curb. It also allowed me to work on getting AK back and connecting with him more than I had prior. It was able for me to get my positioning in the game better because it was the burning tuli also was not the best for my game as i said earlier but riley going was able like the turning point to where i could get these new connections</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 01:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">Everest Hub Bot#0212</span> ```And when she went home, it was able to shift a lot of perspective on me becau...</div>
+        <div class="content">fuck  not this shit</div>
+    </div>
+    <div class="msg">
+        <div class="content">girl oki</div>
+    </div>
+    <div class="msg">
+        <div class="content">actually now ppl don’t get to hear my speech impediment BIA</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/3e6e30a89cceac9a-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 01:50 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> 8 is where I really took the game by storm. I was talking with Ale and he kept telling me about how Garrett was pissed at AK. And after the heat that AK has been on, I finally decided it was time to make a power move and slingshot the rod that Dallas still had. And allowed me to get into better graces with AK by saving him as well as get out my target for a few rounds. It was specifically powerful because no one had expected it to come from me. I had been able to use my small appearance in the game as a way to easily combat a move. And even though I did that move, people still did not see me as a threat. They saw me as someone who did something, but it wasn&#x27;t my sole decision. I knew that a good chunk of this was going to happen because of small little tidbits of conversation and picking up on social cues. and saving AK was something I was able to play off as more something like, I just did it on impulse. I just did it on shits and giggles. And it was actually something that really, really set me for the rest of the season because one, it made a name for myself. Two, it got AK back on our side because it showed that people were willing to vote for him. And it was able to lock my alliance even more, which is why we made Final Four.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 01:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/5716dd56f6d1132b-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 01:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> 7, I was able to rekindle with my alliance of 4 with Ale, Carly, and AK, and lock that 4 down. However, because of the bell counts, I knew that I was not going to be safe. I still had other people who now saw me as a target, and I was receiving votes. I did have my idol, but I wasn&#x27;t ready to play it just yet. I wanted to take it to 6, where it would have expired, and I could have used it then. So I had devised a plan that I steal Ael&#x27;s shovel and play it on myself. So that way I remain safe, I get rid of the slingshot, so that way all of them are out of the game and I still get to keep my idol to guarantee myself five. Being able to use that slingshot was another way to show to people that like, hey, I&#x27;m here, I know where things are, don&#x27;t count me out. And it was also a way to show that like, I have my allies with me, I can plan accordingly and I can read her room.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 01:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/6ea676c7531be7b6-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 01:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> final six, I had locked in my alliance. They were willing to keep me when the target had once again been on me. And even though I had my idol, it later proved that I didn&#x27;t need it. Garrett was a way smaller target than me at the time. So it was way impressive that I was able to rally these people to still believe that I would have been the best to keep in the game later, even though there were so many people willing to keep me at the time. capitalizing on, I think it was Garrett going for Missouri. I can&#x27;t recall off the top of my head. I have it in my notes somewhere, but I really need to get the speech done. Ale was going to flip and vote out Carly. And that was not something I could have had happened because I needed Carly in this game. She was still one of these people that was loyal to me, whereas Garrett was not. And getting ale to still vote garrett would have like had he not vote garrett carly would have gone i would have looked dumb because i would have lost an ally i didn&#x27;t have an idol anymore and i don&#x27;t think i get here today without that so getting ale to stick true to this alliance was something really really pivotal in changing my game to ensure that i&#x27;m ensure final tribal council it was at this point that i 100 guaranteed my seat here</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 01:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/1461cf51a998eafb-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 01:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> tribal, not really much to say. It was just another significance of, hey, this alliance has gotten me. All the work I put in is continuously paying off because I still have this big target and yet it&#x27;s consistently not me because these allies believe that I am the one who is perfect to their game scenario, even though it wouldn&#x27;t have been in everyone&#x27;s best case scenario to keep me as I still had this big target going on. It would have been really smart for AK or Carly to make a power move on me. However, they were not in a position to.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 01:58 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/13bc458f798afcd8-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 01:58 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> Four, not really much to say. I really wanted Carly at three. I really just wanted it. So I voted AK. It wasn&#x27;t really a strategic move because I felt like I was stronger than both Carly and AK. The fire making just didn&#x27;t go my way. And that was really sad. There wasn&#x27;t really much game there. But it&#x27;s just the fact that I was able to make it at four and still not have the target on me was something impressive after having target on me for the past four tribals.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 02:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/1dba49877dc04a83-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 02:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> think my games stands out to most because I was able to change my viewpoint at the early merge as something who just floats along, someone who does nothing and just sits there, when really I was making notations about where people lied, where advantages were, so that way I could capitalize it later on in the game and grow my threat level immensely. And even while I did grow my threat level, I still was able to be connected with all these people, So that way it did not hurt me later. Keep in mind, all season long, I have not won a single individual immunity, not a single one. And yet I was able to consistently be in a good spot for the rest of the merge, even though my target was this big, huge thing. There are other people such as Ale who had an AK actually, who both needed to rely on an individual immunity when at some point in time, I did not. Everything I did was solely because of my social cues, of my connections, and my advantage knowledge. None of it was something that had not been done without some form of strategy or social. I didn&#x27;t need to rely on comps, though I was good at them. At the end of the day, even though I may not have had the biggest or flashiest game, I have really had such a growing arc where I just grew brighter and brighter and stronger until there was no stopping me come the end.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 02:01 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/67c5f2e358728c93-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 02:01 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code>, this is kind of like overdue, but like, I don&#x27;t really give a fuck because it&#x27;s not like you&#x27;re reading through all this in that time, but like, whatever. Um, it&#x27;s also notable to mention that yes, people could say I did need my golden slingshot with a shovel. However, the only reason I was in a position where I would have gotten the majority votes was because of other advantages. I was just susceptible and aware enough. I hope I use that word, right? I was just aware enough in the area that I was able to plan accordingly and counter their strike against me. Had no advantages existed in the first place, I would have still stayed. I had consistently been able to plan ahead and think about what would have been the best move in my favor, even if the odds were stacked against me.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 02:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/272c47a761955d7b-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 02:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code> Underdark arc is not something to overlook. I had started at a shaky spot in the beginning of the game, I had gotten into a good spot at swap, and then again hit merge in a shaky spot. But this time, I wasn&#x27;t going to let myself crumble. I had taken the game by storm, using all the information that I had gathered previously, and I was able to burn as strong as I can and get rid of so many people in my path. even though it had gathered attention to me at the end, it didn&#x27;t matter because I was already so powerful that I did not have anything standing in my way to make it here. Anyone could have won immunity and I still would have been here. That is a powerful statement. I don&#x27;t think that should be underestimated. Even though I had not consistently been an indominant or I had not always been the figurehead or the keystone, I had always had a part in every single thing that I did. And I do think that should be taken into account that I have consistently been growing all game and didn&#x27;t burn out at the end. I have always been a figure.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 02:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/0cf3d24a10f525ed-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">08/28/2026 02:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> </div>
+        <div class="content"><pre><code>, I don&#x27;t know if y&#x27;all can see this now or if jury questions are out, but I&#x27;m gonna go eat my Taco Bell. So talk to you later.</code></pre></div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 02:10 AM</span>
+    </div>
+    <div class="msg">
+        <div class="forwarded">
+            <div class="forwarded-header">Forwarded Message</div>
+            <div class="content">Eating taco bell and watching bb</div>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/shocked-jewels-sparkles</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/dc43760484a1f1a3-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 02:27 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">if its looking bleak i can sing a song for ur jury vote</div>
+    </div>
+    <div class="msg">
+        <div class="content">preferably kpop</div>
+        <div class="reactions">
+            <span class="reaction">🇱 <span class="reaction-count">1</span></span>
+            <span class="reaction">🇴 <span class="reaction-count">1</span></span>
+            <span class="reaction">0️⃣ <span class="reaction-count">1</span></span>
+            <span class="reaction">🇳 <span class="reaction-count">1</span></span>
+            <span class="reaction">🇦 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 04:08 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Soul [S1]</span> can u vote-</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 06:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">going to bed and i have school tmw so pls don’t kill my family if it takes a while for me to answer any questions in that time</div>
+        <div class="attachment"><video controls preload="metadata" src="https://everest-cdn.xsoul.org/videos/a8076dbf53608124-v14044g50000d8vplh7og65iii0gfbn0.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/28/2026 01:25 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> going to bed and i have school tmw so pls don’t kill my family if it takes a whi...</div>
+        <div class="content">rides with <span class="mention">@Omar [S1]</span>.</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">and falls off.</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/28/2026 11:45 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">cat gonna copy one look</div>
+    </div>
+    <div class="msg">
+        <div class="content">two.</div>
+    </div>
+    <div class="msg">
+        <div class="content">three.</div>
+    </div>
+    <div class="msg">
+        <div class="content">then the whole brand.</div>
+    </div>
+    <div class="msg">
+        <div class="content">then deny it!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 12:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Cassandra Fish [S2]</span> hugs you one last time before ftc.</div>
+    </div>
+    <div class="msg">
+        <div class="content">dats my sister.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 12:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">fuck</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 12:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">WHAT</div>
+    </div>
+    <div class="msg">
+        <div class="content">i am not implying anything</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 12:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">WHY R U SAYING IT TO JUST ME</div>
+    </div>
+    <div class="msg">
+        <div class="content">OKAY IM SORRY</div>
+    </div>
+    <div class="msg">
+        <div class="content">hugs you back</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">BC I NEVER HUG THE OTHER ONES.</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1378669679878606941.webp?size=48" alt=":cassiesmile:" title=":cassiesmile:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">CAN YOU BE FUCKING GRATEFUL</div>
+    </div>
+    <div class="msg">
+        <div class="content">OMFG.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">SRRRYIKM PARANOID</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">KNOWS TO NEVER HUG YOU AGAIN.</strong></div>
+        <div class="reactions">
+            <span class="reaction">😲 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">#FinalApplication #NoRecruitNeeded</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/828729689131712552-30574b7aca742fb4.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- Void [S1]</span>
+        <span class="username">@vvoidds</span>
+        <span class="timestamp">08/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">stop trying to hug people without consent dude</div>
+        <div class="reactions">
+            <span class="reaction">‼️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">miss.cassandra.trans</span> #FinalApplication #NoRecruitNeeded</div>
+        <div class="content">the first application btw lets talk about it.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> the first application btw lets talk about it.</div>
+        <div class="content">mind u i was ready since s1 started</div>
+    </div>
+    <div class="msg">
+        <div class="content">i wanted to be in the room where it happened</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Maddy [S2]</span> listen</div>
+    </div>
+    <div class="msg">
+        <div class="content">i’m rooting for u in tris</div>
+    </div>
+    <div class="msg">
+        <div class="content">root for mi here?</div>
+        <div class="reactions">
+            <span class="reaction">✅ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">dis mi cat she is tranz</div>
+        <div class="reactions">
+            <span class="reaction">💗 <span class="reaction-count">4</span></span>
+            <span class="reaction">😻 <span class="reaction-count">1</span></span>
+            <span class="reaction">😹 <span class="reaction-count">1</span></span>
+            <span class="reaction">😽 <span class="reaction-count">1</span></span>
+            <span class="reaction">🐱 <span class="reaction-count">1</span></span>
+            <span class="reaction">🇮🇪 <span class="reaction-count">1</span></span>
+            <span class="reaction">🏳️‍⚧️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 01:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@Ale [S2👑]</span> wanna go halves?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-15a3446d1b7dde15.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- unbiased orgs</span>
+        <span class="username">@bigflshtheory</span>
+        <span class="timestamp">08/29/2026 01:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">bigflshtheory</span> dis mi cat she is tranz</div>
+        <div class="content"><strong style="font-size:1.5em">IRISH CUNT IS SERVED.</strong></div>
+        <div class="reactions">
+            <span class="reaction">💗 <span class="reaction-count">2</span></span>
+            <span class="reaction">🇮🇪 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 01:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="forwarded">
+            <div class="forwarded-header">Forwarded Message</div>
+            <div class="content">Welcome <span class="mention">@Lee inv account 💫</span> to Everest, you are the 203rd to join. Enjoy your stay!</div>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">WHYYY IS MICHAEL LEE HERE GKFJFHKGKGJFJFK</div>
+    </div>
+    <div class="msg">
+        <div class="content">well knows why but-</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://discord.com/channels/1414321682025545822/1542403287209345024/1543064525656297613 MEEEEEE</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1019762492022472765-5b87a842a2fbdfeb.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Cassandra Fish [S2]</span>
+        <span class="username">@miss.cassandra.trans</span>
+        <span class="timestamp">08/29/2026 01:25 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">vile</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/178274f754d085e2-image.webp" alt="image.png" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">sorry im treating this like my cf</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

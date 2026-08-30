@@ -1,12 +1,24 @@
 import os
+import re
 import shutil
 from typing import Optional
 import discord
 from discord import app_commands
 from dotenv import load_dotenv
-from archiver import archive_channel, wipe_r2, build_guild_data
+from archiver import archive_channel, wipe_r2, build_guild_data, ARCHIVES_DIR
 
 load_dotenv()
+
+# Characters Windows/most filesystems reject in a file or folder name
+_INVALID_FS_CHARS = re.compile(r'[<>:"/\|?*\x00-\x1f]')
+
+
+def safe_name(name, fallback):
+    """Turn a Discord category/channel name into a safe folder or file name."""
+    cleaned = _INVALID_FS_CHARS.sub("", name)
+    cleaned = re.sub(r"\s+", " ", cleaned).strip(" .")
+    return cleaned or fallback
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -329,6 +341,7 @@ async def gigaarchive(
     done = 0
     total_messages = 0
     failed = []
+    used_paths = set()
 
     for cat, channel in plan:
         done += 1
@@ -339,22 +352,38 @@ async def gigaarchive(
         except Exception:
             pass
 
+        # archives/<category name>/<channel name>-archive.html
+        cat_folder = safe_name(cat.name, f"category-{cat.id}")
+        base = safe_name(channel.name, f"channel-{channel.id}")
+        filename = f"{base}-archive.html"
+        output_path = os.path.join(ARCHIVES_DIR, cat_folder, filename)
+        # two channels can sanitise down to the same name — don't overwrite
+        n = 2
+        while output_path in used_paths:
+            filename = f"{base}-{n}-archive.html"
+            output_path = os.path.join(ARCHIVES_DIR, cat_folder, filename)
+            n += 1
+        used_paths.add(output_path)
+
         try:
-            count, filepath = await archive_channel(channel, guild_data=gd)
+            count, filepath = await archive_channel(channel, output_path=output_path, guild_data=gd)
             total_messages += count
             try:
-                file = discord.File(filepath, filename=f"{channel.name}-archive.html")
+                # prefix with the category so downloads from Discord don't collide
+                file = discord.File(filepath, filename=f"{cat_folder} - {filename}")
                 await dest.send(f"**{cat.name} / #{channel.name}** — {count:,} messages", file=file)
             except Exception:
                 await dest.send(
-                    f"Archived **#{channel.name}** ({count:,} messages) but upload failed (file too large)."
+                    f"Archived **#{channel.name}** ({count:,} messages) to `{output_path}` "
+                    f"but upload failed (file too large)."
                 )
         except Exception as e:
             failed.append((cat.name, channel.name, str(e)))
 
     summary = (
         f"**Giga archive complete** — {total - len(failed)}/{total} channels "
-        f"({total_messages:,} messages) across {len(categories)} categories."
+        f"({total_messages:,} messages) across {len(categories)} categories.\n"
+        f"Saved locally to `{os.path.abspath(ARCHIVES_DIR)}`, one folder per category."
     )
     if failed:
         summary += "\n\n**Failed:**\n" + "\n".join(f"- {cat}/#{ch}: {err}" for cat, ch, err in failed)
