@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#joel-lemmy — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>joel-lemmy</h1>
+    <p class="meta">Everest &middot; 111 messages archived</p>
+    <p class="topic">Joel, Lemmy</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/12/2026 12:50 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🤝 <strong>Welcome!</strong><br><br>This is a private 1-on-1 for:<br>• <span class="mention" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Joel</span><br>• <span class="mention" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Lemmy</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/13/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hello!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/13/2026 02:18 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">YOOOO JOEL!!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Who is youre favorite koopaling</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/13/2026 05:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I feel like if I don’t say Lemmy</div>
+    </div>
+    <div class="msg">
+        <div class="content">That would be bad</div>
+    </div>
+    <div class="msg">
+        <div class="content"><s>Roy</s></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/13/2026 12:09 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">No it’s ok I like them all</div>
+    </div>
+    <div class="msg">
+        <div class="content">I just like Lemmy the most</div>
+    </div>
+    <div class="msg">
+        <div class="content">Roy’s a good choice too</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/13/2026 02:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">This is fair</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/13/2026 03:48 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Also good morning lolll</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/13/2026 05:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Gm!!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Or good afternoon for me XD</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/13/2026 07:04 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I just realized something<br>Our 1-1 category is still called tribe a 1-1 XD</div>
+    </div>
+    <div class="msg">
+        <div class="content">I hope whoever made that blunder got fired</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/13/2026 08:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ilovelemlem</span> Or good afternoon for me XD</div>
+        <div class="content">good afternoon LOL</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ilovelemlem</span> I hope whoever made that blunder got fired</div>
+        <div class="content">the big tf himself</div>
+    </div>
+    <div class="msg">
+        <div class="content">IT STILL SAYS IT</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/13/2026 08:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">LMAO</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/13/2026 08:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">they will never fix it</div>
+    </div>
+    <div class="msg">
+        <div class="content">we&#x27;re just the best tribe</div>
+    </div>
+    <div class="msg">
+        <div class="content">superior in every way</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/13/2026 11:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hey hey lemmy</div>
+    </div>
+    <div class="msg">
+        <div class="content">You mentioned you had OCs sitting around?</div>
+    </div>
+    <div class="msg">
+        <div class="content"><s>please share i love fan work</s></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 12:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I did<br>I haven’t designed like 90% of them yet but I have a rough design of one and lore available let me get it together rq</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 01:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Basically theyre called the lucky 7 and are like opposite koopalings and are the antagonists for my idea of a koopaling centered game <br>They are a militia group who just showed up one day claiming to be bowsers shunned kids but spoiler alert they arent theyre just lying and they take advantage of the general mushroom kingdoms paranoia around bowsers army to their advantage <br>The one I have an actual design for shes Cyndi, basically she focuses more on spreading propaganda with her tv show called The True Tales of Bowser’s army, imagine ancient aliens but instead of it being conspiracy theories about aliens it’s about the koopa kingdom, and a majority of the populace actually believe her. <br>Cyndis relationship with her counterpart who is Lemmy is kind of weird, you see I feel like the press would portray Lemmy as a sort of misunderstood figure who was just born into evil and can be redeem while they treat the other koopalings like irredeemable bastards. Now Cyndi see she doesn’t like that because Lemmy is kind of like a minor political topic which makes him more famous than her and from her point of view you earn fame from being smart and mature and Cyndi sees Lemmy as dumb and immature so his fame is undeserved. <br>Let me bring in her concept design real quick</div>
+    </div>
+    <div class="msg">
+        <div class="content">Will probably redesign her XD</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/dbfcb26e7f0e4d01-image0.webp" alt="image0.jpg" loading="lazy"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 02:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">That’s a wall of text that I will take the time to read after I eat but I’ll return with a wall of fan game text myself</div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">Love that design</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 02:25 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thank you</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 02:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Question tho</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 02:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 02:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Did you use/do you use fantendo</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 02:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">no i did not</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 02:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Based</div>
+    </div>
+    <div class="msg">
+        <div class="content">Do your own thing 😁</div>
+    </div>
+    <div class="msg">
+        <div class="content">I like Cyndi</div>
+    </div>
+    <div class="msg">
+        <div class="content">That flag behind her is giving North Korea News</div>
+    </div>
+    <div class="msg">
+        <div class="content">But I think it makes sense to have the one with the quirky personality 1. Run the news and 2. Rival Lemmy</div>
+    </div>
+    <div class="msg">
+        <div class="content">Where’d the 7 come from?</div>
+    </div>
+    <div class="msg">
+        <div class="content">Are they truly bowsers kids or does bowser himself have a rival</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 02:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I haven’t really thought of it largely but a short version is that they pretty much wanted the mushroom kingdom to go to them for their bowser defeating needs instead of the Mario bros because here’s the thing the lucky 7 charges for their services so they would make lots of money from it</div>
+    </div>
+    <div class="msg">
+        <div class="content">No they aren’t bowsers kids</div>
+    </div>
+    <div class="msg">
+        <div class="content">Cyndis real last name is rendezvous</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 02:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Ohhhh</div>
+    </div>
+    <div class="msg">
+        <div class="content">So they’re in the same camp as like</div>
+    </div>
+    <div class="msg">
+        <div class="content">Wario and Waluigi</div>
+    </div>
+    <div class="msg">
+        <div class="content">Just more evil?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 02:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">kinda</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 02:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Well by same camp I mean they want that bag LOL</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 02:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">look i created them like 3 weeks ago i will think more about them later</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 02:41 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I mean that’s fair</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was just curious</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 02:42 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">its ok ❤️</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://www.youtube.com/watch?v=lKaMy-fmXYE this song fits cyndi tbh</div>
+        <div class="embed" style="border-left-color:#ff0000">
+            <div class="embed-author">mellowbile</div>
+            <div class="embed-title"><a href="https://www.youtube.com/watch?v=lKaMy-fmXYE">IMMORTAL ft. Macne Nana (Vocaloid Original)</a></div>
+            <div class="embed-desc">you kids like this, right?!<br><br>so this has been a long time coming, huh? sorry for the wait. a lot of difficulties arose on my way to completing this, but the PV is finally finished. hoorah.<br>this song is available on streaming. check the pinned comment for more links.<br>this could be considered a fan-song of flavor foley&#x27;s &quot;static.&quot; or not. you tell...</div>
+            <img class="embed-thumb" src="https://everest-cdn.xsoul.org/images/8bc23f075f2c016c-embed-thumb.webp" loading="lazy">
+            <video class="embed-img" controls preload="metadata" src="https://www.youtube.com/embed/lKaMy-fmXYE"></video>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 03:33 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i also have a straight up au</div>
+    </div>
+    <div class="msg">
+        <div class="content">ive had it for much longer than the lucky 7 so it is kind of complex</div>
+    </div>
+    <div class="msg">
+        <div class="content">but tldr: ludwig dies so as the next oldest, lemmy has to become leader of the koopalings, but lemmy isnt quite ready yet because he&#x27;s had this position thrust onto him</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 05:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Rip Ludwig</div>
+    </div>
+    <div class="msg">
+        <div class="content">Is Lemmy the next oldest?</div>
+    </div>
+    <div class="msg">
+        <div class="content">That’s wild</div>
+    </div>
+    <div class="msg">
+        <div class="content">I’m ngl since I was little I thought they appeared in order age in Mario bros Wii 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 01:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">purple133</span> Is Lemmy the next oldest?</div>
+        <div class="content">yeah!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">they appeared in age order in mario 3</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 07:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Uooo</div>
+    </div>
+    <div class="msg">
+        <div class="content">Okokok that makes sense then</div>
+    </div>
+    <div class="msg">
+        <div class="content">How’s it going today Lemmy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 07:41 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Good!!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Im in school rn so it’s pretty boring</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 08:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">are you hs or uni?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/14/2026 09:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hs</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/14/2026 11:14 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">The good ol days</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/15/2026 02:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/1335354243439267884/1403552427021570169/ezgif-6d5ef31128f544.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/f2b4e2529ab50542-embed-image.gif" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+    <div class="msg">
+        <div class="content">Hi!!!!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/15/2026 04:05 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hi lemmy</div>
+    </div>
+    <div class="msg">
+        <div class="content">hows it hanging</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/15/2026 04:16 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Good rn!!!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/15/2026 10:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Mario party omg</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/15/2026 10:42 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I like Mario party</div>
+    </div>
+    <div class="msg">
+        <div class="content">6 is the best game</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/16/2026 02:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">My Mario party 7 bias is gonna show</div>
+    </div>
+    <div class="msg">
+        <div class="content">But</div>
+    </div>
+    <div class="msg">
+        <div class="content">I begrudgingly agree</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/16/2026 02:58 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">gamecube mario parties best mario parties</div>
+    </div>
+    <div class="msg">
+        <div class="content">there was just a special charm to them idk</div>
+    </div>
+    <div class="msg">
+        <div class="content">also gl being spymaster!!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/16/2026 04:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Thank you</div>
+    </div>
+    <div class="msg">
+        <div class="content">Sorry I died 😭</div>
+    </div>
+    <div class="msg">
+        <div class="content">I’ll be around now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/16/2026 05:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Alright Joel!!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/16/2026 05:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">How’s it going</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/16/2026 06:34 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Good!!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Im watching a 3 hour video about a baseball cocaine scandal it is a very good video</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/16/2026 06:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Like MLB players doing coke?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/16/2026 06:39 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Yea</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/17/2026 02:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">YEAHYEAHYEAHWEWON</div>
+    </div>
+    <div class="msg">
+        <div class="content">GOODJOB</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/17/2026 02:58 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">WE DID IT</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/17/2026 04:18 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">YIPPEEEEEE</div>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1486730444090114229.gif?size=48" alt=":steamyippee:" title=":steamyippee:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/17/2026 10:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">What’s good Lemmy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/17/2026 10:45 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">HEYYY JOEL!!1</div>
+    </div>
+    <div class="msg">
+        <div class="content">as i said before you did an amazing job with your hints :3</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/18/2026 10:51 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">How’s it going Lemmy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/935741124528701461-a84100fd9c98170d.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fefc05, #fea305);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Lemmy | 14th ]</span>
+        <span class="username">@ilovelemlem</span>
+        <span class="timestamp">10/18/2026 11:24 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">good!</div>
+    </div>
+    <div class="msg">
+        <div class="content">sorry for the late response i was doing the comp</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/19/2026 12:25 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Ur good!!!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/576945955530735617-65d0794c36c0fdfc.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- Riley [S2]</span>
+        <span class="username">@goldensaturn</span>
+        <span class="timestamp">10/20/2026 12:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove inactive 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/20/2026 12:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">goldensaturn</span> !chmove inactive 1-1s</div>
+        <div class="content">✅ Successfully moved <span class="mention">#joel-lemmy</span> to the <strong>inactive 1-1s</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

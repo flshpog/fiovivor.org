@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#chrysalis-jay — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>chrysalis-jay</h1>
+    <p class="meta">Everest &middot; 78 messages archived</p>
+    <p class="topic">Chrysalis, Jay</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/12/2026 12:57 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🤝 <strong>Welcome!</strong><br><br>This is a private 1-on-1 for:<br>• <span class="mention" style="background:linear-gradient(90deg,#a9c9ff, #ffbbec, #ffc3a0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Chrysalis</span><br>• <span class="mention" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Jay</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/12/2026 11:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hello jay!</div>
+    </div>
+    <div class="msg">
+        <div class="content">i see you know kenny thats cool</div>
+    </div>
+    <div class="msg">
+        <div class="content">do you play sols</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/13/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">HIIIIII!!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">and omg i love kenny</div>
+    </div>
+    <div class="msg">
+        <div class="content">i only play my friends sols when they host but i know kenny back from when i played my first org 😭</div>
+    </div>
+    <div class="msg">
+        <div class="content">it was a bb org and kenny evicted me prejury but were still friends so its ok</div>
+    </div>
+    <div class="msg">
+        <div class="content">but ALSOOO its nice to meet u!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/13/2026 02:10 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> HIIIIII!!!</div>
+        <div class="content">https://klipy.com/gifs/yuna-ffx-2-thanks-for-playing</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/8c613ce025e18f80-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">hellooooo</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> i only play my friends sols when they host but i know kenny back from when i pla...</div>
+        <div class="content">thats wild omg from ur first org 😭  could not imagine playing my first org with kenny!!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">i played with him in an allstars and he won that season it was pretty cool</div>
+    </div>
+    <div class="msg">
+        <div class="content">nice to meet you too! i see you have been playing roblox for 93 hours i am curious about that LOL (unrelated)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/13/2026 05:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> thats wild omg from ur first org 😭  could not imagine playing my first org with ...</div>
+        <div class="content">LMAOOOO</div>
+    </div>
+    <div class="msg">
+        <div class="content">no rifht hes like an insane player when he locks in</div>
+    </div>
+    <div class="msg">
+        <div class="content">ive seen him do well in a few orgs but hes def more into sols</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> nice to meet you too! i see you have been playing roblox for 93 hours i am curio...</div>
+        <div class="content">SKAJJSKAJSKS I JUST KEEP IT OPEN ON MY COMPUTER</div>
+    </div>
+    <div class="msg">
+        <div class="content">im trying to see how long i can get the time</div>
+    </div>
+    <div class="msg">
+        <div class="content">im so close to 100 rn</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/13/2026 06:29 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> no rifht hes like an insane player when he locks in</div>
+        <div class="content">yeah i got cooked by him so hard im ngl...</div>
+    </div>
+    <div class="msg">
+        <div class="content">it was so humbling</div>
+    </div>
+    <div class="msg">
+        <div class="content">life changing stuff</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> ive seen him do well in a few orgs but hes def more into sols</div>
+        <div class="content">yea ive seen him host em lol played a few</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> SKAJJSKAJSKS I JUST KEEP IT OPEN ON MY COMPUTER</div>
+        <div class="content">LMFAO okay that makes more sense i was like</div>
+    </div>
+    <div class="msg">
+        <div class="content">hmmmmmm surely the game cant be that good</div>
+        <div class="reactions">
+            <span class="reaction">😂 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">god i gotta stop reply pinging every time lamo</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> im so close to 100 rn</div>
+        <div class="content">wait ur an agent of chaos</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/13/2026 02:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> god i gotta stop reply pinging every time lamo</div>
+        <div class="content">no pls do ping me otherwise i wont see it 😭 im rly bad at getting back to people lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/13/2026 08:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> no pls do ping me otherwise i wont see it 😭 im rly bad at getting back to people...</div>
+        <div class="content">alright im gonna ping the fuck out of you every time we talk then twin dw</div>
+        <div class="reactions">
+            <span class="reaction">💜 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">anyway good afternoon!</div>
+    </div>
+    <div class="msg">
+        <div class="content">i hate creative challenges... dont tell the hosts i said this</div>
+        <div class="reactions">
+            <span class="reaction">🐴 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">i used to host them for like every org i did but now... they are dark and evil and they require more effort than i want to put in</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/13/2026 08:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> alright im gonna ping the fuck out of you every time we talk then twin dw</div>
+        <div class="content">YAYYY ill actually respond then !!</div>
+    </div>
+    <div class="msg">
+        <div class="content">and like same 😭</div>
+    </div>
+    <div class="msg">
+        <div class="content">i prefer hosting them over actually doing them because i always struggle with making stuff</div>
+    </div>
+    <div class="msg">
+        <div class="content">i do graphics for my own org but its always messy 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/13/2026 08:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> i prefer hosting them over actually doing them because i always struggle with ma...</div>
+        <div class="content">no literally</div>
+    </div>
+    <div class="msg">
+        <div class="content">i really don&#x27;t like that we&#x27;re doing it with such small tribes either tbh</div>
+    </div>
+    <div class="msg">
+        <div class="content">i will not complain too much its not fun to be around but</div>
+    </div>
+    <div class="msg">
+        <div class="content">💀 we can win this hopefully and then we won&#x27;t have to think about all that...</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> i do graphics for my own org but its always messy 😭</div>
+        <div class="content">u know the org is heartfelt when the graphics are homemade and kinda sloppy tho</div>
+    </div>
+    <div class="msg">
+        <div class="content">thats how i did it when i was still hosting</div>
+    </div>
+    <div class="msg">
+        <div class="content">shit goes hard</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/14/2026 04:44 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> u know the org is heartfelt when the graphics are homemade and kinda sloppy tho</div>
+        <div class="content">UGH YESSS U GET IT</div>
+    </div>
+    <div class="msg">
+        <div class="content">like so many orgs with great graphics have such toxic communities</div>
+    </div>
+    <div class="msg">
+        <div class="content">its the trashy orgs with decent graphics that are rly home to me</div>
+    </div>
+    <div class="msg">
+        <div class="content">cuz the ppl are there for the community not the graphics</div>
+    </div>
+    <div class="msg">
+        <div class="content">thsts how i think of it at least</div>
+    </div>
+    <div class="msg">
+        <div class="content">but yeahhh i hate that these tribes are so small idek how tribals gonna work 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/14/2026 05:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">no literally ur right</div>
+    </div>
+    <div class="msg">
+        <div class="content">its funny orgs get better the smaller the communities get usually mlao</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> but yeahhh i hate that these tribes are so small idek how tribals gonna work 😭</div>
+        <div class="content">yeah i am really not sure how to handle this im ngl</div>
+    </div>
+    <div class="msg">
+        <div class="content">i haven&#x27;t done earlygame four person tribals in several years</div>
+    </div>
+    <div class="msg">
+        <div class="content">i rlly rlly rlly want to focus on not losing so that we dont have to go and hopefully itll swap next round</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/14/2026 07:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> i haven&#x27;t done earlygame four person tribals in several years</div>
+        <div class="content">help ive only been playing orgs for like a year and ive never done this before</div>
+    </div>
+    <div class="msg">
+        <div class="content">smallest tribe ive been on was 5 people and we swapped after 2 rounds without going to tribal</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/14/2026 07:15 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">lord yall cooked on this challenge i feel so useless omg.</div>
+    </div>
+    <div class="msg">
+        <div class="content">im helpful with like everything else just NOT this kind of comp 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/15/2026 12:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> help ive only been playing orgs for like a year and ive never done this before</div>
+        <div class="content">welcome to the pits of hell 😭 😭 this shit sucks lmao</div>
+    </div>
+    <div class="msg">
+        <div class="content">not very joyous</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">jaysveto</span> lord yall cooked on this challenge i feel so useless omg.</div>
+        <div class="content">i wouldnt even say we cooked we just tried our best</div>
+    </div>
+    <div class="msg">
+        <div class="content">that submission is singlehandedly one of the worst creative challenge subs i&#x27;ve ever put in</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">i am not proud LMAOOOOOOO but hey ig thats why we lost</div>
+    </div>
+    <div class="msg">
+        <div class="content">like we did half that shit 30 minutes before the deadline</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/15/2026 03:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">like breathes</div>
+    </div>
+    <div class="msg">
+        <div class="content">i dont thinknit was that bad</div>
+    </div>
+    <div class="msg">
+        <div class="content">i think it was definitely high concept</div>
+    </div>
+    <div class="msg">
+        <div class="content">the judges just didnt feel it</div>
+    </div>
+    <div class="msg">
+        <div class="content">also i’ve spoken to u the most so would u wanna work tgt on this vote</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/15/2026 06:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yeah idk what the other tribes submitted so hard to know how bad it rlly was but</div>
+    </div>
+    <div class="msg">
+        <div class="content">who knows</div>
+    </div>
+    <div class="msg">
+        <div class="content">anyway i’d be down for that, you and i r the younger ppl here soooooo</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/810871886732197908-910aa032cfe544df.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e20775, #6f1b85);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Jay | 17th ]</span>
+        <span class="username">@jaysveto</span>
+        <span class="timestamp">10/15/2026 06:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> anyway i’d be down for that, you and i r the younger ppl here soooooo</div>
+        <div class="content">no right like me being the second youngest on this cast is frying me</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/15/2026 06:45 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">the way that everyone under 20 is getting shipped to the little brother luigi tribe 😭</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">fucked up</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 10:14 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove inactive 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/15/2026 10:14 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">flshpog</span> !chmove inactive 1-1s</div>
+        <div class="content">✅ Successfully moved <span class="mention">#chrysalis-jay</span> to the <strong>inactive 1-1s</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#tully-questioning — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>tully-questioning</h1>
+    <p class="meta">Everest &middot; 64 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 01:26 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">bi</div>
+    </div>
+    <div class="msg">
+        <div class="content">hi</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 05:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">EEEK IM SO EXCITED</div>
+    </div>
+    <div class="msg">
+        <div class="content">OKAY</div>
+    </div>
+    <div class="msg">
+        <div class="content">hmmm questions</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 05:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> Good job on making final 2. You both deserve it so much. I have admittedly came into this questioning with someone who I wanted to vote for to win but I need to make sure I believe this person has played the best.<br><br>my first question is for both of you, what would you say, you did better in this game than the other person, in terms of social game, strategic game, and the physical game. I want you guys to answer whether you think you have played the best in those three aspects and why.<br><br>my next question <span class="mention">@[ Chrysalis ]</span> you were voted off once, without the twist you wouldn&#x27;t be here, on the flip side, ben has never received a vote, a part of my consideration right now is deciding whether or not that you got voted out once should I consider that in deciding whether to give my vote to you or not. On one hand you can argue that you were voted out and came back to the game and now made final 2, thats amazing, but then again an argument can be made that you have already been voted out, there was a flaw in your game.  <strong>My question is do you think that I should consider redemption and if I should how you improved your game fundamentally since returning, to make sure you wouldn&#x27;t be voted out again, what did you do differently, as I would like a bit more clarification about this.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">Im sure ill think of more later</div>
+    </div>
+    <div class="msg">
+        <div class="content">im so excited to vote for one of you to win tho</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 06:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> <span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> Good job on making final 2. You both...</div>
+        <div class="content">hi tully!!! excited to answer<br><br>for your first question- i think ben and i actually have quite similar games, so it&#x27;s hard to pick something out. i believe that the thing i did the best in this game was always actively trying to disrupt the status quo the best i could. i voted in the minority a lot, but those minority votes were born from a place of me wishing to change the game. while ben also joined me eventually, there were a few points where he took lesser outcomes and didn&#x27;t pursue any avenues that could&#x27;ve potentially helped his resume.<br><br>for a good example- at the now or later round, mina and ben spoke (and so did ben and I) and we were able to discover that ben was also totally on board with taking out joel, something that mina, mouse and i had already been trying to do. as you probably know atp we needed your vote for this tully, but as you weren&#x27;t getting on we were kinda scrambling to find more numbers. so here comes ben, saying he&#x27;s down to vote joel and that we should do it this round..... only to supposedly abandon the notion entirely because switch disapproved of the idea. ben saw that switch didn&#x27;t want joel out which implied a level of closeness with joel that ben didn&#x27;t have with switch, right after having clocked joel&#x27;s position in the game and how powerful he was. instead of taking this as a much needed sign, ben just kinda gave up on voting joel entirely and contributed to the vote to get you out.<br><br>sure, getting you out was okay for his short term game as you definitely weren&#x27;t in his corner- but ultimately the joel plan fell through partially because of ben backing out, causing him to lose a possible prospective ally/number in mouse and putting him right at the bottom of the tribe with me. all for switch, someone who didn&#x27;t really have him as part of their long term gameplan anymore atp. i think stuff like this happened a few more times like when ben gave me fire, and when he never did anything about the knowledge he had of both my idols.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 06:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thats a very good answer</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 06:15 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> <span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> Good job on making final 2. You both...</div>
+        <div class="content">for your second question<br><br>I noticed you mentioned Ben never received a vote vs. how I was voted out- but I think what&#x27;s more important beyond those basic stats is the reason that the stat exists. I was voted out and received 17 votes over the course of the season because people saw me as an active threat to their game- Ben stayed largely under the radar and out of enemy sights, but that was because nobody ever seemed to see him as enough of a threat to need him out. Once Nishi was gone, Ben had taken the role of everybody&#x27;s ideal FTC spot and so obviously he didn&#x27;t get any votes.<br><br>I believe my game has improved fundamentally since returning in one big place- RISK ASSESSMENT.<br>The problem and the biggest reason I crashed and burned in the premerge is because I had a tendency to take just as many risks as I took in the post-merge- but without being willing to stop and think about how the decisions I was making would affect my game LONGTERM, more than just 1-2 rounds down the line. If I had been paying attention to the server early on, I would&#x27;ve noticed Jay had no roles and was being sequestered. If I had picked up on that clue to Redemption&#x27;s existence, I could&#x27;ve adjusted the risk I took in voting Switch out.<br><br>If I had picked up on the clue to Nishi and Switch being quite close and simply thought about it a little longer, I wouldn&#x27;t have leaked the gutter alliance to Nishi. If I had assessed risks more in the pre-merge, I would have made much less game-breaking decisions that ultimately ended in my early demise. While I sat on redemption for abt a week, I thought about how good of a spot I could&#x27;ve been in if I just sat and bided my time, took only the smart risks and thought things through. So I wanted to do that when I came back.<br><br>I still constantly tried to get the best voting outcome for my game every tribal, but I stopped trying to socially manage everyone at all times. I embodied a much more loyal playstyle with a lot less leaking, trying to endear myself to people by being a good ally and friend so that I could reap the benefits of being a more predictable variable amongst the group. Despite still being seen as a threat by multiple people all throughout the merge, (my name was out maybe 6 rounds in a row) I never actually received the majority of votes because I was able to socially position myself better and come off as useful to people, even when some of them viewed me as a strategic non-variable. If I had played like I did in the pre-merge, I think everyone would&#x27;ve seen no reason to keep me around for so long, and my game would&#x27;ve been much more reliant on the idols I found than it actually was.</div>
+    </div>
+    <div class="msg">
+        <div class="content">i hope that was a good enough answer but if not u can ask me more questions</div>
+    </div>
+    <div class="msg">
+        <div class="content">im a yapaholic</div>
+    </div>
+    <div class="msg">
+        <div class="content">thank you tully</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 06:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">amazing</div>
+    </div>
+    <div class="msg">
+        <div class="content">if i think of more questions i will post them</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 09:51 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Thanks for your question dude, I absolutely believe I have played a stronger social game than chrysalis, while I respect her game for having a redemption arc to it, I feel I was never put into a situation where I needed to redeem myself. I feel like I made it through a majority of the early game here without having to worry about being voted out, once merge hit, I found myself losing ally after ally. This led me to reasonably believe that I was next. So my game became purely about survival. I told anyone anything they wanted to hear, wrote checks I knew I couldn’t cash, and made sure I was the person who everyone wanted to have with them at the end of this game. I didn’t need to comp out, or make huge plays in the endgame, because I have been putting in work this entire merge to ensure that I would make it here.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Never having a vote cast against me is both a blessing and a curse, because it both means that I was well connected in this game, but also not seen as much of a threat in the endgame. But I accounted for this. I wanted to be seen as the person who everything thinks they have a chance of beating. It’s a part of why I felt it was strategically valid to take out Nishi. Truthfully she was the one who had that status before me, and I wanted it to be me instead lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:11 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> hi tully!!! excited to answer<br><br>for your first question- i think ben and i actual...</div>
+        <div class="content"><span class="mention">@[ Ben ]</span> I have a question for you and it actually regards what Chrys said about the now and later twist can you explain to me what happened in your point of view, do you look back and think what you did wasn&#x27;t the best at that tribal</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:25 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hi Tully, I’ll keep it real, I absolutely hated the now-or-later twist LOL. But here’s how I perceived the situation. That tribal was a rare moment where I had freedom in this game, truthfully, I didn’t mind if mouse went home over Joel here, because I knew the both of them would still have targets on their backs after having their names thrown out so much. I did, however, have my sights set on you this vote. There was very little conversation had with me about this vote until about 20 minutes before tribal. I felt the best thing I could do for my game was use the opportunity to take out someone who I felt was a threat to me personally. That being you. You had just voted Liz out, and I did not feel as strong about our connection as I did before. I somewhat selfishly took the chance to snipe you there as a move that would purely benefit me. Of course this ended up ruining the potential Joel vote and sending mouse out of the game, but I don’t see it as a failure on my part, because I’m sitting in final tribal council.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:30 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">good answer</div>
+    </div>
+    <div class="msg">
+        <div class="content">tbh i really did want us to have the chance to work with each other</div>
+    </div>
+    <div class="msg">
+        <div class="content">it just didnt happen</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:32 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I feel you on that man</div>
+    </div>
+    <div class="msg">
+        <div class="content">In another universe we run this shit 🤝</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:34 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">tbh i preceived you as a huge threat most of the game just because I didn&#x27;t know what was going on with you half of the time</div>
+    </div>
+    <div class="msg">
+        <div class="content">plus i kept hearing you were pushing my name at the eeveon vote off apparently</div>
+    </div>
+    <div class="msg">
+        <div class="content">or you would of preferred me</div>
+    </div>
+    <div class="msg">
+        <div class="content">something like that</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:36 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">And truthfully I was, I also saw you as a threat because i saw firsthand just how persuasive and personable you can be</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:36 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Omg thank you</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:36 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">You played a really strong social game and if not for that twist I could very well see you sitting here in final 2  right now</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I slept through that damn twist</div>
+    </div>
+    <div class="msg">
+        <div class="content">im pretty sure chrys had a plan to save me that round</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">😭😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">so i slept through that like an idiot</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!tully</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">11/18/2026 10:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> !tully</div>
+        <div class="content">This 👉 is Tully, WHAT!!!???⁉️ You’ve never heard of Tully????🐐Tully from season 1 1️⃣and 2 2️⃣ and 33️⃣ of Everest 🏔️ !!???? Don’t you remember🤔 💭??? He whiffed on the golden axe 🥇🪓in BACK TO BACK TRIBALS 😦!! He got eliminated in the Fire Walk With Me <strong>[???]</strong> 🔥🚶‍♂️by the OPPOSING TRIBE 🆚!!!!! HE WAS taken out ➡️ NOW ⬅️ in the NOW or LATER TRIBAL 🔥! He was ONE DUEL SHORT 🤏 🤼 of earning his way BACK INTO THE GAME 🔥 at the final 6 6️⃣ That ring any bells???🔔 🔕</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:38 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">would of you worked with me if i returned to the game instead of joel</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:38 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Absolutely, but I think if it was the same situation it was at f4, I woulda sent you to fire as well</div>
+    </div>
+    <div class="msg">
+        <div class="content">I can’t compete with your story</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 10:40 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i do feel if i returned and played my final few days in the game right i would of had a pretty good story but like if I returned and messed that up there was 0 chance for me.</div>
+    </div>
+    <div class="msg">
+        <div class="content">I still don&#x27;t feel decided on a winner and I need to think of my questions quickly to decide</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 07:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> im pretty sure chrys had a plan to save me that round</div>
+        <div class="content">i did yeah 😭 if u woke up i think it’s probably a joel mouse boot</div>
+    </div>
+    <div class="msg">
+        <div class="content">but it is what it is</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/18/2026 11:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> i did yeah 😭 if u woke up i think it’s probably a joel mouse boot</div>
+        <div class="content">Its the biggest regret of my game.</div>
+        <div class="reactions">
+            <span class="reaction">🕊️ <span class="reaction-count">1</span></span>
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1019976357893128233.gif?size=48" alt=":Heart_Blue:" title=":Heart_Blue:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/19/2026 12:59 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i dont feel like</div>
+    </div>
+    <div class="msg">
+        <div class="content">i can confidently vote and say this person has 100% played the better game</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> can you guys name your biggest flaw/mistake in this game then name your biggest strength/move in this game</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/19/2026 01:34 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> <span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> can you guys name your biggest flaw/...</div>
+        <div class="content">My biggest flaw in this game was not being one of the big movers and shakers of the season. My game was a slow burn of small but calculated moves that ensured I would be at ftc. <br><br>And on that note my biggest strength was my ability to stay off a majority of this cast’s threat list. I am genuinely proud of myself for never receiving a vote in this game. I never gave up after being knocked down time after time. I made it as far as you can in this game despite never truly finding solid footing in the merge. My biggest strength was and always will be my resilience.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/19/2026 01:59 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> <span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> can you guys name your biggest flaw/...</div>
+        <div class="content">I think my biggest flaw/mistake in this game was at points letting emotions and impulse override what was otherwise a solid strategy of sitting back and only taking the necessary risks. I think there were a few points throughout the merge where I lost sight of what I learned on Redemption. I think the F6A round is a good example where I had honestly started to lose faith in myself again and succumbed to gameplay that wasn’t as logical as it could’ve been.<br><br>But I believe my strengths make up for that flaw of mine. My biggest strength in this game particularly was always being <em>just threatening enough.</em> I was considered a threat a lot over the course of the season, especially once I came back. But my goal was to position myself with the right players as much as possible to ensure that while I was still viewed as a threat to people, I wouldn’t be the biggest threat in the room until it was too late. This is why I wanted Switch and Dean to still be around so late into the game, since they were so visible it would overshadow anything I had done. And I was right, which allowed me to make it all the way through merge without needing either idols I found.<br><br>I was able to leverage my position as a chronic underdog very well- allies who wanted to work against the majority would very slowly trickle down to me by default because I was loud and proud about how on the outs I was.  And ultimately refusing to go for the big dogs (like when I told Mina not to go for Switch at 7) helped keep me from being the biggest threat in the room in the endgame. I had to overcome more than anyone else this season in terms of adversity and I was still able to position myself well to be out of danger despite it all!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Thank u for the question tully <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1313313003520921630.webp?size=48" alt=":thumbsup:" title=":thumbsup:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1188619073198755865-67a507698bd794df.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Tully | 7th ]</span>
+        <span class="username">@hiiiiii7850.</span>
+        <span class="timestamp">11/19/2026 01:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> thank you for answering i have two last questions</div>
+    </div>
+    <div class="msg">
+        <div class="content">1. Whats your thoughts on this video in three words or less?</div>
+        <div class="attachment"><video controls preload="metadata" src="https://everest-cdn.xsoul.org/videos/b1543f76e95b330f-VID_20261119_052242_625.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">Then the next question for the both of you</div>
+    </div>
+    <div class="msg">
+        <div class="content">Who do you think im voting for the victory?</div>
+    </div>
+    <div class="msg">
+        <div class="content">Damn it chrys wont be on until reunion</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/19/2026 06:38 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> Damn it chrys wont be on until reunion</div>
+        <div class="content">i got 30 minutes advance time lfg</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> 1. Whats your thoughts on this video in three words or less?</div>
+        <div class="content">did this mf just do a front flip off a grand piano</div>
+    </div>
+    <div class="msg">
+        <div class="content">beautiful</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">hiiiiii7850.</span> Who do you think im voting for the victory?</div>
+        <div class="content">i’d like to say you’re voting for me because confidence is key</div>
+    </div>
+    <div class="msg">
+        <div class="content">🫡</div>
+    </div>
+    <div class="msg">
+        <div class="content">but who knows</div>
+    </div>
+    <div class="msg">
+        <div class="content">see yall at reunion</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

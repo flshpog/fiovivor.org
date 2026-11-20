@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#dean-mouse — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>dean-mouse</h1>
+    <p class="meta">Everest &middot; 131 messages archived</p>
+    <p class="topic">Dean, Mouse</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/20/2026 12:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🤝 <strong>Welcome!</strong><br><br>This is a private 1-on-1 for:<br>• <span class="mention" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Dean</span><br>• <span class="mention" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Mouse</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 12:06 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hello there! How&#x27;s it hanging today?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:12 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hello there, I just came back from a walk, its going good</div>
+    </div>
+    <div class="msg">
+        <div class="content">I do have some uni assessments to complete tho</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:13 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Fair enough, what&#x27;s on the docket for those assignments?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:13 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Basically what Ive learnt this semester in class</div>
+    </div>
+    <div class="msg">
+        <div class="content">it should be fine</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:14 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Gotcha, what are the classes about?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:16 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">its like intercultural communication</div>
+    </div>
+    <div class="msg">
+        <div class="content">its part of my degree in commerce kinda</div>
+    </div>
+    <div class="msg">
+        <div class="content">half boring half interesting</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:17 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Most classes are like that 💀</div>
+    </div>
+    <div class="msg">
+        <div class="content">Half of them feel like treading old ground, half of it is super interesting new stuff that barely gets covered again</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:18 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yea - I mean its like ok - its easy marks ngl</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:19 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Can&#x27;t complain then if it&#x27;s an easy A, good boost to the GPA at least</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:19 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">So true</div>
+    </div>
+    <div class="msg">
+        <div class="content">I hope it is a multi choice question test</div>
+    </div>
+    <div class="msg">
+        <div class="content">even if I whiff this test completely, i still like have a really good mark</div>
+    </div>
+    <div class="msg">
+        <div class="content">so Im not like too stressed out about it</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Fair enough.</div>
+    </div>
+    <div class="msg">
+        <div class="content">I won&#x27;t keep you for longer then, good luck on the assessment!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">oh Im not doing it rn</div>
+    </div>
+    <div class="msg">
+        <div class="content">Im doing it later</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Oh 💀</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:21 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">btw congrats on the timing for the challenge</div>
+    </div>
+    <div class="msg">
+        <div class="content">that was insane LOL</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:21 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Oh thank you lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:21 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">you did it in the time it took me to finish the geoguessr plus pens LOL</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:21 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Geogussr was rough man 💀</div>
+    </div>
+    <div class="msg">
+        <div class="content">I could not even begin to decipher stuff out without copious amounts of googling.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">oh, at least you got the like american place right righrt?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Oh that was incredibly easy.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">If you took on step to the right, u would the sign arkansas bridge LOL</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">YEP</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">XD</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">That was locked in.</div>
+    </div>
+    <div class="msg">
+        <div class="content">5k instant on that round once I searched for the location.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I got serbia mixed up with croatia</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">redsamurott</span> 5k instant on that round once I searched for the location.</div>
+        <div class="content">i got 4934,</div>
+    </div>
+    <div class="msg">
+        <div class="content">i plonked my marker somewhere near the city</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Understandable.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Lowkey, if I knew the exact distance to score calcs, I would have just done closeish enough in the state/region and called it good.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Would have been a lot faster.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:24 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Well, i got 18745 for it</div>
+    </div>
+    <div class="msg">
+        <div class="content">the drop quote killed me tho LOL</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:24 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">24413 for me.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:24 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">its the first time i successfully solved one</div>
+    </div>
+    <div class="msg">
+        <div class="content">but holy it took ages</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:24 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Oh yeah, it takes a while to solve.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Part of it is just start looking for common short words in the puzzle and work backwards from there.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Or depending on the ORG, start looking at quotes that relate to the theme.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:25 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">breh u did the entire leg in the time it took me to solve that 😆</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was thinking mario</div>
+    </div>
+    <div class="msg">
+        <div class="content">lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:25 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I would have also thought that at first until I basically stumbled into the last half of the message lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:26 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yea</div>
+    </div>
+    <div class="msg">
+        <div class="content">you see i was so fixated on mario but nothing made sense</div>
+    </div>
+    <div class="msg">
+        <div class="content">for the first 20 minutes</div>
+    </div>
+    <div class="msg">
+        <div class="content">then i got it</div>
+    </div>
+    <div class="msg">
+        <div class="content">but even then</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:27 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">They are tough 💀</div>
+    </div>
+    <div class="msg">
+        <div class="content">Even when you&#x27;re given a quote bank.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">me realising i did the challenge in 67 minutes 😆</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">...</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">(and 2 seconds)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I never want to hear 6 7 again 💀</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">HAHAHAHAH</div>
+    </div>
+    <div class="msg">
+        <div class="content">but isnt one tribe 6 and the other tribe 7 xd</div>
+    </div>
+    <div class="msg">
+        <div class="content">ok no more 6/7 jokes im sorry, 😆</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:29 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">This guy.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:30 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ok i didnt intentionally be like</div>
+    </div>
+    <div class="msg">
+        <div class="content">Im gonna do this challenge in 67 minutes</div>
+    </div>
+    <div class="msg">
+        <div class="content">LOL</div>
+    </div>
+    <div class="msg">
+        <div class="content">it just so happened after penalties...</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:31 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Well yeah, I&#x27;d assume 💀</div>
+    </div>
+    <div class="msg">
+        <div class="content">I think aiming for a time that&#x27;s a meme number is crazy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:31 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i should have typed stuff two seconds quicker smh</div>
+    </div>
+    <div class="msg">
+        <div class="content">the 2 seconds ruined it</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 01:33 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Could have gotten the unscramble 2 seconds faster <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/907345409616248922.webp?size=48" alt=":Sad:" title=":Sad:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 01:33 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">😭</div>
+    </div>
+    <div class="msg">
+        <div class="content">if only</div>
+    </div>
+    <div class="msg">
+        <div class="content">I love meming around sometimes, I just thought it was really hilarious</div>
+    </div>
+    <div class="msg">
+        <div class="content">lol</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 02:50 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">enough yap about how i accidentally memed my way into a meme number for my time, but like how are you : D</div>
+    </div>
+    <div class="msg">
+        <div class="content">I talked way too much about myself here 👀</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/20/2026 02:51 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I&#x27;m doing chill, don&#x27;t have much planned for the rest of the night outside of dnd in about an hour, but we&#x27;re chilling otherwise.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Hopefully the session won&#x27;t go too long just cause I still have work tomorrow but we ball either way</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/20/2026 02:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Dnd sounds fun : 3</div>
+    </div>
+    <div class="msg">
+        <div class="content">sounds like a chill night : D - my day other than the etest is gonna be pretty chill too</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/21/2026 01:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Good shit, hopefully that test went well for you <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/844982335749357658.gif?size=48" alt=":crumbdance:" title=":crumbdance:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/21/2026 05:33 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hey dean, it did go well for me :3 thanks fo asking : D</div>
+    </div>
+    <div class="msg">
+        <div class="content">Well, like, I am on a break between classes, and its taken be a bit of time to write this up.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/21/2026 05:53 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">As the only unbroken tribe in the game (wario) Im aware that like the votes is always going to be in me, mina and like faith this game.So like, I know i am like on the chopping block here for numbers reasons. I can only really speak for myself here so like, I think here is why should keep me over presumably faith since she is the one going around to other people saying how much she doesn&#x27;t like me. <br><br>Firstly, she is more connected to my og tribe than me, I won&#x27;t be surprised if she was like part of a girl&#x27;s alliance in the first tribe and that I could have probably been the first boot had my tribe gone to tribal, so like numerically wise I would be a good number for you, since like Im a shit position if I were to stick with my original tribe, and in fact because of this tribal, my position has kinda soured towards my og tribe. Like she and liz were pretty close, they both stopped talking to me the moment i stole coins from her in our mario party game. <br><br>Secondly, I am pretty sure she is trying to play in the middle cz like she was still like trying to talk to me to potentially open the avenue of like wario 3 + 1 to vote someone out- but i gave her nothing because i don&#x27;t want to work with her.<br><br>Thirdly, I suspect she probably is talking a lot with people which goes into my second point of keeping her options open<br><br><br><br>I hope like the fact I took time to actually write this and like the unpredictability of her actual in-game relationships will like help you to decide who to vote within us 3.<br><br>P.s I left mina out, cz i assume people would only want to vote in wario people who didn&#x27;t do the challenge cause of numerical reasons. But i prefer to vote out the person is lying to my face lol about wanting to &quot;talk&quot;.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/21/2026 06:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">btw, ftr I do NOT like my original tribe much</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/21/2026 02:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I appreciate the bluntness. She hasn’t said anything to me yet about you, which could just be a consequence of missing each other in the night, so to speak. I’ll do some digging to see what’s up.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/21/2026 09:13 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Heyo, finally got around to talking with folks, the vote seems pretty set on Faith atm.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/21/2026 09:14 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Okay thanks for telling me 🙂</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/21/2026 09:15 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Of course <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/844982335749357658.gif?size=48" alt=":crumbdance:" title=":crumbdance:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/23/2026 01:40 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hey appreciate the effort you did in the challenge : D</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/23/2026 01:41 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">You as well, you got a lot done last night 💪</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/23/2026 01:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">well, not really i only got 6 done, 3/8/13/53/64/75 bc i had to find creative ways for bigger numbers to avoid people thinking wtf I am doing xD</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/23/2026 01:45 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">You just gotta send it at certain points lol</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was cruising around a Home Depot probably looking crazy</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/23/2026 01:51 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yea, the thing is i get embarassed really easily</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/24/2026 11:00 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">good morning hows your weekend :3</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/24/2026 11:01 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">It&#x27;s been chill, just got back from my college town after a like, 4 hour drive so I&#x27;m kinda drained but we move. How&#x27;s it going with you today?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/24/2026 11:06 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i just woke up</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/24/2026 11:06 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Fair enough, any big plans for the day?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/24/2026 11:07 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">its a sunday</div>
+    </div>
+    <div class="msg">
+        <div class="content">I might do some uni work or something</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/24/2026 11:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Gotcha gotcha, what&#x27;s the work you&#x27;ll potentially do?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/24/2026 11:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i have an exam</div>
+    </div>
+    <div class="msg">
+        <div class="content">so its marketing</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/24/2026 11:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Nice nice.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/24/2026 11:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i do not like marketingbut its fine</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/25/2026 12:44 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hey dean wassup 👀</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/25/2026 12:45 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Not much, just still chilling at home, not much changed lol. Did you start working on the uni assignment or?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/25/2026 12:45 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">a little bit</div>
+    </div>
+    <div class="msg">
+        <div class="content">its exam prepration basically</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/25/2026 12:47 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Is the exam coming up pretty soon or do you still got a while until it happens?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/25/2026 12:47 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">yea its in 2 weeks</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/25/2026 12:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Gotcha, do you feel pretty prepped for it?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/25/2026 12:49 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">a little bit</div>
+    </div>
+    <div class="msg">
+        <div class="content">Ill study for it</div>
+    </div>
+    <div class="msg">
+        <div class="content">i dont need that much to pass hopefully</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/25/2026 03:02 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hey dean whatcha thinking 👀</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/25/2026 03:11 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I mean i assume you like kebab</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/31/2026 06:13 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/tom-and-jerry-jerry-mouse-1</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/fa83b40d3644502e-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">10/31/2026 08:54 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/you-tried-balloon-mouse</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/95c0663a35b38e5e-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">11/03/2026 02:08 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove inactive 1-1s 2</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">11/03/2026 02:08 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">caraage</span> !chmove inactive 1-1s 2</div>
+        <div class="content">✅ Successfully moved <span class="mention">#dean-mouse</span> to the <strong>inactive 1-1s 2</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

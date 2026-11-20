@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#chrysalis-kebab — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>chrysalis-kebab</h1>
+    <p class="meta">Everest &middot; 68 messages archived</p>
+    <p class="topic">Chrysalis, Kebab</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/29/2026 12:50 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🤝 <strong>Welcome!</strong><br><br>This is a private 1-on-1 for:<br>• <span class="mention" style="background:linear-gradient(90deg,#a9c9ff, #ffbbec, #ffc3a0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Chrysalis</span><br>• <span class="mention" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Kebab</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/29/2026 12:52 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">helloooooo chrysalis</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/749053689419006003.webp?size=160" alt="Cheer" title="Cheer" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+    <div class="msg">
+        <div class="content">there is a decent chance i will be asleep by the time u return so wanted to say welcome back in case i am not here when u return!!!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/29/2026 05:05 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hi kebab!!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">we never got to play tg before</div>
+    </div>
+    <div class="msg">
+        <div class="content">very exciting prospect</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1377071961049403562.webp?size=48" alt=":yay:" title=":yay:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> there is a decent chance i will be asleep by the time u return so wanted to say ...</div>
+        <div class="content">yeah very good intuition</div>
+    </div>
+    <div class="msg">
+        <div class="content">i have so many new people to talk to and i can barely focus on one talk at once so i&#x27;ve been rlly struggling tonight LOL</div>
+    </div>
+    <div class="msg">
+        <div class="content">very good time to have an immunecklace</div>
+    </div>
+    <div class="msg">
+        <div class="content">thank lord</div>
+    </div>
+    <div class="msg">
+        <div class="content">but yeah its really nice to see a familiar face lmao i hope u have been well recently!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/29/2026 04:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> very good time to have an immunecklace</div>
+        <div class="content">absolutely deserved for having to put up w so many rounds of redemption</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">1</span></span>
+            <span class="reaction">🕊️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">special thanks for taking out all the people i ended up voting against along the way💀🙏</div>
+    </div>
+    <div class="msg">
+        <div class="content">i imagine u prob had people telling u what was going on as they joined u, but if there’s anything u wanna ask or if u need a recap lmk</div>
+    </div>
+    <div class="msg">
+        <div class="content">i was cheering for u to make it back, yes partially to avoid people i voted coming back but also bc i feel like it has been loooong overdue us eventually playing together LOL</div>
+    </div>
+    <div class="msg">
+        <div class="content">(i do not count stealth traitors as a real experience that one showcased some absolutely horrific reads from me)</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> but yeah its really nice to see a familiar face lmao i hope u have been well rec...</div>
+        <div class="content">life is a mixed bag honestly as per usual but we are trucking through, currently studying n getting rejected from every job in existence along the way but we move🔥</div>
+    </div>
+    <div class="msg">
+        <div class="content">hope u are taking care of urself too lovely&lt;3</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/30/2026 06:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> absolutely deserved for having to put up w so many rounds of redemption</div>
+        <div class="content">that horseshit ass endurance comp</div>
+        <div class="reactions">
+            <span class="reaction">💀 <span class="reaction-count">2</span></span>
+            <span class="reaction">🐴 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">omg</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> special thanks for taking out all the people i ended up voting against along the...</div>
+        <div class="content">hey special thanks for taking out my opp liz i appreciate it</div>
+    </div>
+    <div class="msg">
+        <div class="content">we helped eachother out on accident</div>
+    </div>
+    <div class="msg">
+        <div class="content">joyous</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> i imagine u prob had people telling u what was going on as they joined u, but if...</div>
+        <div class="content">i have the general idea of things but i would love your pov! a lot of the ppl that came to redemption lowkey seem to not have rlly known what was actually going on at their tribals lol</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> (i do not count stealth traitors as a real experience that one showcased some ab...</div>
+        <div class="content">yeah and honestly i was out so soon in that i barely even remember it happening 💀</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> i was cheering for u to make it back, yes partially to avoid people i voted comi...</div>
+        <div class="content">yes fr and we didn’t even get the chance to meet before i went originally 😭 but im so ready for this opportunity</div>
+    </div>
+    <div class="msg">
+        <div class="content">plus tbh there’s been way too many shes and hers and theys going home for my flipping liking</div>
+        <div class="reactions">
+            <span class="reaction">‼️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> life is a mixed bag honestly as per usual but we are trucking through, currently...</div>
+        <div class="content">I FEEL THAT</div>
+    </div>
+    <div class="msg">
+        <div class="content">i have been striking out so hard on my applications for almost 4 months now</div>
+    </div>
+    <div class="msg">
+        <div class="content">it’s a grueling miserable grind</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> hope u are taking care of urself too lovely&lt;3</div>
+        <div class="content">doing my best <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1466525910801842386.webp?size=48" alt=":bellableh:" title=":bellableh:"></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">i dont wanna segue to strategy all too hard i did think u should know tho, a big perception on redemption was that u and dean were lowkey mafia bossing shit 😭 i wanted to lyk cause idk if that’s just what the boots think or if ppl ingame rlly think that?</div>
+    </div>
+    <div class="msg">
+        <div class="content">eeveon was my #1 💀unfortunately… so i’m not rlly sure what to do for tribal here and im pretty open to whatever ideas</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 02:23 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> we helped eachother out on accident</div>
+        <div class="content">my goodness we are just so synchronised</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">but i also feel like we are likely to have some opps in common LOL</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> it’s a grueling miserable grind</div>
+        <div class="content">it truly is, like deadass i&#x27;ll do whatever just hire me</div>
+    </div>
+    <div class="msg">
+        <div class="content">u can click full availability n ready to start work within the hour n they&#x27;ll still auto-reject u w no interview</div>
+    </div>
+    <div class="msg">
+        <div class="content">life would be so much easier as a nepo baby damn why couldn&#x27;t my family have created facebook or the hoover something</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> i have the general idea of things but i would love your pov! a lot of the ppl th...</div>
+        <div class="content">i will give u the lowdown from pov shortly, debating whether to do this as a wall of text or a vn that will inevitably generate 7 walls of text in the transcription</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> i dont wanna segue to strategy all too hard i did think u should know tho, a big...</div>
+        <div class="content">but also LOL cause the way we would have been in the minority last vote had it not been for the twist</div>
+    </div>
+    <div class="msg">
+        <div class="content">but i can v much imagine who would be perpetuating that here on this little yoshi island</div>
+        <div class="reactions">
+            <span class="reaction">🕊️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 05:18 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/f9cbf68ad4e92d7d-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/30/2026 05:18 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> </div>
+        <div class="content"><pre><code>, I know I said I would do a recap shortly, but turns out I actually took a nap. So I&#x27;m very sorry. Here it is now. Let me not dilly dally. So I will try and make this as quick as possible. But let&#x27;s go all the way back to the beginning. We&#x27;re on Waluigi tribe. I think we win most until we go to the Codenames tribal. that one was very straightforward i&#x27;m sure you loki heard about it from nishi um sasha insisted on being spy master we lost they crashed out on all of us for us being bad turns out they did not actually know how to play spy master and that&#x27;s why we did horrifically because they were just they were anyway they were awful at the game of code names that is then we have the the joint tribal it&#x27;s us and the it&#x27;s the Waluigi tribe and the red Mario tribe um that was also quite straightforward it was Lemmy the red tribe just didn&#x27;t really fuck with Lemmy like that um Lemmy voted me which was obviously wonderful um but other than that was quite straightforward. Then we go to swap, we end up at our first Tribalon swap and it starts off with Mouse throwing out Faith&#x27;s name. Faith hears about this, Faith starts pushing Mouse back. Okay now it&#x27;s also important to note as soon as we hit swap like the first thing that Mouse did was like launch into everyone&#x27;s one-on-ones and like basically just say how he was like he would have been gone on the warrior tribe he was not like half the tribe wasn&#x27;t speaking to him like um there was a girl&#x27;s alliance with the other three people that he wasn&#x27;t in um and he was telling everybody this and we&#x27;re like okay cool maybe it&#x27;s true maybe he&#x27;s just throwing everyone under the bus. Anyway, Faith versus Mouse this tribal. Also important to note, it&#x27;s actually not that important at all, but me and Kristen had an alliance with Faith. Faith came up to both of us and was like hey really like you two both let make an alliance I was like sure So when it Faith versus And I was like okay let think about this Initially I actually do</code></pre></div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">Everest Hub Bot#0212</span> ```Okay, I know I said I would do a recap shortly, but turns out I actually took...</div>
+        <div class="content"><pre><code> even know what it was initially but towards the end of it actually no it wasn even initially on mouse what am I saying it was initially on faith anyway because it came out that she was just telling everybody that she was that they were her number one and she was going to everyone like oh my god like I&#x27;m obsessed with you like I love you and so on um and everyone was just like what the um so yeah then we had second tribal it was the double one where someone was immune um oh yeah this is what i was gonna say from the joint tribal that we had the lemmy one obviously four of us were on the same swap tribe so pretty soon into swap there was a four created with me kristin joel and dean um just because we already like we had already spoken to each from the one before and we thought it would be useful for the faith versus mouse one so we&#x27;re going into second tribal mean is immune that four exists so it was kind of like default everyone just expected it to be mouse however um kristen had other plans kristen was really going around saying oh i really really want to save mouse though and we&#x27;re like okay like what are you suggesting then um and she was basically saying that had Amina not been immune she wanted to vote for Amina but Amina&#x27;s immune so now she would rather vote for Dean like oh okay understood um and so while all of this is going on um Mouse comes to me and he basically like and when I tell you like a five-page essay like he is sending me so many messages basically just um exposing Kristen right now I don&#x27;t know if she was doing this to other people but she was doing this to me where she would basically just take every single thing I said to her and like relay it back to Maus for no good reason um she would just leak absolutely everything I said and obviously like you might be wary of Maus saying like oh didn&#x27;t he do this the first try we&#x27;re just like throwing people under the bus however he was coming with like actual facts this time like there were certa</code></pre></div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">Everest Hub Bot#0212</span> ```n even know what it was initially but towards the end of it actually no it wa...</div>
+        <div class="content"><pre><code> comments I made, they were jokes, like they weren&#x27;t, there was nothing really game related, but that I had only told Kristen. One of them was like, jokingly like, oh like I&#x27;m obsessed with faith, like 60 of my confession was just me talking about faith because it was funny which is kind of true it was true at the time And then why am I hearing that same comment coming out of Mouse mouth And I like oh no do you know what there actually truth to this, this is factual. So yeah, so he comes back and he tells me basically since first round, so as soon as swap hit, Kristen has just been like leaking every single thing I say to him to her to him and I&#x27;m like what the fuck um he also says that she initially uh also pitched me as the vote this round as well I&#x27;m like what the fuck so that&#x27;s half the tribe she&#x27;s pitched already in an effort to save mouse who has then also just gone and thrown her under the bus to me and she was the only person willing to save him as well anyway so it was such a mess a huge huge mess um obviously the rest of us like we find out what&#x27;s happening we congregate together we&#x27;re like okay not only is Kristen like basically throwing all of our names out she&#x27;s also just leaked everything about our games and anything to Mouse for some reason so we&#x27;re like we just really can&#x27;t trust her so we vote Kristen um we don&#x27;t tell Mouse I don&#x27;t remember reason for us not telling Maus because like it would not have made a difference anyway I don&#x27;t know why we didn&#x27;t tell Maus actually but it was a 4-1-1 with Kristen voting Dean and Maus voting Joel for some reason but yeah so that was that round then we get to the duo round um what&#x27;s his face switch and joel win so they&#x27;re off they&#x27;re not involved then um at the start of tribal apparently mouse throws out nishi&#x27;s name and she pushes back okay cool um i wake up and i hear this is what&#x27;s going on um up until like maybe three hours before the deadline all I&#x27;m hearing is like everyone&#x27;s voting mouse I&#x27;m like </code></pre></div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">Everest Hub Bot#0212</span> ```in comments I made, they were jokes, like they weren&#x27;t, there was nothing rea...</div>
+        <div class="content"><pre><code> cool makes sense um like it was pretty controversial on swap like this doesn&#x27;t surprise me um and so yeah then like again this is like 10 p.m my time like I&#x27;ve not heard from half the tribe like all day all I can do is just assume that they voting mouse because like no one talking like to me from a lot of the new people and so and then suddenly I hear from Mina she like actually I think they all on Nishi instead and I like huh like no one no one&#x27;s even spoken to me like um which was insane so I then have to like go and double and like triple text these people and I&#x27;m like guys like please come talk about the vote because they mind you they&#x27;ve not spoken to me all day um and they&#x27;re like again they&#x27;re not giving me anything they&#x27;re just like oh really vague like like it&#x27;s difficult like i&#x27;m not sure like i&#x27;m like okay whatever so at this point also as you know Nishi and Dean had um extra voting power and so So depending on where Tully was voting, maybe it would tie, maybe it would, like, not tie. It wouldn&#x27;t have tied. It would only tie if someone played a star. But we didn&#x27;t know if we had a majority or not because Tully was at work. Tully was offline. So we had no idea, basically, what was going on if Tully had also switched to Nishi. Just genuinely no idea because no one was talking. and so there&#x27;s a fly in my room and so Tully gets back online like what 20 minutes before the deadline not 20 minutes before the deadline like it&#x27;s like 20 past midnight my time and then a couple minutes later they say all the votes are in and it gets called early so really not that long um but Sally comes online and he&#x27;s like why don&#x27;t we just vote Liz like no one&#x27;s talking like let&#x27;s just and because of the twist specifically like we have enough firepower let&#x27;s just vote Liz um and so to make sure that you know she doesn&#x27;t play a star we couldn&#x27;t tell anyone um so we end up voting Liz and then yeah that&#x27;s basically where we are at the minute so Liz was very much a last mi</code></pre></div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">Everest Hub Bot#0212</span> ```okay cool makes sense um like it was pretty controversial on swap like this d...</div>
+        <div class="content"><pre><code> um decision and you know not mad about it I can&#x27;t lie she she literally was not speaking to me um but yeah that is where we are at the minute I&#x27;m sorry that has low key not been super coherent that was very rambly if there&#x27;s anything that was not clear let me know um and i can clarify otherwise i don&#x27;t yeah i think that&#x27;s it</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 05:18 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i am so sorry</div>
+    </div>
+    <div class="msg">
+        <div class="content">😭 😭 😭 😭 😭 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/30/2026 09:58 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> but i also feel like we are likely to have some opps in common LOL</div>
+        <div class="content">true LMAO</div>
+    </div>
+    <div class="msg">
+        <div class="content">i am rlly busy so i will be back in a sec to read this but i am hearing mouse and tully rn as vote options. ur name and nishi also came up but everyone dismissed that from what i heard</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/30/2026 10:20 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> u can click full availability n ready to start work within the hour n they&#x27;ll st...</div>
+        <div class="content">deadass i’m so over it</div>
+    </div>
+    <div class="msg">
+        <div class="content">entry level jobs wanting experience and shit</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> i will give u the lowdown from pov shortly, debating whether to do this as a wal...</div>
+        <div class="content">i wonder which one it was… LMAO</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> but also LOL cause the way we would have been in the minority last vote had it n...</div>
+        <div class="content">yeah lowkey 😭 it seemed like a bit of a perfect storm</div>
+    </div>
+    <div class="msg">
+        <div class="content">i will listen to the voice note later i just realized it is ten minutes long and im lowkey rushing to talk to everyone before deadline cause of how busy ive been 😭 but thank you for being so in detail lmao</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 11:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">not to worry literally no rush😭 i feel bad for rambling sm, it got to like 6 mins n i felt like i had to commit to it LOL</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> i am rlly busy so i will be back in a sec to read this but i am hearing mouse an...</div>
+        <div class="content">but yes ofc ty for letting me know, i hear mouse has revived this n is pushing me once more</div>
+    </div>
+    <div class="msg">
+        <div class="content">so my vote naturally will be going to 🐁</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">10/31/2026 12:13 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">FASK</div>
+    </div>
+    <div class="msg">
+        <div class="content">WTF</div>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1035076435452379206.gif?size=48" alt=":hitthefloorveryfast:" title=":hitthefloorveryfast:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/31/2026 12:14 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">if only i were online LOL</div>
+    </div>
+    <div class="msg">
+        <div class="content">generational fumble</div>
+    </div>
+    <div class="msg">
+        <div class="content">good luck chrysalis i will be cheering for u</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/31/2026 12:16 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove inactive 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/31/2026 12:16 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">caraage</span> !chmove inactive 1-1s</div>
+        <div class="content">✅ Successfully moved <span class="mention">#chrysalis-kebab</span> to the <strong>inactive 1-1s</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

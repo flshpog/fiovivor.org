@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#kebab-questioning — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>kebab-questioning</h1>
+    <p class="meta">Everest &middot; 77 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/17/2026 09:50 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hello friends</div>
+        <div class="reactions">
+            <span class="reaction">👋 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">congrats on ftc!</div>
+    </div>
+    <div class="msg">
+        <div class="content">there is a strong chance i will be asleep when speeches are posted/questioning opens</div>
+    </div>
+    <div class="msg">
+        <div class="content">but fret not, i will read everything properly in the morning</div>
+    </div>
+    <div class="msg">
+        <div class="content">i look forward to hearing what both of u have to say</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/749053689419006003.webp?size=160" alt="Cheer" title="Cheer" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">11/17/2026 10:34 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> </div>
+        <div class="content">when will we get a gif of u hitting the wumpus cheer?</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/1464740954597495079/1570966736809758800/Discord_N5a4AneF16.gif</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/9a38611732fe5df0-embed-image.gif" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 10:28 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">good morning i have been reading though answers a bit n will send some questions of my own when i get on the tube</div>
+    </div>
+    <div class="msg">
+        <div class="content">my questions are mostly gonna be based on second-hand info from jury cause i was not around long enough to properly interact w either of u LOL</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">so if there’s anything grossly inaccurate pls do correct me</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 10:42 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ok i lied i’m asking the first questions now</div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Ben ]</span> u mention that have not had a vote cast against u all season n that, by ur own admission, u were not seen as a threat to win. to what extent is this perception true n why? how much of ur game do u think was u being “allowed” to reach ftc by others rather than u “fighting” for ur spot?</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Chrysalis ]</span> i heard that in the f6 joel round, u told nishi about ur idol n that u were going to play it on urself. how can u reconcile self-sabotaging an idol snipe w ur self-proclaimed post-redemption mentality which was about re-evaluating risks where u should now recognise them (ie. knowing that switch n nishi were close) n wanting to take down the status quo?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 11:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I like this question a lot, I feel like as soon as I got the notion that I perceived that way I ran with it. In the final 4 I realized that there was almost no way I wasn’t going to be sitting here now. I feel like had to fight for my spot more in the start of the merge, but as time went on I realized that I had set myself up for a pretty easy walk to the final 2. I purposely made sure not to be the crooked nail in this merge. I threw challenges just to not be seen as a physical threat, I played dumb to people knowing that it would negatively effect how the jury perceived me, but with the overall goal of sitting here and telling everyone that I knew exactly what I was doing this whole time. <br><br>So to answer your question, I think the belief that I cannot win this game is false, because I have been working so hard making myself seem as unthreatening as possible. it was my plan for quite some time to make it here exactly this way. I was able to fully guarantee my spot in the final 2 without needing a giant move.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 11:09 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> I like this question a lot, I feel like as soon as I got the notion that I perce...</div>
+        <div class="content">ty for ur answer, follow-up question - if u felt ur path to ftc was p much secured at f4, why did u tie the vote for firemaking n give whoever wins another move on their resume for free if ur safety was not threatened?</div>
+    </div>
+    <div class="msg">
+        <div class="content">also could u give examples of the “playing dumb to people” n any other ways u were “working to seem as unthreatening as possible”</div>
+    </div>
+    <div class="msg">
+        <div class="content">(this is not me doubting what ur saying, i just was not alive to see any examples so i am curious what this is referring to)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 11:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I tied the final 4 vote because I saw Joel as a much larger win threat than Chrysalis. My goal was not to just be in ftc, but to win. It was a calculated risk because if chrysalis did win and I sat next to her it would be an extra move on her resume, but I feel I have a better chance at beating her than Joel or switch.</div>
+    </div>
+    <div class="msg">
+        <div class="content">I think the main way I made myself look unthreatening was just not constantly talking about the game. Sometimes people would come to me in my 1-1 trying to talk about an upcoming vote, and I would segway it into a chat about life, or some other topic. I didn’t want to come across as someone who was as deep into this game mentally as I was. I wanted to look aloof. Like someone you could control in this game, when in actually I was very aware of everything happening around me</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 04:18 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">just finished class will get back to questions soon</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Nishi | 6th ]</span> thought of u when visiting the goated pop-up store today</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/f9e4ada56e82e2f8-IMG_1032.webp" alt="IMG_1032.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 05:41 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> I think the main way I made myself look unthreatening was just not constantly ta...</div>
+        <div class="content">to make sure i understand, ur way of “working on seeming unthreatening” was through avoiding gameplay? do u not think this weakens ur argument? in that u reaching the end was less due to moves actively taken by u n more characterised by other people willing to take u from ur lack of action.</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> I think the main way I made myself look unthreatening was just not constantly ta...</div>
+        <div class="content">also in regards to saying u were “very aware of everything happening around me”, in ur own speech u highlight that “the merge was more of a struggle for me strategically. i rarely found myself on the right side of a vote”. if this is true, how is being the victim of multiple blindsides reflective of u being aware of everything happening around u?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 06:08 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> to make sure i understand, ur way of “working on seeming unthreatening” was thro...</div>
+        <div class="content">I don’t think I played this game in an avoidant way, I tried to make moves in this merge, they just never worked.  In f10a I wanted nishi out because I saw her as a number for Dean, someone who would vote with him no matter what, and someone who was very persuasive. I thought I had the votes to make that happen and it turns out I did not have as many people on board as I thought. In the now or later twist, I made the move that I felt was best for my game, after a ton of inaction by my allies, and a sneaking suspicion that half of them were going to voting mouse no matter what I said. I decided to drop joel as a target and vote out tully: someone who went back on their word with me during the Liz vote. In the f7 vote, I wanted to target Joel again, but lost Mina. In this vote my closest ally switch told me they were voting joel and instead voted Mina. This was a turning point in my game where I realized that I was just unable to compete with the influence nishi and Dean had over much of this cast. As I said earlier, every single one of my allies was either voted out by, or recruited by this “other side” of the game. After this vote I knew I could very well be the next to go. And that’s where the threat managing came into play. I knew the only way I could truly take a shot at Dean, nishi, or anyone else in their voting block was to wait until the time was right. That time came in the f6b tribal council when I had immunity and was able to get chrysalis and joel on the idea of voting switch to trigger a rock draw between the two. I voted switch with the exact intention of triggering a rock draw. I’ve gotten some slack for not having a big move in this game. But I would consider this one of more shining moments as I was able to send the two people I saw as controlling the game to rocks. After nishi was rocked out, Dean losing the next challenge was a guarantee he was being voted out. Im proud of myself for that because I was able to outlast 2 big threats to my game</div>
+    </div>
+    <div class="msg">
+        <div class="content">In an under-the-radar way.</div>
+    </div>
+    <div class="msg">
+        <div class="content">My game is not defined by inaction but the inability to ever succeed in taking action, yet prevailing anyways</div>
+    </div>
+    <div class="msg">
+        <div class="content">And I’ll come out and say it, it’s not the most enticing jury pitch I’ve ever seen, but that is my game and I’m proud of the game I played</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> also in regards to saying u were “very aware of everything happening around me”,...</div>
+        <div class="content">And I appreciate you asking this because it does sound contradictory</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was aware that there was a massive voting block that I was just not able to be a part of</div>
+    </div>
+    <div class="msg">
+        <div class="content">I couldn’t be a part of it even if I wanted too! Dean completely ignored me the WHOLE merge until he was 5 minutes from going to rocks</div>
+    </div>
+    <div class="msg">
+        <div class="content">If that doesn’t scream “this guys on the outs” I don’t know what does</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was aware that I was in the bottom of the tribe, but I let those from that side believe that they had control over me. But they did not. Had they had control over me, I would have a perfect voting record lol. I knew that switch wanted to vote Mina and pitched joel so hard to them, I knew tully didn’t like Liz and pitched nishi like hell to him. I knew switch didn’t like mouse but still tried my absolute hardest to get them to vote out joel in the now or later. I went into so many votes with the suspicion that I may be blindsided but the confidence that I wouldn’t. And I admittedly had misplaced that confidence many times. I just wasn’t very persuasive I guess.</div>
+    </div>
+    <div class="msg">
+        <div class="content">You get your ideas flat out ignored by people you think are you’re friends in this game so many times and it just puts you into survival mode</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was absolutely in am anybody but me mindset by the time I reached the endgame</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was constantly getting knocked down by an alliance I could never join, but I kept getting back up and now there all on the jury and I’m sitting here</div>
+    </div>
+    <div class="msg">
+        <div class="content">And I’m proud of that</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 07:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> <span class="mention">@[ Chrysalis ]</span> i heard that in the f6 joel round, u told nishi about ur i...</div>
+        <div class="content">my thought process for final 6a with the idol was this:<br><br>i told ben about it slightly after i found it, trusted his loyalty and knew that if i convinced him into thinking we were idoling someone out then i could get his vote on whoever necessary. i chose nishi for being the least threatening person to come back from redemption- if i sent nishi i could guarantee that i would get mina or tully back from redemption as nishi seemed to have 0 willingness to do the redemption comp needed.<br><br>i figured though there was an ok chance that i could be getting my idol flushed, which i was ok with risking since the only person they could logically vote out while flushing the idol was joel, who was voting for me. i did end up telling nishi about the idol, and fearmongering dean that i may have an idol that round. i actually considered not playing it for me after doing this but i decided that either way, i’d get a round further and either continue to sandbag my threat level OR make a huge move in idoling out nishi.<br><br>either way i knew that whoever came back from redemption would be stupid not to work with me, so i was willing to accept a sloppy round</div>
+    </div>
+    <div class="msg">
+        <div class="content">also i don’t believe that an idol snipe looks too bad on my resume, i didn’t end up ever needing either of my idols for anything and i actually somewhat think that my threat level being sandbagged by an idol flush made me look like more of an appealing ally to joel upon his return. (didn’t help that his allies voted him out too lmao but ykwim)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 07:44 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> I don’t think I played this game in an avoidant way, I tried to make moves in th...</div>
+        <div class="content">I feel like at F6b the rock draw being touted as a big move doesn’t work with how I personally perceived that round. You and Joel were immune and thus had no stakes in causing rocks. I also think painting it as you trying to get me and Joel onboard for rocks is similarly disingenuous, I think rocks as a possibility became strikingly obvious once Joel came back. That’s not something I believe can go on an individual resume when the other person ur sitting here with also was a part of this move, and in fact benefitted from it more than you did. (Rocks in effectivity gave me a free ticket to the Final 4)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 08:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thank u for ur long answers friends i am walking back home i will read them properly n ask any follow-ups shortly</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 08:53 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> my thought process for final 6a with the idol was this:<br><br>i told ben about it sli...</div>
+        <div class="content">do u mean joel was voting w u? or was he casting a vote against u? pls correct me if i am wrong, i thought u n joel were the 2 nishi voters that round n u voted together. in which case, u ended up losing a, at least short-term, ally for no real reason from what i can tell n also lessened the likelihood of tully/mina coming back into the game (which i assume u would consider this better for u than joel returning? lmk if not). i appreciate that u likely could have recovered whichever way that vote went in terms of who made it back from redemption, i just do not quite understand the logic of unironically telling nishi that u are planning on idoling them out n it not being a fake-out. the only reason i can think of is if u had a genuine concern that u would be voted out that tribal n wanted to bluff n save the idol, but u ended up playing it anyway n in such a way that it lost both its defensive n offensive use, as well as introducing a new risk factor of someone else finding the rehidden idol for no real reason</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 08:54 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> do u mean joel was voting w u? or was he casting a vote against u? pls correct m...</div>
+        <div class="content">me and ben voted for nishi, joel to my knowledge voted against me</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 08:54 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> me and ben voted for nishi, joel to my knowledge voted against me</div>
+        <div class="content"><span class="mention">@[ Joel | 4th ]</span> can u confirm pretty pls</div>
+    </div>
+    <div class="msg">
+        <div class="content">if that’s true then ignore the first like 6 lines</div>
+    </div>
+    <div class="msg">
+        <div class="forwarded">
+            <div class="forwarded-header">Forwarded Message</div>
+            <div class="content"><span class="mention">@[ Kebab | 9th ]</span> i voted nishi originally then dean and switch baited me into voting chrysalis so i voted chrysalis then about two minutes after votes locked chrysalis goes &quot;DUDE VOTE NISHI&quot; and i was like</div>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">@joel had timing not been an issue, would u have swapped ur vote to nishi?</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Joel | 4th ]</span> ping did not work</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 09:02 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> do u mean joel was voting w u? or was he casting a vote against u? pls correct m...</div>
+        <div class="content">i will be honest i told nishi about the idol out as a personal courtesy because they were going through rough personal stuff at the time- it was more of an emotional courtesy play but i ended up paying the price there. i’ll be honest a bit of a flaw in my game relates to my nishi management at times, this is one of those examples similarly to f13. regardless i still calculated the risk of doing it and understood that it would likely work out for me either way.<br><br>i did not anticipate the idol being rehidden again though lmao i didn’t know that’s how they worked in this org, probably my bad for not reading the rules but i didn’t expect them to hide a new one with 2 rounds left. when they did rehide it i immediately locked in and found it, i spent like 7 hours in one day playing flappy copter to get it because i knew i screwed up by putting it back in rotation</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 09:19 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i can’t pretend there’s no flaws in that round for me but i don’t believe they ultimately mattered enough to screw my game long term- i made a mistake and then immediately got to work fixing the mess that i made.<br><br>I see now that Joel would’ve voted Nishi if I spoke to him abt it before deadline but unfortunately I wasn’t able to gauge that trust properly since that was right after the two round Joel v Chrysalis stint lmao. I did genuinely consider trying to pocket the idol which is why I was vagueposting to Dean abt it, but I aired on the side of “I’d rather misplay an idol than go home with one in my pocket” for that round. Ultimately I made the wrong choice, but I think my positioning was good enough to allow me a lot more wiggle room than I should’ve realistically had.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 09:23 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> I don’t think I played this game in an avoidant way, I tried to make moves in th...</div>
+        <div class="content">thank u for the examples of convos u had in ur other paragraph, it helped understand me a little more of what was going on behind the scenes at tribals. i can see that attempts to steer the vote n consolidate some power were made, but these largely didn’t end up coming to fruition at the intended times. u mention that u were “just unable to compete with the influence nishi and dean had over much of this cast”, why do u think this was? i am curious for ur opinion on this bc iirc me n dean at the start of merge felt like we were alienated n lowkey iced out by half the tribe n having a distinct lack of influence. what, if anything, changed along the way for the roles to be reversed?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 09:35 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> thank u for the examples of convos u had in ur other paragraph, it helped unders...</div>
+        <div class="content">This vexes me because I was in so tight with people in this game that ended up voting with those two pretty much every tribal, and it all stemmed from the Liz vote. I think it was a classic case of “if you can’t beat them join them”. I confronted switch on this and they said “i come back from the confinement and liz is gone and replaced by untrustworthy players” <br><br>Liz being voted out, triggered a scramble that flipped the power structure of the game. When switch returned, they joined forces with nishi and dean. Joel was already in close with dean from their time in the rosalina tribe and slotted in nice. After these two players returned from confinement, the side of you, dean, nishi, and tully gained two more members. Leaving me, mouse, and Mina on the outside. <br><br>I tried so hard to get switch to vote with me, and they just didn’t. It frustrated me because we had worked so closely on peach tribe. I learned later on that switch was working with nishi on peach tribe too, and they just chose the stronger side.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 09:44 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> I feel like at F6b the rock draw being touted as a big move doesn’t work with ho...</div>
+        <div class="content">And I agree this is not my big move in this game, it’s just a moment I’m really proud of, I personally think you and Joel should’ve voted nishi here to keep more players you know you could beat in the game. But I pushed hard for switch knowing Dean and nishi would go to rocks. <br><br>I’ve been doing some thinking about what really is my big move, why I’m sitting here in tribal, and honestly. I keep thinking back to tying the final 4 vote. It was a move that both guaranteed me at least the chance to go to fire if I was being blindsided and a chance to take out a player I think would be more likely to beat me in an ftc: joel. I’ve seen chrysalis trying to take credit for me doing this, but as I said in tribal chat after the vote, she had nothing to do with it. I made the decision to send joel to fire purely out of what I believed was best for my game.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 09:50 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> And I agree this is not my big move in this game, it’s just a moment I’m really ...</div>
+        <div class="content">I don&#x27;t think voting Nishi was the right move as their elimination via rocks forced everyone&#x27;s gameplan to change and opened up a practically guaranteed FTC spot that would never have been able to happen if they didn&#x27;t go at that round specifically. It wasn&#x27;t the intended outcome but I saw the benefits in it happening and I was able to play to them accordingly. I saw you as a player I could beat, and one that trusted me the most- so Nishi going home as another player I could beat was not a problem for me<br><br>I don&#x27;t believe you can exonerate me from taking any credit for you giving me firemaking- regardless of the reason why you did it, I was positioned in a way that made giving me firemaking beneficial for you. That was not just luck, I also intentionally made sure to constantly talk about how much of a threat Joel was with you and feed into your perception of him as a threat so that you&#x27;d prioritize him over me. You even told me about your F2 deal with him which was fully unnecessary and did nothing but cement the fact that you trusted me the most.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:37 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> I don&#x27;t think voting Nishi was the right move as their elimination via rocks for...</div>
+        <div class="content">I made the conscious decision to go against the majority and send you and Joel to fire-making because I believed that it was best for my game and chances of winning. I identified an opportunity, acted on it, and took control of the direction of this game, I’m not going to minimize my strategic decisions because you benefited from them.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 10:43 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> I made the conscious decision to go against the majority and send you and Joel t...</div>
+        <div class="content">I don’t really think this addresses what I said in a meaningful way and tbh I don’t want to derail from Kebabs questions too far so I’m down to be done here 💀</div>
+    </div>
+    <div class="msg">
+        <div class="content">I think my point is made</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:54 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">What I’m saying is that there’s a difference between someone making a decision, and saying you persuaded them to do it after. I knew Joel was a threat before you even came back from redemption. The only chance I had of possibly winning this game was against you. And sending you to fire was my decision. I told you about the final 2 joel proposed to me because I trust you, and I don’t think I should be punished trusting the only person who truly wanted to work with me in the merge.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Kebab ask another question I’m having fun 😭</div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/18/2026 10:58 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i have a more lighthearted question</div>
+    </div>
+    <div class="msg">
+        <div class="content">but u can take it more seriously if u wish n treat it as an assessment of ur social reads this season</div>
+    </div>
+    <div class="msg">
+        <div class="content">or u can troll idrm</div>
+    </div>
+    <div class="msg">
+        <div class="content">here is my unoriginal n plagiarised question #shoutoutjb - <span class="mention">@[ Ben ]</span> <span class="mention">@[ Chrysalis ]</span> pls assign the jury an alignment that u think suits them best! u can put more than 1 juror for the same box but there are 9 jurors n 9 boxes n it seems a shame to ruin that beautiful coincidence. but if u feel strongly enough to go against it, who am i to judge. if u have the will to also write why u put each juror in their position it is most welcomed, but i also understand if u cba after all these essays</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/e45b6dd393efd63a-IMG_1078.webp" alt="IMG_1078.jpg" loading="lazy"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 11:09 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Ooo I like this</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 11:17 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> What I’m saying is that there’s a difference between someone making a decision, ...</div>
+        <div class="content">I see where you’re coming from and I think it was from my misinterpreting part of your answer so mb. I didn’t want to take away the agency in ur own decision making. I wanted to emphasize that I had a hand in being given firemaking because I positioned myself and got the right final 4 needed to make it happen in the worst case scenario that switch won immunity. But I interpreted ur original reply slightly differently than I believe you intended which is why I brought it up in the first place. I still don’t agree that sending me and Joel to firemaking is a good ‘big move’ for your game but I think theres not much to be done abt that disagreement lmao we do both want to win after all. I am gonna do the alignment chart now and move on 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 11:40 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/30ac3ab326fd9055-3C9A0E81-1DC4-41B4-8CE0-221EF513A4DA.webp" alt="3C9A0E81-1DC4-41B4-8CE0-221EF513A4DA.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">personally….</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/19/2026 01:39 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/bc6ca57ac454a888-IMG_9487.webp" alt="IMG_9487.jpg" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">11/19/2026 02:42 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thank u both</div>
+    </div>
+    <div class="msg">
+        <div class="content">muy interesante</div>
+    </div>
+    <div class="msg">
+        <div class="content">n thank u for ur lovely detailed answers earlier too</div>
+    </div>
+    <div class="msg">
+        <div class="content">there is much to think about</div>
+    </div>
+    <div class="msg">
+        <div class="content">if i wake up in a cold sweat w any other burning questions i will let u guys know</div>
+    </div>
+    <div class="msg">
+        <div class="content">but for now it is goodnight</div>
+        <div class="reactions">
+            <span class="reaction">🩶 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/776243107654008872.webp?size=160" alt="Good Night" title="Good Night" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+        <div class="reactions">
+            <span class="reaction">💛 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">11/19/2026 02:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/776243107654008872.webp?size=160" alt="Good Night" title="Good Night" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

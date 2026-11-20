@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#twist-info — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>twist-info</h1>
+    <p class="meta">Everest &middot; 114 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/12/2026 11:51 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">Advantages:</strong><br><br>Hidden Immunity Idols will be the ONLY in-server hidden advantage you will find. They negate any and all votes cast against you and become &quot;flushed&quot; from the game if they go unused. Any other advantages must be obtained via twists that will be announced in the future! Idols will always be a command, starting with the <code>!</code> prefix, prompts will be given to you by <span class="mention">@Everest Hub Bot</span>. The last time an Idol can be used is when there are five players left in the game.<br><br>There will always be one idol in circulation. If and when it is flushed from the game, it will be re-hidden!<br><div class="blockquote">- If an idol is played, it will be explicity mentioned in the Tribal it is played that it will be rehidden UNLESS someone is voted out with it in their pocket... or we forget.<br>- If we <em>do</em> forget, ask us and we&#x27;ll clarify. The only scenarios an Idol won&#x27;t be rehidden is when it is very late into the game or we may specify a cooldown (ex: rehidden within two cycles).<br>- If someone is voted out of the game with an idol in their pocket, it will also be rehidden, but it will not be stated by production.</div></div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">The first Idol will be hidden at some point during episode one! Be on the lookout for anything suspicious in this server that you think could be a command!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/14/2026 08:17 PM</span>
+    </div>
+    <div class="msg">
+        <div class="attachment"><audio controls preload="metadata" src="https://everest-cdn.xsoul.org/audio/31c636641c5f95d7-voice-message.ogg" style="margin:4px 0;"></audio></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/14/2026 08:17 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> </div>
+        <div class="content"><pre><code> guys, so I&#x27;m just going to come out and clarify something real quick. If you come across an edited message with something that you may believe is a command or anything related to an idle hunt, real quick, just go ahead and double check the date that that message was edited. You can see it on Discord PC. Discord mobile, however, is a little different. If you do not have access to a computer, if you are a mobile-only player, first of all, oof, not looking good for you this season in terms of immunity challenges. But also you can ping a host and we will clarify. We just don&#x27;t want any of you guys to get lost on the idle hunt, go down a rabbit hole for something that was a previous season&#x27;s advantage. That&#x27;s not fun for anyone, and it&#x27;s a waste of your time.</code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/14/2026 11:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="color:#99aab5;background:rgba(153,170,181,0.1)">@Alive Player</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/14/2026 11:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">first</div>
+        <div class="reactions">
+            <span class="reaction">🐴 <span class="reaction-count">4</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/14/2026 11:10 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Here at Everest Survivor, we as a production team get <strong>two lies</strong> in a season.</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1117960750862958662.webp?size=48" alt=":sussysus:" title=":sussysus:"> <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">You&#x27;ve been lied to about something, and I&#x27;m about to fess up, so I&#x27;ve only got one lie left!!! :(</div>
+    </div>
+    <div class="msg">
+        <div class="forwarded">
+            <div class="forwarded-header">Forwarded Message</div>
+            <div class="content"><pre><code>, all of you are considered newbies because none of you have played Everest Survivor before. So give yourselves a little pat on the back and wish yourself good luck for our first all newbie season.</code></pre></div>
+        </div>
+        <div class="reactions">
+            <span class="reaction">🤣 <span class="reaction-count">8</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">&quot;wasn&#x27;t our first all newbie season season 1&quot; someone said and well YEAH youre kinda right</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">From both <u>Survivor: Twin Peaks</u> <em>and</em> <u>Survivor: New Horizons...</u><br><br><strong style="font-size:1.25em"><strong>TULLY</strong> is back again!</strong><br>He becomes the seventeenth and final castaway of <u>Survivor: Mushroom Kingdom.</u><br><br>In <strong>Survivor: Twin Peaks,</strong> Tully was voted out at the infamous &quot;Fire Walk With Me&quot; round by the OTHER Tribe. It was a fine run until he was sniped in one of the most brutal twist in our series&#x27; history. But that was not the end of Tully&#x27;s story.<br><br>Tully came back as one of three captains for <strong>Survivor: New Horizons.</strong> He drafted the Peach tribe, which blindsided him and left him out of the first vote of the season. He then played the rest of the game on the bottom, winning a clutch immunity from May Day and earning enough Bells to purchase the Golden Axe TWICE (although he ultimately whiffed it both times <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/622899676773089310.gif?size=48" alt=":RoverLaughHaha:" title=":RoverLaughHaha:">).<br><br>As this is... well, Tully&#x27;s third chance here at Everest Survivor (💀), <strong>he has started off the game with somewhat of a disadvantage.</strong> At the time you all begun the game on your tribes, Tully was actually <strong>banished to the Sand Kingdom</strong> for the entirety of the round. He essentially started off on <strong>Exile Island</strong> and only will only join the game after the first person will be voted out.</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">i have one more announcement tonight</div>
+    </div>
+    <div class="msg">
+        <div class="content">it is not a lie</div>
+        <div class="reactions">
+            <span class="reaction">🐴 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">You will hear from <span class="mention">@- weed crack &amp; dope</span> in this channel soon-ish <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/863253387486036018.webp?size=48" alt=":JudyCozySmile:" title=":JudyCozySmile:"></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/14/2026 11:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/820854670071037963.gif?size=48" alt=":joeblink:" title=":joeblink:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 03:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1558493323168190655.webp?size=48" alt=":monty_mole:" title=":monty_mole:"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 05:48 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">if i said i promise the wait is worth it, would you believe me</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/15/2026 03:48 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i would mr. scenes.</div>
+        <div class="reactions">
+            <span class="reaction">💛 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 10:20 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><span class="mention" style="color:#99aab5;background:rgba(153,170,181,0.1)">@Alive Player</span></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">hello everyone!</div>
+    </div>
+    <div class="msg">
+        <div class="content">it is me behind the scenes aka fishpog! i promise i havent forgotten about this org i&#x27;ve just been hard at work on this twist</div>
+    </div>
+    <div class="msg">
+        <div class="content">what is that twist, you ask? id be honoured to tell you</div>
+    </div>
+    <div class="msg">
+        <div class="content">as you know, here at everest we love pushing the boundaries of ORGs!</div>
+    </div>
+    <div class="msg">
+        <div class="content">our own bot... our own website... our own wikipedia... (which is horribly unfinished)</div>
+    </div>
+    <div class="msg">
+        <div class="content">what&#x27;s next?</div>
+    </div>
+    <div class="msg">
+        <div class="content">how about... our own <em>board game</em>?</div>
+        <div class="reactions">
+            <span class="reaction">😮 <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">our most ambitious twist yet...</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">The Everest Party!</strong></div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">2</span></span>
+            <span class="reaction">‼️ <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">there were a few ways the production considered combining Super Mario and an extremely over the top twist. in the end, we decided that the best would be our own version of <strong>Mario Party</strong>!</div>
+    </div>
+    <div class="msg">
+        <div class="content">here&#x27;s how it works.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/15/2026 10:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">wow mr scenes that sounds really cool.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 10:22 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">that&#x27;s crazy.</div>
+    </div>
+    <div class="msg">
+        <div class="content">If you check your tribe category, shortly you&#x27;ll be able to see a new channel appear. It&#x27;ll be called &lt;tribename-board&gt;. This is <strong>one of two</strong> ways to view the twist.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Head over to https://board.fiovivor.org and log in, and you&#x27;ll be sent to something that looks like this:</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/3c0a94824bb54875-image.webp" alt="image.png" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">4</span></span>
+            <span class="reaction">🤯 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">This is your Mario Party board! Every space that you land on can change the game, and this twist will be going on throughout <em>most of</em> the entire season.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">Here&#x27;s all of the information you&#x27;ll need:</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1em">Your turn</strong><br>Turns go in order. When it&#x27;s your turn, the bot pings you in your board&#x27;s thread with a <strong>Roll</strong> button. You can also use <strong><code>/roll</code></strong>.<br>You have <strong>12 hours</strong> to roll. If you somehow miss that window, your turn is skipped. You will still keep your place in the order.<br>After every roll there is a <strong>4 hour cooldown</strong> before the next player&#x27;s turn opens.<br>If you hit a fork, a shop, a star, or an event space, you&#x27;ll be greeted with a choice! These choices vary a lot, but no matter what you&#x27;ll have <strong>1 hour</strong> to do it, else the bot will choose for you.<br><span class="subtext">you will probably never need more than 20 seconds to decide, this is just a precautionary measure</span></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong> </strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1em">Spaces</strong><br>We put a little spin on the usual colour code for tiles here, so even if you&#x27;re familiar I&#x27;d recommend familiarizing yourself.<br>Green: <strong>Nothing!</strong><br>Blue: <strong>3+ coins.</strong><br>Red: <strong>-3 coins.</strong><br>Yellow: <strong>Event Space.</strong> I won&#x27;t reveal all the events now, that&#x27;s for you to find out!<br>Pink/Purple: <strong>Shop.</strong> There are <strong>10</strong> different traditional items from Mario Party that you can purchase at these shops, plus your <strong>Tribe Advantage!</strong><br>Stars: The goal of the game! You can hold up to <strong>3</strong> stars at a time. Each star you earn can be used to negate one vote against you at Tribal Council. When you collect one, you have three Tribal Councils to play it. After that, they become unusable <em>but</em> will still be useful for something later in the game!</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong> </strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">Everyone starts with <strong>10 coins</strong>.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong> </strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">There is one <strong>Tribe Advantage</strong> in each board&#x27;s shop. The advantage for each tribe is different. The first person to buy it gets it, and after that it&#x27;s gone.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong> </strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">This is a <em>huge</em> announcement, I know. I am happy to answer any questions you may have in your submissions!</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">once everyone has digested this information, we&#x27;ll get our turn order sorted out 😌</div>
+        <div class="reactions">
+            <span class="reaction">🐴 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">alright ive finished reading confessionals</div>
+    </div>
+    <div class="msg">
+        <div class="content">first up... <strong>Mario&#x27;s Stadium</strong>!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/15/2026 10:28 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Ben</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Joel</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Cristen</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 10:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">right then, Ben -&gt; Joel -&gt; Cristen -&gt; Lemmy</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>WarioWare Inc.</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/15/2026 10:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Liz</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Faith</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Mina</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 10:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Liz -&gt; Faith -&gt; Mina -&gt; Mouse</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>Waluigi Pinball</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/15/2026 10:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Dean</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Nishi</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Kebab</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 10:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Dean -&gt; Nishi -&gt; Kebab -&gt; Sasha</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">ahem sorry</div>
+    </div>
+    <div class="msg">
+        <div class="content">finally</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>Luigi&#x27;s Mansion</strong>, now featuring <strong>Tully</strong>!</div>
+        <div class="reactions">
+            <span class="reaction"><img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1530026293192556664.webp?size=48" alt=":tully:" title=":tully:"> <span class="reaction-count">3</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/15/2026 10:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Chrysalis</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Tully</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">🎲 I choose: <strong>Switch</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/15/2026 10:32 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Chrysalis -&gt; Tully -&gt; Switch -&gt; Eeveon</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">i&#x27;ll now give you all viewing access to your board&#x27;s channel and start the game!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/19/2026 11:53 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">This player spans back to <strong>Season 2</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">im trolling</div>
+    </div>
+    <div class="msg">
+        <div class="content">no secret extra cast member</div>
+        <div class="reactions">
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">THE UNDERWORLD</strong><br>How funny would it be to tell you all that when the first four players were voted out of the game, they were not actually <em>eliminated,</em> but rather sent to the <strong>Underworld</strong> and given a chance to return to the game? This twist is generally more well known as...<br><br><strong style="font-size:1.5em">REDEMPTION ISLAND</strong><br>A <strong>duel</strong> between all inhabitants of the Underworld will take place each round. (I say &quot;duel&quot; because most often it will be a 1v1 for survival.) The winner of the duel will stay alive and continue their quest to re-enter the game), and the loser becomes <strong>permanently eliminated.</strong><br><br>All advantages in a player&#x27;s inventory <strong>automatically expire</strong> upon being voted out. You will never be able to hold advantages in The Underworld. Upon returning, you will receive temporary immunity but production will <strong>never</strong> gift you an advantage in the game for returning nor will you get back the advantages that were once yours.<br><br>Because this twist was revealed late as part of the surprise behind it, I will throw you guys a bone in the form of <strong>transparency.</strong><br><div class="blockquote">- One of the current four inhabitants will re-enter the game <strong>tomorrow</strong> to even out the swap.<br>- Whenever the <strong>merge</strong> arrives (not saying when!), a second return opportunity will occur.<br>- Finally, a third return will occur after the <strong>F6 Tribal Council,</strong> meaning there will be two F6 rounds.</div></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/20/2026 12:11 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> Here at Everest Survivor, we as a production team get <strong>two lies</strong> in a season.</div>
+        <div class="content">damnit im all out of lies</div>
+        <div class="reactions">
+            <span class="reaction">🐴 <span class="reaction-count">5</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/854424783051685899-fb5de61b90296494.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- Goomba</span>
+        <span class="username">@sambubbles</span>
+        <span class="timestamp">10/20/2026 12:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">No you’re not :)<br>founders get an extra <strong>five</strong> lies</div>
+        <div class="reactions">
+            <span class="reaction">💀 <span class="reaction-count">6</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/20/2026 01:12 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Finalized placement will be determined by redemption island!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/26/2026 12:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">TO CLARIFY:<br><br>- this is a JOINT TRIBAL COUNCIL<br>- this is NOT a double elimination.<br>- you run this challenge in DUOS<br>- one duo overall will win <span class="mention" style="background:linear-gradient(90deg,#f3ce70, #eaf370);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Exemption</span>, allowing them to avoid tribal!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/29/2026 12:12 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/clapping-toad</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/4f850a4589e8ead3-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">for the merge, you&#x27;ll also be moving to a new home.</div>
+    </div>
+    <div class="msg">
+        <div class="content">of course i&#x27;m talking about the new board!</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/449d9d61490bfdd6-image.webp" alt="image.png" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content">i will transfer u all now</div>
+    </div>
+    <div class="msg">
+        <div class="content">everyone&#x27;s here, i&#x27;m now going to randomize your turn order again</div>
+    </div>
+    <div class="msg">
+        <div class="content">aaaand</div>
+    </div>
+    <div class="msg">
+        <div class="content">here it is</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/68de1d722d7e28be-image.webp" alt="image.png" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content">nowww GO!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/29/2026 12:04 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="color:#99aab5;background:rgba(153,170,181,0.1)">@Alive Player</span> OH...</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/5459afba06dfb611-one-more-thing-jobs.webp" alt="one-more-thing-jobs.png" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">Superstar Immunity</strong><br><br>Continuing the Everest tradition of some form of <strong>&quot;Legacy Immunity&quot;,</strong> there will be <strong>no challenge</strong> held for individual immunity at the <strong>first F6 round.</strong><br><br>Immediately following the F7 Tribal, we will jump straight into the F6 Tribal with someone being crowned immunity by default. This person will be the <strong>SUPERSTAR-</strong> whoever has the most <strong>stars and coins</strong> becomes the Superstar!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/31/2026 12:21 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="background:linear-gradient(90deg,#75d807, #dfff24);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Yoshi&#x27;s Island</span> Hello Every Nyan !!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Wow !! What a shocking tribal !!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Wait... why am I in <span class="mention">#twist-info</span></div>
+    </div>
+    <div class="msg">
+        <div class="content">OH !!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">That&#x27;s because... I am supposed to be here !!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">When Fio asked if I wanted to main host the season, he asked if there were any twists I was fond of.</div>
+    </div>
+    <div class="msg">
+        <div class="content">There is one !!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">I hope you are ready.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">NOW OR LATER ⁉️ </strong><br><br>Our second merge episode will feature a <strong>double elimination</strong> format in a Sequester-style twist called <strong>Now or Later.</strong> It&#x27;s essentially a combination of a <strong>Double Urn Tribal</strong> and a classic Survivor Double Tribal from <strong>S22</strong> and <strong>S23.</strong><br><br>We will start with a Immunity Challenge for our <strong><em>Final 9 Tribal.</em></strong> Due to the Holidays, we are giving you an extra day to complete it! I&#x27;m so kind!!!<br><br>At the conclusion of that challenge, a <strong><em>SECOND</em></strong> Immunity Challenge for the <strong><em>Final 8 Tribal </em></strong>(24hr deadline) will be held and our <strong><em> NOW or LATER</em></strong> Tribal Council will begin. On top of your socialization and strategy talks for this vote, you will also be tasked with:<br>- Completing another Immunity Challenge<br>- Deciding if you wish to vote <strong>now</strong> or <strong>later.</strong><br><br>The <u>now</u> voters will cast votes for the <strong>F9 elimination.</strong><br><u>Everyone</u> will participate in the <strong>F8 Immunity</strong> while Tribal Council is ongoing.<br>The <u>later</u> voters will cast votes for the <strong>F8 elimination.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">With that being said, let&#x27;s announce our <strong><em>Final 9 Challenge</em></strong> !!!</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">#challenge-arena</span></div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

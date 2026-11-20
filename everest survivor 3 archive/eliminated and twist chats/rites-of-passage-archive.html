@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#rites-of-passage — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>rites-of-passage</h1>
+    <p class="meta">Everest &middot; 16 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">11/15/2026 02:19 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="background:linear-gradient(90deg,#354c1d, #a9be2f);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Ben</span> <span class="mention" style="background:linear-gradient(90deg,#a9c9ff, #ffbbec, #ffc3a0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Chrysalis</span> <span class="mention" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Switch</span> Welcome F3 to Rites of Passage !!!</div>
+    </div>
+    <div class="msg">
+        <div class="content">Our contestants, in order of elimination.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Jay<br>Sasha<br>Faith<br>Lemmy<br>Cristen<br>Eeveon<br>Liz<br>Mouse<br>Kebab<br>Mina<br>Tully<br>Nishi<br>Dean</div>
+    </div>
+    <div class="msg">
+        <div class="content">and now Joel</div>
+    </div>
+    <div class="msg">
+        <div class="content">The floor is yours</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/15/2026 07:15 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">JAY<br><br>i remember first convo we had i said i wanted to work with u cause we were the only teenagers on the tribe, never could’ve guessed tully would be airdropped in to replace the role of tribe teenager<br><br>SASHA<br><br>i wanted to swap to see u eventually queen… we needed to work together for our third fio season in a row but it just didn’t pan out. i’ll always mourn what we could’ve had #howcoulduwaluigi</div>
+    </div>
+    <div class="msg">
+        <div class="content">FAITH<br><br>idk what happened to you lowkey but it would’ve been nice to talk to u again after playing summer sequester with u<br><br>LEMMY<br><br>i’m sorry bro, i told you i’d avenge you on redemption but i ended up sitting in f4 with two of the mario tribe 💀 but i hope i put on a show worthy of the big lemmy koopa</div>
+    </div>
+    <div class="msg">
+        <div class="content">CRISTEN<br><br>the world would’ve shattered if they put us together this season…. i love u queen ur goated wish u were on jury so u could vote for me 😔<br><br>EEVEON<br><br>my first #1… i am sorry i called you a simp. it was a joke i am sorry. i am sorry i ruined your game with my sloppy gameplay and my insistence on voting out switch over tully. i was ur unhealthy #1 relationship this season i hope u dont hold it against me… but i miss you dearly</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+            <span class="reaction">👑 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">LIZ<br><br>i clicked with u so immediately and felt very sad when you voted me out, even if it was 100% the right move on ur part. i was rlly happy we got to talk again on redemption and connect a little more, PERONA FANS 4 LYFE<br><br>MOUSE<br><br>I MISS YOU DEARLY. your crazy amounts of dms and energy was such a breath of fresh air when i was struggling to adjust to this cast’s strategy focused convos. u are the funniest mf on this cast please never stop being goated</div>
+    </div>
+    <div class="msg">
+        <div class="content">KEBAB<br><br>i was rlly excited to get to finally play an org with you… and then mouse idoled 😭 i think it was ultimately for the best that u went home game wise. but sometimes i like to think about what could’ve been if i got to actually work with the women this season<br><br>MINA<br><br>u are the person i clicked with most at merge, i talked to you and immediately just knew i wanted to play the game with you and genuinely be your friend lmao. working with you and mouse for a single round was a freeing and beautiful experience and probably the most fun i had all season</div>
+    </div>
+    <div class="msg">
+        <div class="content">TULLY<br><br>you are so funny and sweet and silly to talk to tully, i loved talking to you this season and im so glad our tribe lost the first challenge so i could meet you early 😭 even if my decision to keep you over switch kinda cost me an entire season’s worth of agency and game control i don’t regret the sentiment. u getting drunk in tribe chat was very funny (not enabling)</div>
+    </div>
+    <div class="msg">
+        <div class="content">NISHI<br><br>u are lovely and i appreciate you keeping things realer with me in dms this season than basically everyone else did. send my regards to jonah<br><br>DEAN<br><br>idk what it is with you and me in orgs but i did not truly feel one moment all season where you ever gave the impression you wanted to work with me. despite that you’re quite a nice guy when you’re not talking about anything strategy related and i hope ur favorite hundred line character gets a dlc route dedicated to them</div>
+    </div>
+    <div class="msg">
+        <div class="content">JOEL<br><br>joelbot. joelhuman. joeldroid. joelmazing. the joelstoppable joman. i went from thinking of u as a bigger robot than dean to someone that i viewed as a genuine friend over the course of the season- u have this weird way of being really charming but it takes like 2 weeks to kick in. also it helps that you fw meta runner so heavy all this time later. tari nation. next firemaking challenge u should get a meta runner arm so u can beat me 🫡</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/15/2026 08:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Jay<br><br>I never got to meet you! But I’m sure you’re cool!<br><br>Sasha<br><br>Rage quitting the whole server was iconic. You’re a legend in my book. <br><br>Faith<br><br>We had the briefest of convos in marooning chat, hope you’re enjoying adults if you started it!<br><br>Lemmy<br><br>Lemmy, it was wonderful getting to know you. I’m sorry your story ended so soon here, especially because you had the most Mario ball knowledge out of anyone here. I’m sure I speak for all my Mario tribe-mates when I say that we would have never won that first challenge without your artistic talent. Lemmy is my favorite koopaling.<br><br>Cristen<br><br>I really enjoyed our talks way back at the start of this game, you were actually the first person I ever talked to in this game. I honestly was gutted when you were voted out of the Rosalina tribe because I realized I’d have to wait forever to chat again. In another universe we woulda ran this merge 🙏🙏<br><br>Eeveon<br><br>I really enjoyed the chats we had man, you were genuenly one of the hardest votes I had in this game. It didn’t feel right at the time and honestly still doesn’t. I hope life is treating you well my dude. <br><br>Liz<br><br>Ugh it was genuinely gut-wrenching to see you go, you were one of the few people in this game who I think genuinely had my back. Your elimination lit a flame under me and from that point forward I knew I had to do everything in my power to not be next out the door. I hope you’re doing good, and I can’t wait to chat with you when this is all over. Shoutout lizards!<br><br>Mouse<br><br>Mouse! I really enjoyed our late night (mid day for you) chats. Your idol play was the stuff of legends and will most likely win move of the season or some other award. It’s not often someone truly gags the entire cast but you did that handedly. I’m sorry you were one of the victims of the: Worst Twist Ever ™</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">Kebab<br><br>Thank you for being one of the only people to truly extend me an olive branch after the Liz vote. Unfortunately I feel like as soon as we really started vibing you were suddenly launched out of this game from a cannon. Hope all is well and can’t wait to chat with you after this is done!<br><br>Mina<br><br>I was genuinely mad after you got eliminated 😭 I really enjoyed playing this game with you when I did, and I’m sorry I forgot to add Sasha to the list of Everest players in our duo challenge lol. I genuinely wish you were here in the final 3 with me. <br><br>Tully<br><br>Tully! Instead of a normal message I have a story for you. I was working the night shift at the news station and I got out at around midnight. I ended up heading to the bar that my friends had been hanging out at since around 10 pm. I played pool with them for a bit, but then they got tired and left. I still had some energy so I sat at the bar and ordered another beer. At the moment you messaged me to talk about the game, and we talked strategy for a good while I finished my drink. That was such a small interaction between us, but genuenly one of the most enjoyable ones I had, i don’t even remember plan we were even talking about and if it even came to fruition. But I really did enjoy sitting at the bar playing online survivor with you lol. <br><br>Nishi<br><br>Nishi, we didn’t get to talk nearly as much as I hoped throughout this game. I feel like we were on opposite sides of the game and because of that we’re never able to really get to know each other. I wish you well and hope you’re doing alright. <br><br>Dean<br><br>To me our 1-1 was like shouting into a void, I found myself saying increasingly outlandish shit in there to try and get you to respond lol. Honestly, i respect the commitment to completely ignoring me. I hope your d&amp;d campaign is going well and maybe we can have a legitimate convo when this is all over with. I hope you’re doing alright.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Joel<br><br>I feel like I said most of what I wanted to say to you in our 1-1 earlier. But I hope you know I think you’re a great guy and I look forward to talking to you after this game.</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

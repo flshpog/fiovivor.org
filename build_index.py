@@ -36,12 +36,14 @@ PRETTY = {
     "the mountaintop": "The Mountaintop",
     "audience seating": "Audience Seating",
     "submissions": "Submissions",
+    "eliminated and twist chats": "Eliminated & Twist Chats",
 }
 
 EVEREST_ORDER = [
     "in-game info", "tribal councils", "final tribal council", "confessionals",
-    "1-1s and alliances", "tribe chat archives", "nook auction",
-    "lodge twist archives", "the mountaintop", "other channels",
+    "1-1s and alliances", "tribe chat archives", "submissions", "nook auction",
+    "lodge twist archives", "the mountaintop", "eliminated and twist chats",
+    "other channels",
 ]
 FIO_ORDER = [
     "in-game information", "tribal councils", "confessionals",
@@ -136,11 +138,12 @@ everest_worlds = []
 for sid, folder, label in [
     ("everest-s1", "everest survivor 1 archive", "Season 1 &middot; Twin Peaks"),
     ("everest-s2", "everest survivor 2 archive", "Season 2 &middot; New Horizons"),
+    ("everest-s3", "everest survivor 3 archive", "Season 3 &middot; The Mushroom Kingdom"),
 ]:
     cats, total = season_categories(folder, EVEREST_ORDER)
     everest_worlds.append((sid, label, total, cats))
 
-EVEREST_DEFAULT = "everest-s2"
+EVEREST_DEFAULT = "everest-s3"
 everest_total = sum(t for _, _, t, _ in everest_worlds)
 
 everest_tabs, everest_panels = [], []

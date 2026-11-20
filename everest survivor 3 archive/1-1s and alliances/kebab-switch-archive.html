@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#kebab-switch — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>kebab-switch</h1>
+    <p class="meta">Everest &middot; 81 messages archived</p>
+    <p class="topic">Kebab, Switch</p>
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/29/2026 12:52 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🤝 <strong>Welcome!</strong><br><br>This is a private 1-on-1 for:<br>• <span class="mention" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Kebab</span><br>• <span class="mention" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Switch</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/29/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">good evening switch</div>
+    </div>
+    <div class="msg">
+        <div class="content">it is lovely to finally meet u</div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://media.discordapp.net/stickers/749051341325729913.webp?size=160" alt="Aww" title="Aww" loading="lazy" style="max-width:160px;max-height:160px;"></div>
+    </div>
+    <div class="msg">
+        <div class="content">how has life been treating u today</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/529892684031197212-c041f21393ca1512.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Switch | 3rd ]</span>
+        <span class="username">@switcharooooo</span>
+        <span class="timestamp">10/29/2026 01:14 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hey kebab</div>
+    </div>
+    <div class="msg">
+        <div class="content">its nice to meet you too :)</div>
+    </div>
+    <div class="msg">
+        <div class="content">im doing good today wbu?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/29/2026 01:37 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i am doing wonderful</div>
+    </div>
+    <div class="msg">
+        <div class="content">doing my night-time skincare</div>
+    </div>
+    <div class="msg">
+        <div class="content">playing pokemon in bed</div>
+    </div>
+    <div class="msg">
+        <div class="content">all cozy</div>
+    </div>
+    <div class="msg">
+        <div class="content">getting ready to snooze v soon</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/529892684031197212-c041f21393ca1512.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Switch | 3rd ]</span>
+        <span class="username">@switcharooooo</span>
+        <span class="timestamp">10/29/2026 06:10 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hope that all went well</div>
+    </div>
+    <div class="msg">
+        <div class="content">sorry i wasn’t rly around today</div>
+    </div>
+    <div class="msg">
+        <div class="content">which pokemon u playin?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/29/2026 04:27 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">all good i was asleep anyway LOL</div>
+    </div>
+    <div class="msg">
+        <div class="content">it was pokemon x, i just managed to get my 3ds fixed after like 10 years which feels insane ahaha</div>
+    </div>
+    <div class="msg">
+        <div class="content">just finished w classes for today n am back home having dinner now</div>
+    </div>
+    <div class="msg">
+        <div class="content">how’s ur day been going</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/529892684031197212-c041f21393ca1512.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Switch | 3rd ]</span>
+        <span class="username">@switcharooooo</span>
+        <span class="timestamp">10/29/2026 05:54 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ohhh pokemon x was the main one i played growing up</div>
+    </div>
+    <div class="msg">
+        <div class="content">thats great</div>
+    </div>
+    <div class="msg">
+        <div class="content">ive still got my old 3ds somewhere but its been so long since ive used it lol</div>
+    </div>
+    <div class="msg">
+        <div class="content">it probably still works</div>
+    </div>
+    <div class="msg">
+        <div class="content">u in college rn?</div>
+    </div>
+    <div class="msg">
+        <div class="content">my days fine im jus on campus rn myself</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 12:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> ive still got my old 3ds somewhere but its been so long since ive used it lol</div>
+        <div class="content">would highly recommend rebooting that bad boy up</div>
+    </div>
+    <div class="msg">
+        <div class="content">all the games are still as fire as i remember but nintendo discontinued all online services so lowkey that killed half the trading/battling part of pokemon</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> u in college rn?</div>
+        <div class="content">ye same boat as u twin</div>
+    </div>
+    <div class="msg">
+        <div class="content">less than a year to go tho so there is light at the end of the tunnel (hopefully)</div>
+    </div>
+    <div class="msg">
+        <div class="content">what are u studying atm</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/529892684031197212-c041f21393ca1512.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Switch | 3rd ]</span>
+        <span class="username">@switcharooooo</span>
+        <span class="timestamp">10/30/2026 01:32 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> all the games are still as fire as i remember but nintendo discontinued all onli...</div>
+        <div class="content">oh shit i didn’t know that but i guess it’s kinda expected</div>
+    </div>
+    <div class="msg">
+        <div class="content">my fave nintendo series has always been mario actually</div>
+    </div>
+    <div class="msg">
+        <div class="content">u?</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> what are u studying atm</div>
+        <div class="content">im doing a masters in biology rn, but my goal afterwards is medical school</div>
+    </div>
+    <div class="msg">
+        <div class="content">wbu?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 02:43 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> my fave nintendo series has always been mario actually</div>
+        <div class="content">did that in any way influence ur decision to apply for this season LOL</div>
+    </div>
+    <div class="msg">
+        <div class="content">can&#x27;t go wrong w the og tho, solid pick</div>
+    </div>
+    <div class="msg">
+        <div class="content">lowkey idk if u ever played that one random mario football game but it was so good</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> u?</div>
+        <div class="content">in case the pfp didn&#x27;t give it away LOL mine is prob fire emblem, it&#x27;s got like a lil bit of every type of game in it</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> im doing a masters in biology rn, but my goal afterwards is medical school</div>
+        <div class="content">damn medical school is insane best of luck bro</div>
+    </div>
+    <div class="msg">
+        <div class="content">that&#x27;s gonna be intense asf</div>
+    </div>
+    <div class="msg">
+        <div class="content">am doing a masters in law atm, the goal is to get a job LOL</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/529892684031197212-c041f21393ca1512.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Switch | 3rd ]</span>
+        <span class="username">@switcharooooo</span>
+        <span class="timestamp">10/30/2026 03:20 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hey kebab gm</div>
+    </div>
+    <div class="msg">
+        <div class="content">is a masters in law any different from law school&gt;</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> did that in any way influence ur decision to apply for this season LOL</div>
+        <div class="content">no actually it just kinda worked out</div>
+    </div>
+    <div class="msg">
+        <div class="content">i was supposed to play last season and dropped</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> lowkey idk if u ever played that one random mario football game but it was so go...</div>
+        <div class="content">i do not remember any mario football :(</div>
+        <div class="reactions">
+            <span class="reaction">😔 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> in case the pfp didn&#x27;t give it away LOL mine is prob fire emblem, it&#x27;s got like ...</div>
+        <div class="content">thats cool ive actually never played fire emblem</div>
+    </div>
+    <div class="msg">
+        <div class="content">i didnt know it was that varied i thought it was just like an rpg</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 05:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> is a masters in law any different from law school&gt;</div>
+        <div class="content">ye we just don’t have law school here, u just do undergrad n call it a day, masters is totally optional if u just wanna cripple urself financially for the hell of it</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> i was supposed to play last season and dropped</div>
+        <div class="content">i feel like i vaguely remember this acc</div>
+    </div>
+    <div class="msg">
+        <div class="content">meant to be type shit</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> thats cool ive actually never played fire emblem</div>
+        <div class="content">would highly recommend if u ever get the chance<img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1377071961049403562.webp?size=48" alt=":yay:" title=":yay:"></div>
+    </div>
+    <div class="msg">
+        <div class="content">how are u on this fine day switch</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/529892684031197212-c041f21393ca1512.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Switch | 3rd ]</span>
+        <span class="username">@switcharooooo</span>
+        <span class="timestamp">10/30/2026 05:48 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">im doing good!</div>
+    </div>
+    <div class="msg">
+        <div class="content">just on campus doing thesis work rn</div>
+    </div>
+    <div class="msg">
+        <div class="content">so technically are u like a certified lawyer</div>
+    </div>
+    <div class="msg">
+        <div class="content">where are u from btw?</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> i feel like i vaguely remember this acc</div>
+        <div class="content">fishpog recruited me and then i had to go to toronto for a family medical situation the same week it started so i dropped</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">and then the same thing happened this season but i didnt drop</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> would highly recommend if u ever get the chance<img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1377071961049403562.webp?size=48" alt=":yay:" title=":yay:"></div>
+        <div class="content">what would be a good starting point</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 06:26 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> just on campus doing thesis work rn</div>
+        <div class="content">ooooh what are u researching</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> so technically are u like a certified lawyer</div>
+        <div class="content">nooooo not at all lol, still many exams n years of training to go til i get there</div>
+    </div>
+    <div class="msg">
+        <div class="content">i am from the UK!</div>
+    </div>
+    <div class="msg">
+        <div class="content">hence the mildly inconvenient timezone</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> and then the same thing happened this season but i didnt drop</div>
+        <div class="content">damn i’m sorry to hear that, hope things are getting better now hopefully</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> what would be a good starting point</div>
+        <div class="content">depends what console u have but awakening was my first one n it was sensational</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/529892684031197212-c041f21393ca1512.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#fe8140, #289af8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Switch | 3rd ]</span>
+        <span class="username">@switcharooooo</span>
+        <span class="timestamp">10/30/2026 08:12 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> ooooh what are u researching</div>
+        <div class="content">i work in a plant ecology lab</div>
+    </div>
+    <div class="msg">
+        <div class="content">im researching a decline in maple trees that’s been seen in canada and my experiments are gonna be to look at possible causes</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> nooooo not at all lol, still many exams n years of training to go til i get ther...</div>
+        <div class="content">ohh okay</div>
+    </div>
+    <div class="msg">
+        <div class="content">gl with all that</div>
+    </div>
+    <div class="msg">
+        <div class="content">ive kinda made it clear i think from my past messages but im from canada</div>
+    </div>
+    <div class="msg">
+        <div class="content">ive never been to the uk but ive always thought it’d be really cool</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">ibnelkebab</span> damn i’m sorry to hear that, hope things are getting better now hopefully</div>
+        <div class="content">yeah things are getting better now</div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">everything’s alr</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/30/2026 11:29 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">switcharooooo</span> im researching a decline in maple trees that’s been seen in canada and my experi...</div>
+        <div class="content">oooh damn lowkey the gov gotta fund ur research</div>
+    </div>
+    <div class="msg">
+        <div class="content">that’s the country’s national leaf at stake</div>
+    </div>
+    <div class="msg">
+        <div class="content">otherwise tf they gonna put on the flag</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/31/2026 12:15 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove inactive 1-1s</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/31/2026 12:15 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">caraage</span> !chmove inactive 1-1s</div>
+        <div class="content">✅ Successfully moved <span class="mention">#kebab-switch</span> to the <strong>inactive 1-1s</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#joel-questioning — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>joel-questioning</h1>
+    <p class="meta">Everest &middot; 29 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">11/17/2026 08:31 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/super-paper-mario-spm-18</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/c0f744cd0b28548d-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">11/18/2026 05:25 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Ben ]</span> can you tell me about a move you made in this game that should be rewarded with my jury vote</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Chrysalis ]</span> can you compare each juror to a baked good and tell me why you chose said baked good</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 05:34 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">purple133</span> <span class="mention">@[ Chrysalis ]</span> can you compare each juror to a baked good and tell me why...</div>
+        <div class="content">liz - cherry pie, reminds me of perona LOL<br>mouse - cheese biscuit, mice like cheese! also mouse seems like the kinda dude who would slam down the cheese biscuits at red lobster<br>kebab - shepherd&#x27;s pie, just the right vibe<br>mina - strawberry shortcake, weirdly the first thing i think of when i hear the name mina? also sweet like mina LOL<br>tully - blondies, idk what tully looks like but spiritually he feels like a blondie so he gets blondies instead of brownies<br>nishi - raspberry crowns, pfps and overall style gives me some real raspberry enjoying vibes<br>dean - everything bagel, he strikes me as the kinda dude who would make one of these with cream cheese for lunch 4-5 times a week<br>joel - oatmeal raisin cookies, first time you eat them u spit it out cause ur not expecting oatmeal raisin, then you eat them the second time knowing what they are and they&#x27;re delicious. reminds me of our arc this season lamo<br>switch - banana muffin, switch is very banana-coded to me. also very muffin-coded to me. im not sure if this says anything about our relationship or if i just assign weird values to people like that</div>
+        <div class="reactions">
+            <span class="reaction">🐴 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 08:59 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Good morning Joel, I’ll start by saying that I do feel like one of my big weaknesses coming into this ftc is that I don’t have this big giant move that i fully stand behind and say “I did that” I feel like my game here was more of a slow burn where I made small moves to assure myself a chance to vouch for myself at ftc. One of the biggest moves I was a part of was ironically voting chrysalis out pre merge. I was in an alliance with her and could have easily taken the path of least resistance by voting with her. But I knew that she had ulterior motives with our alliance at the time so I worked with Liz and switch to blindside her. As for the merge, I never really got the opportunity to make a big move. Don’t get me wrong, I tried to make things happen, but it became increasingly obvious that I was on the bottom of the tribe, so I had to pivot my game away from making big moves, and instead toward small adjustments that both made myself appear as “the guy everyone wants to sit next too” while still having an actual chance to get votes at FTC. I feel I have played a very strong social game here, and it’s led me to having this seat in the final 2.</div>
+    </div>
+    <div class="msg">
+        <div class="content">Thank you for your question</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">11/18/2026 04:09 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> Good morning Joel, I’ll start by saying that I do feel like one of my big weakne...</div>
+        <div class="content">So you’re saying the reason I should vote you to win is because you blindsided someone premerge who proceeded to return and is your opponent this ftc? 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 04:36 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">No Joel, that’s not what I’m saying. Please reread my answer. <br><br>I feel like you wanted to hit me with a sick burn so bad you completely missed the point of my response. <br><br>I understand that I am the reason you were not in the final 3. I’m sorry, but I hope my explanation as to why makes just a little sense to you. I feel you have made it expressly clear to me where your vote is going tonight. And I respect you for that. It’s all love man 💚</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">11/18/2026 05:01 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Follow up</div>
+    </div>
+    <div class="msg">
+        <div class="content">Can you elaborate on that strong social game that should get you the win over chrysalis</div>
+    </div>
+    <div class="msg">
+        <div class="content">Tell me one thing you learned about each juror</div>
+    </div>
+    <div class="msg">
+        <div class="content">Im not mad that im not at the ftc I just feel like you answer my question with “well I didn’t really do a big move in the merge” isn’t what I was looking for</div>
+    </div>
+    <div class="msg">
+        <div class="content">Was securing an ftc spot your biggest winning move?</div>
+    </div>
+    <div class="msg">
+        <div class="content">You say you “wanted to be the guy everyone wanted to sit next to” but I want to know what exactly what means?? How did you do that AND play a game deserving of the win</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 07:51 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">purple133</span> Can you elaborate on that strong social game that should get you the win over ch...</div>
+        <div class="content">So on this point, it comes back to me never reviving a vote in this game. Even when I was on the bottom of the merge tribe, and all of my allies were dropping like flies, I remained completely safe. It could have easily been me voted out instead of Liz, Mina, mouse, or even switch. But I managed to stay connected and appear useful to people who were actively voting against me. <br><br>Id also like to touch on how I utilized redemption island in my approach to the social game. When switch came back from redemption, I immediately jumped into their dms and spouted off on how amazed I was with their performance in the challenge, how I think it’s unfair they were booted so fast form the game, and that I want to work with them. At the time it seemed like everyone else was writing them off, but I saw an opportunity. An opportunity for a close game relationship with someone who at the time seemed desperate for it. I was somewhat desperate for it as well, I was on a tribe with people I had never met in the game yet, so being able to work switch into a close alliance worked wonders for me and my game here. I now realize that Nishi may have also seen that opportunity as switch told me around f5 that they had been working together since peach tribe as well, and honestly, kudos there nishi. Great minds think alike ig <br><br>I used this same strategy with chrysalis after her return from redemption, but this time I wanted to gauge the public reception to her return first. I waited for a couple rounds and right when I realized she was on the outs, I jumped in and started giving her information, I became her closest ally for the end game. I think for both switch and chrysalis I did a little “strategic glazing”. For switch it was thier redemption performance that was my in. For chrysalis it was her desire to not be seen as a “gamebot”. I knew exactly what to say to make both switch and chrysalis like me enough to keep me safe. And I do think that takes a lot of social awareness in this game.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">11/18/2026 07:54 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">tiredchrysalis</span> liz - cherry pie, reminds me of perona LOL<br>mouse - cheese biscuit, mice like che...</div>
+        <div class="content">i do like oatmeal raisin cookies</div>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">.neeeb</span> So on this point, it comes back to me never reviving a vote in this game. Even w...</div>
+        <div class="content">understood! it does take social awareness to finesse ts</div>
+    </div>
+    <div class="msg">
+        <div class="content">i am taking these answers into consideration</div>
+    </div>
+    <div class="msg">
+        <div class="content">and uh</div>
+    </div>
+    <div class="msg">
+        <div class="content">i will be voting soon</div>
+    </div>
+    <div class="msg">
+        <div class="content">thank you for your time</div>
+    </div>
+    <div class="msg">
+        <div class="content">thank you for your speeches</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 08:30 PM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">purple133</span> Tell me one thing you learned about each juror</div>
+        <div class="content">Liz: Liz is someone with a huge heart and played this game with a lot of passion, she’s on school to become a behavior psychologist. We had a long ass chat about lizards and she got me to try deadlock for the first time!<br><br>Kebab: kebab hates the propeller mushroom! Lol but seriously, due to timezones and the nature of her exit I didn’t get to talk with her nearly as much as I wanted too, I know she likes minmaxing kingdom hearts, but most of our conversations were purely game talk <br><br>Tully: Tully had a brilliant mind for this game, but I think many underestimate his prowess here, I want wait to see him play next season 😭 he also works at a cafe! Shoutout food service workers!<br><br>Mouse: mouse has some Rick Devins in him with that idol play, he’s got grandparents in Tennessee, and is astounded by American gas prices<br><br><br>Mina: Mina is a big fan of the X-men and was zatanna for Halloween last year, she also had a really close connection with Liz that formed early in this game and we were both gutted to see her go. <br><br><br>Joel: you are currently on ur grind in college, and you have a partner who makes you very happy, their favorite band is waterparks and you two went to see them a few weeks ago <br><br><br>Nishi: Nishi and I didn’t talk too much, but I know she had a lot of outside shit going on in this game and I hope she’s doing alright <br><br>Dean: dean and I talked even less! But I know he loves persona 3 and d&amp;d! That rhymed, that’s a bar <br><br>Switch: switch is a beer drinkin hockey lovin Canadian and I love them for that. They also work at a pharmacy!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/854424783051685899-fb5de61b90296494.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- Goomba</span>
+        <span class="username">@sambubbles</span>
+        <span class="timestamp">11/18/2026 08:34 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">🇨🇦</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">11/18/2026 08:55 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Kebab | 9th ]</span> i voted nishi originally then dean and switch baited me into voting chrysalis so i voted chrysalis then about two minutes after votes locked chrysalis goes &quot;DUDE VOTE NISHI&quot; and i was like</div>
+    </div>
+    <div class="msg">
+        <div class="content">whoops</div>
+    </div>
+    <div class="msg">
+        <div class="content">but yeah 3-2-1 with me as the 1 against chrysalis</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">11/18/2026 09:03 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Kebab | 9th ]</span> had chrys told me earlier i would’ve voted Nishi</div>
+    </div>
+    <div class="msg">
+        <div class="content">I mean shit it was my idea 😭</div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+            <span class="reaction">🔥 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

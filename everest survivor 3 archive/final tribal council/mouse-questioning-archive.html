@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#mouse-questioning — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>mouse-questioning</h1>
+    <p class="meta">Everest &middot; 13 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1302164824775462912-90345bc7c106f054.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#492a29, #a34d34);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mouse | 10th ]</span>
+        <span class="username">@az2005__</span>
+        <span class="timestamp">11/18/2026 05:29 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Ben ]</span> <br>Sorry if this is too direct- but there are a few things, they relate to each aspects of the games you played in. You said you played a fluid and scrappy game, but like honestly I don&#x27;t realllly understand what you did this game, like some of the decisions felt really odd like the solo chrysalis vote- can you elaborate on how some of these odd-ish decision were good for your game? <br><br>You also said you played a good strategical game and said u took out people gunning for you, can you elaborate on who was actually gunning for you cause i need specific names to actually verify that ... <br><br>Also, what was your best move this game, and how much of it can actually be credited to yourself, and why do you think it was the best for your game?</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention">@[ Chrysalis ]</span> <br>1. Elaborate on one occurrence where a blindside benefited you, and one occurrence where you were able to recover from a blindside.<br><br>2. If you could turn back time and change one  move you did this game, which one would you choose and why<br><br>3. What was your best move, and how much of it can be credited to youreslf, and why do u think it was the best for your game (same question as for ben)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 05:38 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">az2005__</span> <span class="mention">@[ Chrysalis ]</span> <br>1. Elaborate on one occurrence where a blindside benefite...</div>
+        <div class="content">1. I believe the first time that a blindside worked to my benefit was actually when you were slipped the idol by Mina- I had no idea that was going to happen nor that Kebab would be going home, but I saw Kebab as a huge huge threat that would need to be taken out soon and I believe I actually might&#x27;ve talked with you or Mina about this at the time briefly? I don&#x27;t remember lol. I think despite me not having any agency in this blindside it helped my game position. Additionally I think the string of blindsides that kept happening to me for the first 3-4 rounds of merge all worked in harmony to somewhat lower my threat level before Joel came back from Redemption and inflated it.</div>
+    </div>
+    <div class="msg">
+        <div class="content">oops i pressed enter early</div>
+    </div>
+    <div class="msg">
+        <div class="content">let me continue</div>
+    </div>
+    <div class="msg">
+        <div class="content">I was able to recover from multiple blindsides throughout the game, but the best example is how I handled being outplayed and blindsided with the failure of my first Joel plan at the Now or Later round. With both you and Tully now gone, I had lost pretty much all of my close allies and I only had Mina left. I was still majorly on the backfoot at F7 being misled by Nishi that her vote would be on Joel that round, but because I proved my value to Switch/Nishi as someone who wasn&#x27;t targeting them, they went for Mina instead of me- not ideal but it allowed me to stay safe and find new opportunities.</div>
+    </div>
+    <div class="msg">
+        <div class="content">2. This is taking it way back for sure lmao but I would&#x27;ve voted out Tully over Switch at F16 if I could go back and change it. Obviously I love Tully and he became a great ally and friend to me while he was around, but voting out Switch and burning the trust with them early on had serious ripple effects on the rest of my game. Many times during merge I tried to schmooze with Switch to make using them as a shield safer for me, but it never really went anywhere because we had such obviously different agendas that were ultimately caused because I pushed Eeveon to get rid of Switch. I think I could&#x27;ve had much more agency and control that way and ultimately I probably would&#x27;ve enjoyed the season a bit more LOL</div>
+    </div>
+    <div class="msg">
+        <div class="content">Switch was just such a power player that my relationship with them being handicapped was a really big obstacle and I wish I could&#x27;ve gotten rid of that</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 05:56 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">az2005__</span> <span class="mention">@[ Chrysalis ]</span> <br>1. Elaborate on one occurrence where a blindside benefite...</div>
+        <div class="content">3. I think my best move was standing on business at the second Final 6. I had an idol in my pocket that round that Ben knew about, but with Joel and Ben newly on my side in the Triple Date alliance I felt very confident that they would go to rocks for me and I could guarantee myself a spot in the Final 5. I sweetened the incentive for Ben by telling him I&#x27;d play the idol on him at 5 if I needed to, but I never would&#x27;ve done that unless I was immune.<br><br>I was being told by Nishi and Switch very persistently to vote for Dean, but I refused. This ultimately got Nishi rocked out, but I was confident in my decision and how it would affect my game for a few reasons.<br><br>- Nishi and Switch were actively much closer on a game level than Nishi and Dean were, Nishi was much more willing to be anti-Dean in my DMs and I felt that the two of them being in the F5 together was unnecessarily risky for me if I could prevent it. <br>-Voting for Switch ensured that either the biggest threat to my game in Switch went home, or if rocks were drawn then either the Nishi-Switch duo would be split up or Dean would get rocked out which was a fine outcome.<br>-Even though Nishi going here was the least preferred scenario for me, I was still confident in my ability to beat Dean and Switch in challenges- and I knew that Nishi being gone would push Ben further towards me as an ideal FTC partner for him, lessening everyone&#x27;s wiggle room. I had a gameplan for a scenario where every single non-immune person besides myself went home.<br>-I was told Dean would win out if he wasn&#x27;t voted out here but I believed in my own skills more than I believed in the fearmongering.<br><br>I will not pretend like I had all the agency in this move- Joel and Ben pulled a lot of weight here with their immunity necklaces and being willing to go to rocks for me, but I pushed very hard for Switch to be the vote specifically because I felt like I could control the variables the most that way. It&#x27;s not very flashy, but I think it&#x27;s the best example of how I was able to position myself for success in the lategame</div>
+    </div>
+    <div class="msg">
+        <div class="content">why didn&#x27;t the whole list turn into bullet points?</div>
+    </div>
+    <div class="msg">
+        <div class="content">whatever</div>
+    </div>
+    <div class="msg">
+        <div class="content">thank you for the questions mouse! lmk if you have any more!</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/422198363979644929-c4e00bddadd61558.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Ben ]</span>
+        <span class="username">@.neeeb</span>
+        <span class="timestamp">11/18/2026 10:33 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hi mouse I appreciate the question! <br><br>I completely understand why you don’t fully understand the game I played. To be honest I always tended to keep my cards pretty close to my chest while talking with you in this game. As for my odd moves in this game, I did what I always believed I had to do to ensure I could make it as far as I can in this game without being seen as a threat to win. I’m not entirely sure what you mean by “solo chrysalis vote” but please elaborate on that when you see this because I want to give you an answer for that!  <br><br>As for who exactly did want me out. There’s only 2 people who I knew wanted me out in this game. The first is ironically chrysalis. I voted her out pre merge after finding out, and then using the social dynamics of being a redemption returnee was able to turn her into a trusted ally. The other is Dean. Dean ignored me for most of this game. Joel informed me that Dean had been gunning for me in the later half of this merge. And honestly I saw it coming from a mile away. You don’t just ignore someone in a social strategy game if you think they’re going to outlast you.<br><br>As for my best move, I mentioned in Joel’s thread that I don’t have one big crowning move that I can fully rest my hat on in this game. But I am proud of myself for winning back to back immunities at f6a and f6b as it was a huuuuge reason as to why i am sitting here today, never voted for and with a 1 in 2 shot of winning this thing</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#f14b-tribal-faith — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>f14b-tribal-faith</h1>
+    <p class="meta">Everest &middot; 75 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/21/2026 12:55 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/reading-a-book-rosalina</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/73fb3eca54844e70-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">Welcome, <span class="mention" style="background:linear-gradient(90deg,#41a3fa, #043d70);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Rosalina&#x27;s Observatory</span>, to Tribal Council!</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">Faith, Mina, Mouse... behind you is a torch, grab one dip it in the flame and get fire. Fire represents your life in this game &#x27;cause when it is gone, <strong>so are you.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">!tribal-rules</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/21/2026 12:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> !tribal-rules</div>
+        <div class="content">Rules/Reminders:<br><div class="blockquote">- <strong>Trust Rankings:</strong> When you submit your vote at Tribal Council, we also need a list of everyone on your tribe, ranked by how much you trust them. We will remind you if you don&#x27;t provide them, but if you refuse to provide them you <strong>will</strong> receive a strike.<br>- <strong>No parchment meta:</strong> You may not, at any point describe to someone what your parchment will look like or plan around whose parchment belongs to who. You also can’t do shit like, “let’s vote this person with blue text parchments and an image of their character!” either. Anything else is fair game.<br>- <strong>No “waiting until the last hour of Tribal to vote and strategize” meta:</strong> You may change your vote as many times as you want to until the deadline. If all the votes are in early, I will do a poll along the lines of “5 :thumbsup: reacts for an early Tribal”, and if the vote passes the votes will be read early.<br>- <strong>Idol Play Info:</strong> Pre-playing idols is 100% allowed if you cannot be there for the live vote reading. Additionally may play your advantage around a condition. For example, “I play my idol on myself if an idol is played on this person”. You can’t do stupid ass conditions like “I play my idol for my ally if they get the most votes” or anything like that.<br>- <strong>Final Words Info:</strong> In the event you are voted out of the game, you may pre-submit final words in your submissions, type them live after the vote reading, or in your submissions after. You may not give ponderosa/VIP spec info to people still in the game. Pre-Jurors, you will likely not be invited back for another season if you leave the server immediately after you’re voted out, it’s bad etiquette. Jurors, you’re not allowed to specify where your jury vote is going or you’ll be given a strike.</div></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/21/2026 12:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">ignore the section about TRs</div>
+    </div>
+    <div class="msg">
+        <div class="content">!parchment</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/21/2026 12:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">perma5toned</span> !parchment</div>
+        <div class="content">https://media.discordapp.net/attachments/1560070513475190844/1560072593569091634/s3parch.jpg?ex=6ad16253&amp;is=6ad010d3&amp;hm=f42753dd593e14627f903d2266d39d640bc6b5c29d1edc23dd8fe903182cd2e3&amp;=&amp;format=webp&amp;width=1235&amp;height=925</div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/49f4ee711aba39a7-embed-image.webp" loading="lazy" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/586877333248540676-cd803a9a75c33cb3.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- yosh(T)i</span>
+        <span class="username">@perma5toned</span>
+        <span class="timestamp">10/21/2026 12:57 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Votes due tomorrow at <span class="timestamp-inline">12:00 AM</span>!</div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><pre><code></code></pre></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/281980956506587138-f0f8d3784ade82e3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d0eff3, #765527);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Dean | 5th ]</span>
+        <span class="username">@redsamurott</span>
+        <span class="timestamp">10/21/2026 12:58 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I hate the Propeller Mushroom.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/21/2026 01:04 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">burn that game.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/838695182412677130-4c61217624d03046.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e9fff5, #7dd4ae);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mina | 8th ]</span>
+        <span class="username">@penquiny__</span>
+        <span class="timestamp">10/21/2026 01:10 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">The parchment is cute</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/431087120979984405-11634a8dbf8effb3.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#44c840, #031202);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Joel | 4th ]</span>
+        <span class="username">@purple133</span>
+        <span class="timestamp">10/21/2026 01:16 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/suicide-booth-futurama-1</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/f6e493b6111ab6c0-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+        <div class="reactions">
+            <span class="reaction">❤️ <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">10/21/2026 01:27 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">suicide booth</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/556663419483324421-fd7c82d3fb15f0be.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#674119, #71599a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Kebab | 9th ]</span>
+        <span class="username">@ibnelkebab</span>
+        <span class="timestamp">10/21/2026 02:01 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i am having great difficulty keeping my eyes open</div>
+    </div>
+    <div class="msg">
+        <div class="content">it is 3am</div>
+    </div>
+    <div class="msg">
+        <div class="content">i will go slumber</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/838695182412677130-4c61217624d03046.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e9fff5, #7dd4ae);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mina | 8th ]</span>
+        <span class="username">@penquiny__</span>
+        <span class="timestamp">10/21/2026 02:24 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hope you sleep well</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/22/2026 12:12 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">oh its tribal time</div>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="mention" style="background:linear-gradient(90deg,#41a3fa, #043d70);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Rosalina&#x27;s Observatory</span> <strong><em>I will now go tally the votes</em></strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><em>struts in with urn</em></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">I have the votes.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1em">If anyone has a <u>Hidden Immunity Idol</u> or an <u>advantage</u> and you want to play it, now would be the time to do so.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">.</div>
+    </div>
+    <div class="msg">
+        <div class="content">all quiet on da advantage front</div>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/princess-daisy-daisy-mario-3</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/ed9e464036a89ec5-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+    <div class="msg">
+        <div class="content">Alright!</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">I&#x27;ll read the votes</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">First vote...</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>Faith</strong></div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/fc24824703ede9d5-image.webp" alt="image.png" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">1</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">Second vote...</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">https://cdn.discordapp.com/attachments/1558993470595797022/1562528082051596358/parchment_V1.mp4?ex=6ada512d&amp;is=6ad8ffad&amp;hm=e9122a9179192526eb90c808d8ad116a4f73d43aee825da802ef09896366da6d&amp;<br><strong>Mouse</strong></div>
+        <div class="embed" style="border-left-color:#4f545c">
+            <video class="embed-img" controls preload="metadata" src="https://cdn.discordapp.com/attachments/1558993470595797022/1562528082051596358/parchment_V1.mp4?ex=6b01de2d&is=6b008cad&hm=da59a92ea4511a4477724df4afb2a9d152aa44eed96b03380e8a02a07503795e&"></video>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content">That&#x27;s <u>one</u> vote Faith, <u>one</u> vote Mouse.</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">Third vote...</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong>Faith</strong></div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/c269933855b8a282-image.webp" alt="image.png" loading="lazy"></div>
+        <div class="reactions">
+            <span class="reaction">😭 <span class="reaction-count">2</span></span>
+        </div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">Fourth vote...</strong></div>
+    </div>
+    <div class="msg">
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/2626ed548ccfda53-image.webp" alt="image.png" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1em">Faith. That&#x27;s now <u>three</u> votes for Faith. One vote Mouse.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">Fifth vote...</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.25em">and the Fifth person voted out of <u>Survivor: Mushroom Kingdom...</u></strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/824340033959755828-b6744191e4a52561.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#ff0202, #eb589d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Faith | 15th ]</span>
+        <span class="username">@shinyface.</span>
+        <span class="timestamp">10/22/2026 12:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">oooo do i have some final words</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/22/2026 12:20 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong><em>FAITH</em></strong></div>
+        <div class="attachment"><img src="https://everest-cdn.xsoul.org/images/62ffac6d8e829b54-image.webp" alt="image.png" loading="lazy"></div>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em"><span class="mention" style="background:linear-gradient(90deg,#ff0202, #eb589d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">@Faith</span> That&#x27;s 4 and tonight, that is enough.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">Do you have any final words?</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/838695182412677130-4c61217624d03046.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#e9fff5, #7dd4ae);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Mina | 8th ]</span>
+        <span class="username">@penquiny__</span>
+        <span class="timestamp">10/22/2026 12:21 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">I’m so sorry faith</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374099594016980997-af08ce20ad67928a.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d85089, #ecdf26);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Cristen | 13th ]</span>
+        <span class="username">@capyidentity</span>
+        <span class="timestamp">10/22/2026 12:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i liked you a lot but you gotta play different if you come back from redemption sorry girl 😭</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/824340033959755828-b6744191e4a52561.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#ff0202, #eb589d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Faith | 15th ]</span>
+        <span class="username">@shinyface.</span>
+        <span class="timestamp">10/22/2026 12:22 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">So every single one of you lied to me. At least Mouse was honest to me about voting me. Cristen you are the fakest bitch ive ever met. Kebab and joel and dean all of you for telling me id be good and liked me yall fake asf. Cristen was the one who first suggested the alliance. Dont agree to a f2 with me and then do that. Cristen me and kebab were in an alliance. Also everyone likes cristen so be aware of her. WTF you mean different. i didnt do shit mouse was the one who started shit</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">-<br><br><strong style="font-size:1.25em">Alright.</strong><br><br><strong style="font-size:1.5em">Faith...</strong></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374099594016980997-af08ce20ad67928a.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d85089, #ecdf26);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Cristen | 13th ]</span>
+        <span class="username">@capyidentity</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i wasn’t the only one u said u were #1s with mom</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">https://klipy.com/gifs/survivor-tribe-has-spoken</div>
+        <div class="attachment"><video autoplay loop muted playsinline src="https://everest-cdn.xsoul.org/videos/0b2367e9470bd21f-gifv.webm" style="max-width:400px;max-height:300px;border-radius:4px;margin:4px 0;"></video></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/824340033959755828-b6744191e4a52561.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#ff0202, #eb589d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Faith | 15th ]</span>
+        <span class="username">@shinyface.</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">thats a lie but ok</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><strong style="font-size:1.5em">Time for you to go.</strong></div>
+    </div>
+    <div class="msg">
+        <div class="content">-</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/824340033959755828-b6744191e4a52561.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#ff0202, #eb589d);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Faith | 15th ]</span>
+        <span class="username">@shinyface.</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">maybe 2nd place will be ur fate here</div>
+    </div>
+    <div class="msg">
+        <div class="content">i hope so</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/374099594016980997-af08ce20ad67928a.webp" alt="" loading="lazy">
+        <span class="author" style="background:linear-gradient(90deg,#d85089, #ecdf26);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent">[ Cristen | 13th ]</span>
+        <span class="username">@capyidentity</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">end</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/288844840811233280-d57244450c17d143.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- hi i&#x27;m daisy</span>
+        <span class="username">@caraage</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">!chmove council archive</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/1492920443219480676-e995243b20d1f03b.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">Everest Hub Bot <span class="bot-tag">BOT</span></span>
+        <span class="username">@Everest Hub Bot#0212</span>
+        <span class="timestamp">10/22/2026 12:23 AM</span>
+    </div>
+    <div class="msg">
+        <div class="reply"><span class="reply-author">caraage</span> !chmove council archive</div>
+        <div class="content">✅ Successfully moved <span class="mention">#f14b-tribal-faith</span> to the <strong>🔥 | Tribal Council Archive</strong> category!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>

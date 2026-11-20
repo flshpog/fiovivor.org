@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#chrysalis-speech — Everest</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #36393f;
+    color: #dcddde;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.375;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+header {
+    padding: 24px 16px;
+    border-bottom: 1px solid #42454a;
+    background: #2f3136;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+header .hash {
+    color: #72767d;
+    margin-right: 2px;
+}
+
+header .meta {
+    color: #72767d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+header .topic {
+    color: #96989d;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.messages {
+    padding: 16px 0;
+}
+
+.msg-group {
+    padding: 4px 16px 4px 72px;
+    position: relative;
+    margin-top: 12px;
+}
+
+.msg-group:hover {
+    background: #32353b;
+}
+
+.msg-header {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    left: 16px;
+    top: 4px;
+    object-fit: cover;
+}
+
+.author {
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+}
+
+.username {
+    color: #72767d;
+    font-size: 12px;
+}
+
+.bot-tag {
+    background: #5865f2;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.timestamp {
+    color: #72767d;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.msg {
+    padding: 2px 0;
+}
+
+.content {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.content code {
+    background: #2f3136;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+
+.content pre {
+    background: #2f3136;
+    padding: 8px;
+    border-radius: 4px;
+    margin: 4px 0;
+    overflow-x: auto;
+}
+
+.content pre code {
+    padding: 0;
+    background: none;
+}
+
+.content strong { color: #fff; }
+
+.reply {
+    font-size: 13px;
+    color: #72767d;
+    padding: 2px 0 4px 0;
+    border-left: 2px solid #4f545c;
+    padding-left: 8px;
+    margin-bottom: 4px;
+}
+
+.reply-author {
+    font-weight: 600;
+    color: #b9bbbe;
+}
+
+.attachment img {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+.attachment a {
+    color: #00aff4;
+    text-decoration: none;
+}
+
+.attachment a:hover { text-decoration: underline; }
+
+.embed {
+    border-left: 4px solid #4f545c;
+    background: #2f3136;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 4px 0;
+    max-width: 520px;
+}
+
+.embed-title {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-title a { color: #00aff4; text-decoration: none; }
+.embed-title a:hover { text-decoration: underline; }
+
+.embed-desc {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.embed-author-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.embed-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.embed-field {
+    width: 100%;
+}
+
+.embed-field.inline {
+    width: calc(33% - 8px);
+    min-width: 120px;
+}
+
+.embed-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #b9bbbe;
+    margin-bottom: 2px;
+}
+
+.embed-field-value {
+    font-size: 14px;
+    color: #dcddde;
+}
+
+.embed-img {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.embed-thumb {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 4px;
+    margin-top: 8px;
+    float: right;
+}
+
+.embed-footer {
+    font-size: 12px;
+    color: #72767d;
+    margin-top: 6px;
+}
+
+.reactions {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.reaction {
+    background: #2f3136;
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #b9bbbe;
+}
+
+.timestamp-inline {
+    background: rgba(79, 84, 92, 0.48);
+    padding: 0 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 14px;
+}
+
+.forwarded {
+    border: 1px solid #4f545c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: #2f3136;
+    max-width: 520px;
+}
+
+.forwarded-header {
+    font-size: 12px;
+    color: #72767d;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.blockquote {
+    border-left: 4px solid #4f545c;
+    padding-left: 12px;
+    margin: 2px 0;
+}
+
+.spoiler {
+    background: #202225;
+    color: transparent;
+    border-radius: 3px;
+    padding: 0 4px;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+}
+
+.spoiler:hover {
+    background: rgba(79, 84, 92, 0.48);
+    color: #dcddde;
+}
+
+.mention {
+    background: rgba(88, 101, 242, 0.15);
+    color: #dee0fc;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.custom-emoji {
+    width: 22px;
+    height: 22px;
+    vertical-align: -0.4em;
+    object-fit: contain;
+}
+
+.reaction .custom-emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: -0.3em;
+}
+
+.subtext {
+    font-size: 0.8em;
+    color: #949ba4;
+}
+
+/* Click-to-zoom images */
+.attachment img,
+.embed-img,
+.embed-thumb {
+    cursor: zoom-in;
+}
+
+.lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lightbox.open { display: flex; }
+
+.lightbox img {
+    max-width: 95vw;
+    max-height: 95vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 600px) {
+    .msg-group { padding-left: 56px; }
+    .avatar { width: 32px; height: 32px; }
+    .attachment img { max-width: 100%; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+    <h1><span class="hash">#</span>chrysalis-speech</h1>
+    <p class="meta">Everest &middot; 10 messages archived</p>
+    
+</header>
+<div class="messages">
+
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/17/2026 06:11 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">hi jury i missed you! i had some plans made in advance for today so my speech is gonna come later! <img class="custom-emoji" src="https://cdn.discordapp.com/emojis/1115590146478313543.webp?size=48" alt=":thumbu:" title=":thumbu:"> excited for questioning</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/932329766063837246-9cdaa3b298f3992f.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">- weed crack &amp; dope</span>
+        <span class="username">@flshpog</span>
+        <span class="timestamp">11/17/2026 10:33 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content"><span class="subtext">(jury cant see this until youve finished posting it)</span></div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/17/2026 11:48 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hm.</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 01:38 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">Hi jury! I&#x27;m honored to be sitting here in front of you- this season has been a rollercoaster over the last month and I&#x27;m really proud of both myself and Ben to have lasted the whole way through. I think I deserve to win Everest 3 and I hope you&#x27;re willing to consider voting for me! Rather than look at my whole game front to back, I want to acknowledge my overall game journey and strategy that got me to this FTC seat today. I don&#x27;t think y&#x27;all wanna read a super long speech and I don&#x27;t want to write one since questioning is my strength admittedly lol!<br><br>When looking back at my game, I find it hard to ignore the obvious divide that comes with having been sent to Redemption during the pre-merge. I overplayed my hand and made some risky decisions that would come back to bite me very quickly and very harshly. Being blindsided with my boot spearheaded by Switch put a lot of strong emotions in me- at this point I was super angry at myself, the cast, and the season itself. When I was first sent to the Underworld I didn&#x27;t even want to come back into the game- but as I took time for myself to reflect without needing to social game, I felt like I understood where I went wrong. And most importantly I knew that if I came back, I could go far! Being blindsided at the F13 to me is where my old game died and my new game begun.<br><br>My entire mindset towards this game changed upon my return- I wanted to ensure that I never compromised on what I believed would be best for my game at any given vote, to play to my win con and stand on business even if it meant being on the wrong side of the vote. I identified Switch and Dean as very visible players with lots of agency and knew that it wouldn&#x27;t be practical to take them out before redemption was over- so I wanted to risk keeping them in for as long as possible to shield me in the endgame. After losing multiple allies and fumbling multiple votes I made sure to emphasize to people how low spirits I was, how tired I was of the game, how much of a &quot;charlie brown&quot; I was- because I wanted them to forget the fact they were funneling all my allies onto the jury.<br><br>Most importantly I wanted to ensure that even if I couldn&#x27;t wrestle game control away from the power players, I was still forming strong relationships with whoever would be sent to the jury. While I wasn&#x27;t always able to get to know people as much as I would&#x27;ve liked, (Kebab especially) my social game was able to get me out of several critical binds that I shouldn&#x27;t have been able to survive by all means. I was able to turn people who previously voted against me into crucial allies multiple times with Ben and Joel, and was being fed critical info by them and other players like Mouse, Mina, and Nishi throughout the merge. Winning people over in this game became my greatest strength- that&#x27;s ultimately what got me out of harm&#x27;s way in this game, not the idols or immunity wins. I was willing to work with anyone if it meant putting me in a position to go far, and it worked.<br><br>When Joel came back from Redemption having info from many of the jurors, it became clearer to the rest of the cast (and honestly, me as well) that I was perceived as a threat. At this point, my focus switched- I had taken a ton of risks and I would need to take just as many more to make my effort pay off. Once the F5 episode was clearly not the finale episode, I realized that it was a Final 2 and planned accordingly, making an F2 deal with Ben and making sure to butter him up as much as possible in the event I fumbled an important challenge. I did, and my social game and ability to position myself well even into the endgame allowed me to get firemaking much to the ire of Joel and Switch. Ben knew the decision would be controversial and pulled the trigger to save me anyway, giving me the ability to win the final immunity challenge and be the person to finally take out Switch.</div>
+    </div>
+    <div class="msg">
+        <div class="content">I spent a large portion of the season with poor agency getting frequently blindsided, that is quite true and worth noting. But what I believe matters most is that I was always playing as hard as I possibly could to my win condition. Strategically, I wasn&#x27;t afraid of being on the wrong side of the vote as I felt it would be worth it as long as I eventually succeeded in toppling the power players- which I was able to do despite my name being under constant fire. I learned a lot from my mistakes in the pre-merge and applied a more cautious, loyal style of game that allowed me to evade danger when it counted most and find allies who would make poor game decisions in my favor. Even though I was being constantly told how gamebotty this cast was on redemption, I didn&#x27;t give up on trying to genuinely socialize and talk with people the best I could. Being on the backfoot from the very second I entered the merge was pretty inevitable for my game imo, and I believe that I played the hand I was dealt better than anyone else. I think I deserve to win and I hope you can consider voting for me!<br><br>This speech is admittedly a bit rushed cause I have a lot on the schedule today lol- but questioning is my strength anyway, so if there&#x27;s anything you&#x27;d like clarified or expanded on please just ask! I still think I have a lot to prove and I&#x27;m excited for questioning. Talk to you all very soon!!! :)</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/18/2026 09:51 PM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i love ben btw i am debating him with kindness in my heart</div>
+    </div>
+    <div class="msg">
+        <div class="content">we are not fighting evilly</div>
+    </div>
+    <div class="msg">
+        <div class="content">we r like spunch bop and patrice</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/19/2026 02:00 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">gonna watch survivor now so i’ll be gone for a bit! i’ll answer any last questions before i go to bed</div>
+    </div>
+</div>
+<div class="msg-group">
+    <div class="msg-header">
+        <img class="avatar" src="https://everest-cdn.xsoul.org/avatars/918753129560936458-9905f3e4c2569062.webp" alt="" loading="lazy">
+        <span class="author" style="color:#dcddde">[ Chrysalis ]</span>
+        <span class="username">@tiredchrysalis</span>
+        <span class="timestamp">11/19/2026 08:03 AM</span>
+    </div>
+    <div class="msg">
+        <div class="content">i’m heading to bed now and may not be around until reunion time, thanks so much for playing with me this season everyone 😊 i’m excited to talk to yall outside of the context of game! let’s send off the season strong lmao we been up to this for too long!!!</div>
+    </div>
+</div>
+</div>
+</div>
+<div class="lightbox" id="lightbox"><img src="" alt=""></div>
+<script>
+(function () {
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var zoomable = t.tagName === 'IMG' &&
+      (t.closest('.attachment') || t.classList.contains('embed-img') || t.classList.contains('embed-thumb'));
+    if (zoomable) {
+      lbImg.src = t.currentSrc || t.src;
+      lb.classList.add('open');
+    } else if (lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && lb.classList.contains('open')) {
+      lb.classList.remove('open');
+      lbImg.removeAttribute('src');
+    }
+  });
+})();
+</script>
+</body>
+</html>
