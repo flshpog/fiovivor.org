@@ -165,7 +165,8 @@ everest_panels_html = "\n".join(everest_panels)
 SEQUESTERS = [
     ("seq7", "sequesters/sequester 7", "Sequester 7 &middot; Merry Thanksgiving!",
      "https://www.youtube.com/live/BVKXCooF0MY"),
-    ("seq6", "sequesters/sequester 6", "Sequester 6 &middot; Floppa Friday", None),
+    ("seq6", "sequesters/sequester 6", "Sequester 6 &middot; Floppa Friday",
+     "https://www.youtube.com/live/seL89Atd2u8"),
 ]
 SEQ_ORDER = ["game channels", "confessionals"]
 
