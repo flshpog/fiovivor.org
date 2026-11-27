@@ -160,19 +160,20 @@ everest_tabs_html = "\n            ".join(everest_tabs)
 everest_panels_html = "\n".join(everest_panels)
 
 # ---- sequesters (a separate format, kept apart from the Survivor seasons) ----
-# (id, folder, tab label, livestream url or None). Newest first; the first one is
-# also featured in the "Recent activity" block.
+# (id, folder, tab label, livestream url or None), in tab order (oldest first).
 SEQUESTERS = [
-    ("seq7", "sequesters/sequester 7", "Sequester 7 &middot; Merry Thanksgiving!",
-     "https://www.youtube.com/live/BVKXCooF0MY"),
     ("seq6", "sequesters/sequester 6", "Sequester 6 &middot; Floppa Friday",
      "https://www.youtube.com/live/seL89Atd2u8"),
+    ("seq7", "sequesters/sequester 7", "Sequester 7 &middot; Merry Thanksgiving!",
+     "https://www.youtube.com/live/BVKXCooF0MY"),
 ]
+SEQ_DEFAULT = "seq7"  # tab that opens first, and the one featured in "Recent activity"
+SEQ_BY_ID = {sq[0]: sq for sq in SEQUESTERS}
 SEQ_ORDER = ["game channels", "confessionals"]
 
 seq_tabs, seq_panels = [], []
-for i, (sid, folder, label, stream) in enumerate(SEQUESTERS):
-    active = " active" if i == 0 else ""
+for sid, folder, label, stream in SEQUESTERS:
+    active = " active" if sid == SEQ_DEFAULT else ""
     cats, _ = season_categories(folder, SEQ_ORDER)
     stream_html = ""
     if stream:
@@ -198,8 +199,8 @@ def youtube_embed(url):
 RECENT = {
     "title": "Sequester 7: Merry Thanksgiving!",
     "facts": [("Winner", "Emmet"), ("Runner-up", "Ayla"), ("Cast", "19 players")],
-    "video": SEQUESTERS[0][3],
-    "archive": SEQUESTERS[0][0],
+    "video": SEQ_BY_ID[SEQ_DEFAULT][3],
+    "archive": SEQ_DEFAULT,
 }
 recent_facts_html = "".join(
     f"<div><dt>{html.escape(k)}</dt><dd>{html.escape(v)}</dd></div>" for k, v in RECENT["facts"]
