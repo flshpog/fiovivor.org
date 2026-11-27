@@ -247,7 +247,7 @@ TEMPLATE = r"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Everest</title>
 <meta property="og:title" content="Everest">
-<meta property="og:description" content="A collaborative multiformat Discord ORG community, home to competitive Survivor, Traitors, Big Brother and more.">
+<meta property="og:description" content="A collaborative multiformat Discord ORG community, home to competitive Survivor, Sequesters, Big Brother and more.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://fiovivor.org/everestembedlogo.png">
 <meta name="theme-color" content="#637798">
