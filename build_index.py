@@ -194,7 +194,6 @@ def youtube_embed(url):
 
 # ---- recent activity ----------------------------------------------------------
 RECENT = {
-    "label": "Live sequester",
     "title": "Sequester 7: Merry Thanksgiving!",
     "facts": [("Winner", "Ayla"), ("Runner-up", "Emmet"), ("Cast", "19 players")],
     "video": SEQUESTERS[0][3],
@@ -379,9 +378,8 @@ a{color:inherit;text-decoration:none}
 .video-frame{position:relative;min-height:300px;background:#000}
 .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .recent-info{display:flex;flex-direction:column;padding:1.5rem 1.6rem;border-left:1px solid var(--line)}
-.recent-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .recent-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(1.5rem,3vw,1.95rem);
-  line-height:1.12;letter-spacing:-.01em;color:#fff;margin-top:.45rem}
+  line-height:1.12;letter-spacing:-.01em;color:#fff}
 .recent-facts{margin-top:1.2rem;border-top:1px solid var(--line)}
 .recent-facts div{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.92rem}
 .recent-facts dt{color:var(--muted)}
@@ -557,7 +555,6 @@ __FIO_PANELS__
                 referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             <div class="recent-info">
-              <div class="recent-label">__RECENT_LABEL__</div>
               <h3 class="recent-title">__RECENT_TITLE__</h3>
               <dl class="recent-facts">__RECENT_FACTS__</dl>
               <div class="recent-actions">
@@ -816,7 +813,6 @@ out = (TEMPLATE
        .replace("__RECENT_TITLE__", html.escape(RECENT["title"]))
        .replace("__RECENT_EMBED__", youtube_embed(RECENT["video"]))
        .replace("__RECENT_ARCHIVE__", RECENT["archive"])
-       .replace("__RECENT_LABEL__", html.escape(RECENT["label"]))
        .replace("__RECENT_FACTS__", recent_facts_html)
        .replace("__RECENT_VIDEO__", html.escape(RECENT["video"])))
 
