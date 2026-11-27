@@ -37,6 +37,7 @@ PRETTY = {
     "audience seating": "Audience Seating",
     "submissions": "Submissions",
     "eliminated and twist chats": "Eliminated & Twist Chats",
+    "game channels": "Game Channels",
 }
 
 EVEREST_ORDER = [
@@ -157,6 +158,46 @@ for sid, label, total, cats in everest_worlds:
     )
 everest_tabs_html = "\n            ".join(everest_tabs)
 everest_panels_html = "\n".join(everest_panels)
+
+# ---- sequesters (a separate format, kept apart from the Survivor seasons) ----
+# (id, folder, tab label, livestream url or None). Newest first; the first one is
+# also featured in the "Recent activity" block.
+SEQUESTERS = [
+    ("seq7", "sequesters/sequester 7", "Sequester 7 &middot; Merry Thanksgiving!",
+     "https://www.youtube.com/live/BVKXCooF0MY"),
+]
+SEQ_ORDER = ["game channels", "confessionals"]
+
+seq_tabs, seq_panels = [], []
+for i, (sid, folder, label, stream) in enumerate(SEQUESTERS):
+    active = " active" if i == 0 else ""
+    cats, _ = season_categories(folder, SEQ_ORDER)
+    stream_html = ""
+    if stream:
+        stream_html = (
+            f'            <a class="stream-link" href="{html.escape(stream)}" target="_blank" rel="noopener">'
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'
+            'Watch the livestream</a>\n'
+        )
+    seq_tabs.append(f'<button class="tab{active}" data-seq="{sid}">{label}</button>')
+    seq_panels.append(
+        f'          <div class="seq-panel{active}" id="{sid}">\n{stream_html}{cats}\n          </div>'
+    )
+seq_tabs_html = "\n            ".join(seq_tabs)
+seq_panels_html = "\n".join(seq_panels)
+
+
+def youtube_embed(url):
+    m = re.search(r"(?:live/|watch\?v=|youtu\.be/|embed/)([\w-]{11})", url)
+    return f"https://www.youtube-nocookie.com/embed/{m.group(1)}" if m else url
+
+
+# ---- recent activity ----------------------------------------------------------
+RECENT = {
+    "title": "Sequester 7: Merry Thanksgiving!",
+    "video": SEQUESTERS[0][3],
+    "archive": SEQUESTERS[0][0],
+}
 
 fio_worlds = []
 for sid, folder, label in [
@@ -326,6 +367,35 @@ a{color:inherit;text-decoration:none}
 .channel-link .hash{color:var(--accent);font-weight:700;font-size:1.05rem;flex-shrink:0}
 .no-results{display:none;text-align:center;color:var(--muted);padding:3rem 1rem}
 
+/* ---------- recent activity ---------- */
+.recent{max-width:940px;margin:0 auto;padding:4rem 1.6rem 1rem;text-align:center}
+.recent-kicker{font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:.85rem;color:var(--ice);
+  display:inline-flex;align-items:center;gap:.55rem}
+.recent-kicker .live-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.recent h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;
+  font-size:clamp(2rem,6.5vw,4.2rem);line-height:.95;margin:.8rem 0 1.6rem;
+  background:linear-gradient(180deg,#ffffff 0%,#bcd4f2 60%,#7ea2cc 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.video-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;
+  border:1px solid var(--line);background:#000;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.recent-btn{margin-top:1.6rem;display:inline-flex;align-items:center;gap:.55rem;cursor:pointer;border:none;font-family:inherit;
+  background:var(--accent);color:#f4f8ff;font-weight:800;font-size:.98rem;padding:.8rem 1.6rem;border-radius:100px;
+  box-shadow:0 10px 30px rgba(99,119,152,.34);transition:transform .18s,filter .18s,box-shadow .18s}
+.recent-btn:hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 14px 38px rgba(99,119,152,.48)}
+.recent-btn svg{width:18px;height:18px;fill:currentColor}
+
+/* ---------- sequester archives ---------- */
+.section-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;
+  font-size:clamp(1.5rem,4vw,2.3rem);text-align:center;margin-bottom:.4rem}
+.section-sub{text-align:center;color:var(--muted);font-size:.95rem;margin-bottom:1.4rem}
+.seq-panel{display:none}
+.seq-panel.active{display:block}
+.stream-link{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-bottom:.5rem;padding:.85rem 1rem;
+  border:1px solid var(--accent);border-radius:10px;background:var(--accent-soft);color:#fff;font-weight:700;font-size:.92rem;
+  transition:background .15s}
+.stream-link:hover{background:var(--accent)}
+.stream-link svg{width:18px;height:18px;fill:currentColor}
+
 /* ---------- FIOVIVOR (restored original blurple design) ---------- */
 #fiovivor{background:#1a1a2e;color:#e0e0e0}
 #fiovivor .fio-header{text-align:center;padding:2rem 1rem 1.5rem;background:linear-gradient(180deg,#16213e 0%,#1a1a2e 100%);border-bottom:1px solid #2a2a4a}
@@ -464,6 +534,20 @@ __FIO_PANELS__
           </a>
         </div>
 
+        <section class="recent" id="recent-activity">
+          <div class="recent-kicker"><span class="live-dot"></span>Recent activity</div>
+          <h2>__RECENT_TITLE__</h2>
+          <div class="video-frame">
+            <iframe src="__RECENT_EMBED__" title="__RECENT_TITLE__ livestream" loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <button class="recent-btn" data-open-seq="__RECENT_ARCHIVE__">
+            View the archive
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </button>
+        </section>
+
         <div class="about">
           <div class="about-block">
             <h2>What is Everest <span class="q">&#8265;</span></h2>
@@ -495,6 +579,15 @@ __FIO_PANELS__
           </div>
 __EVEREST_PANELS__
           <div class="no-results">No channels found.</div>
+        </div>
+
+        <div class="browser" id="sequester-browser">
+          <h2 class="section-title">Sequester archives</h2>
+          <p class="section-sub">Our shorter, live-played games, separate from the Survivor seasons.</p>
+          <div class="tabs seq-tabs">
+            __SEQ_TABS__
+          </div>
+__SEQ_PANELS__
         </div>
 
       </div>
@@ -566,6 +659,21 @@ document.querySelectorAll('.everest-tabs .tab').forEach(function(tab){
     tab.classList.add('active');
     document.querySelectorAll('#everest .season').forEach(function(sn){ sn.classList.remove('active'); });
     document.getElementById(tab.dataset.eseason).classList.add('active');
+  });
+});
+
+// ---------- sequester tabs + recent activity ----------
+function openSeq(id){
+  document.querySelectorAll('.seq-tabs .tab').forEach(function(t){ t.classList.toggle('active', t.dataset.seq === id); });
+  document.querySelectorAll('.seq-panel').forEach(function(p){ p.classList.toggle('active', p.id === id); });
+}
+document.querySelectorAll('.seq-tabs .tab').forEach(function(tab){
+  tab.addEventListener('click', function(){ openSeq(tab.dataset.seq); });
+});
+document.querySelectorAll('[data-open-seq]').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    openSeq(btn.dataset.openSeq);
+    document.getElementById('sequester-browser').scrollIntoView({behavior:'smooth', block:'start'});
   });
 });
 
@@ -682,7 +790,12 @@ out = (TEMPLATE
        .replace("__EVEREST_TOTAL__", f"{everest_total:,}")
        .replace("__FIO_TABS__", fio_tabs_html)
        .replace("__FIO_PANELS__", fio_panels_html)
-       .replace("__FIO_TOTAL__", f"{fio_grand_total:,}"))
+       .replace("__FIO_TOTAL__", f"{fio_grand_total:,}")
+       .replace("__SEQ_TABS__", seq_tabs_html)
+       .replace("__SEQ_PANELS__", seq_panels_html)
+       .replace("__RECENT_TITLE__", html.escape(RECENT["title"]))
+       .replace("__RECENT_EMBED__", youtube_embed(RECENT["video"]))
+       .replace("__RECENT_ARCHIVE__", RECENT["archive"]))
 
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(out)
