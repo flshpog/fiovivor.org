@@ -195,7 +195,7 @@ def youtube_embed(url):
 # ---- recent activity ----------------------------------------------------------
 RECENT = {
     "title": "Sequester 7: Merry Thanksgiving!",
-    "facts": [("Winner", "Ayla"), ("Runner-up", "Emmet"), ("Cast", "19 players")],
+    "facts": [("Winner", "Emmet"), ("Runner-up", "Ayla"), ("Cast", "19 players")],
     "video": SEQUESTERS[0][3],
     "archive": SEQUESTERS[0][0],
 }
