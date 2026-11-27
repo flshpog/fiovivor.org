@@ -194,10 +194,15 @@ def youtube_embed(url):
 
 # ---- recent activity ----------------------------------------------------------
 RECENT = {
+    "label": "Live sequester",
     "title": "Sequester 7: Merry Thanksgiving!",
+    "facts": [("Winner", "Ayla"), ("Runner-up", "Emmet"), ("Cast", "19 players")],
     "video": SEQUESTERS[0][3],
     "archive": SEQUESTERS[0][0],
 }
+recent_facts_html = "".join(
+    f"<div><dt>{html.escape(k)}</dt><dd>{html.escape(v)}</dd></div>" for k, v in RECENT["facts"]
+)
 
 fio_worlds = []
 for sid, folder, label in [
@@ -368,21 +373,30 @@ a{color:inherit;text-decoration:none}
 .no-results{display:none;text-align:center;color:var(--muted);padding:3rem 1rem}
 
 /* ---------- recent activity ---------- */
-.recent{max-width:940px;margin:0 auto;padding:4rem 1.6rem 1rem;text-align:center}
-.recent-kicker{font-weight:800;letter-spacing:.2em;text-transform:uppercase;font-size:.85rem;color:var(--ice);
-  display:inline-flex;align-items:center;gap:.55rem}
-.recent-kicker .live-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
-.recent h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;
-  font-size:clamp(2rem,6.5vw,4.2rem);line-height:.95;margin:.8rem 0 1.6rem;
-  background:linear-gradient(180deg,#ffffff 0%,#bcd4f2 60%,#7ea2cc 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.video-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;
-  border:1px solid var(--line);background:#000;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.recent{max-width:940px;margin:0 auto;padding:4rem 1.6rem 0}
+.recent-card{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:1.4rem;
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+.video-frame{position:relative;min-height:300px;background:#000}
 .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-.recent-btn{margin-top:1.6rem;display:inline-flex;align-items:center;gap:.55rem;cursor:pointer;border:none;font-family:inherit;
-  background:var(--accent);color:#f4f8ff;font-weight:800;font-size:.98rem;padding:.8rem 1.6rem;border-radius:100px;
-  box-shadow:0 10px 30px rgba(99,119,152,.34);transition:transform .18s,filter .18s,box-shadow .18s}
-.recent-btn:hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 14px 38px rgba(99,119,152,.48)}
-.recent-btn svg{width:18px;height:18px;fill:currentColor}
+.recent-info{display:flex;flex-direction:column;padding:1.5rem 1.6rem;border-left:1px solid var(--line)}
+.recent-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.recent-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:clamp(1.5rem,3vw,1.95rem);
+  line-height:1.12;letter-spacing:-.01em;color:#fff;margin-top:.45rem}
+.recent-facts{margin-top:1.2rem;border-top:1px solid var(--line)}
+.recent-facts div{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.recent-facts dt{color:var(--muted)}
+.recent-facts dd{color:var(--snow);font-weight:600}
+.recent-actions{margin-top:auto;padding-top:1.4rem;display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.1rem}
+.recent-btn{cursor:pointer;border:none;font-family:inherit;background:var(--accent);color:#fff;font-weight:700;font-size:.92rem;
+  padding:.65rem 1.15rem;border-radius:8px;transition:filter .15s}
+.recent-btn:hover{filter:brightness(1.12)}
+.recent-yt{color:var(--ice);font-size:.9rem;font-weight:600}
+.recent-yt:hover{color:#fff;text-decoration:underline}
+@media(max-width:760px){
+  .recent-card{grid-template-columns:1fr}
+  .video-frame{min-height:0;aspect-ratio:16/9}
+  .recent-info{border-left:none;border-top:1px solid var(--line)}
+}
 
 /* ---------- sequester archives ---------- */
 .section-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;
@@ -534,18 +548,24 @@ __FIO_PANELS__
           </a>
         </div>
 
-        <section class="recent" id="recent-activity">
-          <div class="recent-kicker"><span class="live-dot"></span>Recent activity</div>
-          <h2>__RECENT_TITLE__</h2>
-          <div class="video-frame">
-            <iframe src="__RECENT_EMBED__" title="__RECENT_TITLE__ livestream" loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <section class="recent about" id="recent-activity">
+          <h2>Recent activity</h2>
+          <div class="recent-card">
+            <div class="video-frame">
+              <iframe src="__RECENT_EMBED__" title="__RECENT_TITLE__ livestream" loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+            <div class="recent-info">
+              <div class="recent-label">__RECENT_LABEL__</div>
+              <h3 class="recent-title">__RECENT_TITLE__</h3>
+              <dl class="recent-facts">__RECENT_FACTS__</dl>
+              <div class="recent-actions">
+                <button class="recent-btn" data-open-seq="__RECENT_ARCHIVE__">Browse the archive</button>
+                <a class="recent-yt" href="__RECENT_VIDEO__" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+              </div>
+            </div>
           </div>
-          <button class="recent-btn" data-open-seq="__RECENT_ARCHIVE__">
-            View the archive
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </button>
         </section>
 
         <div class="about">
@@ -795,7 +815,10 @@ out = (TEMPLATE
        .replace("__SEQ_PANELS__", seq_panels_html)
        .replace("__RECENT_TITLE__", html.escape(RECENT["title"]))
        .replace("__RECENT_EMBED__", youtube_embed(RECENT["video"]))
-       .replace("__RECENT_ARCHIVE__", RECENT["archive"]))
+       .replace("__RECENT_ARCHIVE__", RECENT["archive"])
+       .replace("__RECENT_LABEL__", html.escape(RECENT["label"]))
+       .replace("__RECENT_FACTS__", recent_facts_html)
+       .replace("__RECENT_VIDEO__", html.escape(RECENT["video"])))
 
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(out)
